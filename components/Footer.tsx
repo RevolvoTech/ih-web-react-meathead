@@ -51,7 +51,9 @@ export default function Footer() {
           <div className="text-center md:text-right">
             <h3 className="font-heading font-bold text-xl text-meathead-red mb-4 uppercase tracking-tighter">THE PROMISE</h3>
             <p className="text-gray-400 text-sm">
-              24G Protein
+              24G+ Protein
+              <br />
+              125G Patty
               <br />
               80/20 Precision
               <br />

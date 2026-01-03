@@ -33,8 +33,8 @@ export default function MeatheadMath() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <p className="font-data text-sm text-gray-400 mb-1">PER PATTY</p>
-                  <p className="font-data text-4xl font-bold text-meathead-red">24g</p>
+                  <p className="font-data text-sm text-gray-400 mb-1">PER 125G PATTY</p>
+                  <p className="font-data text-4xl font-bold text-meathead-red">24g+</p>
                 </div>
                 <div className="bg-meathead-red/10 px-3 py-1 rounded-full">
                   <p className="font-data text-xs font-bold text-meathead-red">BIOAVAILABLE</p>

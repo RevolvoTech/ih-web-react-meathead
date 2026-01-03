@@ -78,7 +78,9 @@ export default function FoundersNote() {
             </div>
 
             <blockquote className="text-gray-300 leading-relaxed italic">
-              "Look, the science is great, but let's be real: <span className="text-white font-bold not-italic">Asli Australian Verhay ka gosht khao, chass aye gi.</span> 💪
+              "If the vegans aren't complaining, we aren't doing it right.
+              <br /><br />
+              <span className="text-white font-bold not-italic">Asli Australian Verhay ka gosht khao, chass aye gi, aur rona band karo.</span> 💪
               <br /><br />
               Most burgers feel like a chemistry project - ours feels like a reward. No fillers, no seed oils, just heavy protein that actually tastes like it's supposed to.
               <br /><br />

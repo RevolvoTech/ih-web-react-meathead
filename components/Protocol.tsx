@@ -7,13 +7,13 @@ import { useRef } from "react";
 const protocols = [
   {
     number: "01",
-    title: "SOURCED FRESH",
-    description: "100% grass-fed beef from Green Valley, Islamabad. Elite local sourcing.",
+    title: "ELITE SOURCES",
+    description: "100% grass-fed beef from elite local suppliers. Same-day sourcing for maximum freshness.",
   },
   {
     number: "02",
-    title: "GROUND THURSDAY",
-    description: "Fresh ground every Thursday morning. Never frozen, never old.",
+    title: "SAME DAY COOK",
+    description: "Get it Thursday morning. Cook it Thursday. Zero freezing, zero aging, zero compromises.",
   },
   {
     number: "03",
@@ -22,8 +22,8 @@ const protocols = [
   },
   {
     number: "04",
-    title: "TEMP CONTROLLED",
-    description: "Delivered in insulated bags. Friday 6-8 PM. Bahria 7, 8 | DHA 1, 2, 4 only.",
+    title: "FRIDAY DELIVERY",
+    description: "Delivered fresh in insulated bags. Friday 6-8 PM. Bahria 7, 8 | DHA 1, 2, 4 only.",
   },
 ];
 

@@ -15,7 +15,7 @@ const reasons = [
   },
   {
     title: "ZERO EXCUSES",
-    description: "24g bioavailable protein, 0g carbs. Your macros are already calculated. Just eat and grow.",
+    description: "24g+ bioavailable protein per 125g patty, 0g carbs. Your macros are already calculated. Just eat and grow.",
   },
   {
     title: "ZERO BS",

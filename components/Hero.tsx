@@ -62,7 +62,7 @@ export default function Hero() {
             className="flex flex-wrap justify-center lg:justify-start gap-6 mb-8 text-sm md:text-base"
           >
             <div className="bg-meathead-gray px-6 py-3 rounded-lg border border-meathead-red/20">
-              <span className="text-meathead-red font-data font-bold text-2xl">24G</span>
+              <span className="text-meathead-red font-data font-bold text-2xl">24G+</span>
               <span className="text-gray-400 ml-2 font-data text-sm">PROTEIN</span>
             </div>
             <div className="bg-meathead-gray px-6 py-3 rounded-lg border border-meathead-red/20">
@@ -70,8 +70,8 @@ export default function Hero() {
               <span className="text-gray-400 ml-2 font-data text-sm">PRECISION</span>
             </div>
             <div className="bg-meathead-gray px-6 py-3 rounded-lg border border-meathead-red/20">
-              <span className="text-meathead-red font-data font-bold text-2xl">0%</span>
-              <span className="text-gray-400 ml-2 font-data text-sm">FILLERS</span>
+              <span className="text-meathead-red font-data font-bold text-2xl">125G</span>
+              <span className="text-gray-400 ml-2 font-data text-sm">PATTY</span>
             </div>
           </motion.div>
 

@@ -5,9 +5,9 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 
 const nutritionFacts = [
-  { label: "Protein", value: "24g", description: "Premium muscle fuel" },
+  { label: "Protein", value: "24g+", description: "Premium muscle fuel" },
+  { label: "Weight", value: "125g", description: "Perfect portion size" },
   { label: "Fat", value: "20g", description: "80/20 lean-to-fat ratio" },
-  { label: "Calories", value: "280", description: "Efficient energy" },
   { label: "Carbs", value: "0g", description: "Zero fillers" },
 ];
 
@@ -22,7 +22,7 @@ const features = [
   },
   {
     title: "HIGH PROTEIN",
-    description: "24g of quality protein per patty",
+    description: "24g+ of quality protein per 125g patty",
   },
   {
     title: "READY TO COOK",

@@ -38,7 +38,7 @@ export default function WhyMeathead() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-6 uppercase tracking-tighter">
+          <h2 className="font-heading text-5xl md:text-7xl mb-6 uppercase tracking-heading">
             WHY <span className="text-meathead-red">MEATHEAD?</span>
           </h2>
           <p className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto">
@@ -57,7 +57,7 @@ export default function WhyMeathead() {
               transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
               className="bg-meathead-gray/50 backdrop-blur-sm p-8 rounded-xl border border-meathead-red/10 hover:border-meathead-red/30 transition-all duration-300 group"
             >
-              <h3 className="font-heading font-bold text-3xl text-meathead-red mb-4 group-hover:scale-105 transition-transform uppercase tracking-tighter">
+              <h3 className="font-heading text-3xl text-meathead-red mb-4 group-hover:scale-105 transition-transform uppercase tracking-heading">
                 {reason.title}
               </h3>
               <p className="text-gray-300 leading-relaxed">
@@ -75,7 +75,7 @@ export default function WhyMeathead() {
         >
           <div className="inline-block bg-meathead-charcoal border-2 border-meathead-red px-8 py-6 rounded-xl">
             <p className="text-gray-400 mb-2">THE MEATHEAD PROMISE</p>
-            <p className="font-heading text-3xl md:text-4xl text-white uppercase tracking-tighter">
+            <p className="font-heading text-3xl md:text-4xl text-white uppercase tracking-heading">
               REAL PROTEIN. <span className="text-meathead-red">REAL GAINS.</span>
             </p>
           </div>

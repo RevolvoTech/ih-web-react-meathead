@@ -25,7 +25,7 @@ export default function Comparison() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-tighter">
+          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-heading">
             US VS <span className="text-meathead-red">THEM</span>
           </h2>
           <p className="text-gray-400 text-lg">
@@ -45,7 +45,7 @@ export default function Comparison() {
               <p className="text-gray-500 font-bold text-sm md:text-base line-through">THEM</p>
             </div>
             <div className="p-4 md:p-6 text-center bg-meathead-red/10">
-              <p className="text-meathead-red font-heading text-lg md:text-xl uppercase tracking-tighter">
+              <p className="text-meathead-red font-heading text-lg md:text-xl uppercase tracking-heading">
                 MEATHEAD
               </p>
             </div>

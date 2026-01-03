@@ -51,10 +51,10 @@ export default function PriorityListForm() {
       className="max-w-2xl mx-auto bg-meathead-gray/80 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-8 md:p-12"
     >
       <div className="text-center mb-8">
-        <div className="inline-block bg-meathead-red text-white font-heading text-sm px-4 py-2 rounded-full mb-4">
+        <div className="inline-block bg-meathead-red text-white font-heading text-sm px-4 py-2 rounded-full mb-4 tracking-heading">
           BATCH 01 - SOLD OUT
         </div>
-        <h2 className="font-heading text-4xl md:text-5xl mb-4 uppercase tracking-tighter">
+        <h2 className="font-heading text-4xl md:text-5xl mb-4 uppercase tracking-heading">
           GET PRIORITY ACCESS <span className="text-meathead-red">FOR BATCH 02</span>
         </h2>
         <p className="text-gray-300 text-lg">
@@ -84,7 +84,7 @@ export default function PriorityListForm() {
           disabled={isSubmitting}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="w-full bg-meathead-red hover:bg-red-700 disabled:bg-gray-600 text-white font-heading text-xl py-4 rounded-lg transition-all duration-300 uppercase tracking-wider"
+          className="w-full bg-meathead-red hover:bg-red-700 disabled:bg-gray-600 text-white font-heading text-xl py-4 rounded-lg transition-all duration-300 uppercase tracking-heading"
         >
           {isSubmitting ? "SUBMITTING..." : "JOIN PRIORITY LIST"}
         </motion.button>

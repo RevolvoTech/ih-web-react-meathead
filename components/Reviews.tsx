@@ -48,7 +48,7 @@ export default function Reviews() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-tighter">
+          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-heading">
             THE GOOD, THE BAD,
             <br />
             AND THE <span className="text-meathead-red">SOY-FREE</span>
@@ -102,7 +102,7 @@ export default function Reviews() {
               </div>
 
               {review.highlight && (
-                <div className="absolute -top-3 -right-3 bg-meathead-red text-white font-heading text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+                <div className="absolute -top-3 -right-3 bg-meathead-red text-white font-heading text-xs px-3 py-1 rounded-full uppercase tracking-heading">
                   Not for Everyone
                 </div>
               )}

@@ -17,14 +17,16 @@ export default function StatusBar() {
   useEffect(() => {
     // Fetch real order count from API
     fetch("/api/get-order-count")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("API not available");
+        return res.json();
+      })
       .then((data) => {
         setOrderData(data);
         setIsLoading(false);
       })
-      .catch((error) => {
-        console.error("Failed to fetch order count:", error);
-        // Fallback to fake data if API fails
+      .catch(() => {
+        // Fallback to fake data if API fails (dev mode)
         const randomDecrease = Math.floor(Math.random() * 15) + 5;
         setOrderData({
           slotsRemaining: 50 - randomDecrease,
@@ -36,9 +38,14 @@ export default function StatusBar() {
     // Refresh every 30 seconds
     const interval = setInterval(() => {
       fetch("/api/get-order-count")
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) throw new Error("API not available");
+          return res.json();
+        })
         .then((data) => setOrderData(data))
-        .catch((error) => console.error("Failed to refresh order count:", error));
+        .catch(() => {
+          // Silently fail in dev mode
+        });
     }, 30000);
 
     return () => clearInterval(interval);

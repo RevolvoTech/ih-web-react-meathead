@@ -29,7 +29,7 @@ export default function OrderCTA() {
           transition={{ duration: 0.6 }}
           className="bg-meathead-gray/80 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-12 md:p-16"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-6 uppercase tracking-tighter">
+          <h2 className="font-heading text-5xl md:text-7xl mb-6 uppercase tracking-heading">
             READY TO <span className="text-meathead-red">FUEL UP?</span>
           </h2>
 

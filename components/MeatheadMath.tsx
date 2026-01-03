@@ -18,7 +18,7 @@ export default function MeatheadMath() {
           className="bg-gradient-to-br from-meathead-charcoal to-meathead-gray border-2 border-meathead-red/30 rounded-2xl p-8 md:p-12"
         >
           <div className="text-center mb-8">
-            <h2 className="font-heading text-5xl md:text-6xl text-white mb-4 uppercase tracking-tighter">
+            <h2 className="font-heading text-5xl md:text-6xl text-white mb-4 uppercase tracking-heading">
               MEATHEAD <span className="text-meathead-red">MATH</span>
             </h2>
             <p className="text-gray-400">The ROI on real protein</p>

@@ -14,11 +14,11 @@ export default function Footer() {
               <Image
                 src="/images/logo.png"
                 alt="Meathead Logo"
-                width={60}
-                height={60}
-                className="w-16 h-16 md:w-[60px] md:h-[60px] rounded-full"
+                width={80}
+                height={80}
+                className="w-20 h-20 md:w-20 md:h-20 rounded-full"
               />
-              <span className="font-heading text-3xl text-meathead-red uppercase tracking-tighter">MEATHEAD</span>
+              <span className="font-heading text-3xl text-meathead-red uppercase tracking-heading">MEATHEAD</span>
             </div>
             <p className="text-gray-400 text-sm">
               Premium beef patties for serious gains.
@@ -28,7 +28,7 @@ export default function Footer() {
           </div>
 
           <div className="text-center">
-            <h3 className="font-heading font-bold text-xl text-meathead-red mb-4 uppercase tracking-tighter">CONTACT</h3>
+            <h3 className="font-heading text-xl text-meathead-red mb-4 uppercase tracking-heading">CONTACT</h3>
             <a
               href="https://wa.me/923354818171"
               target="_blank"
@@ -49,7 +49,7 @@ export default function Footer() {
           </div>
 
           <div className="text-center md:text-right">
-            <h3 className="font-heading font-bold text-xl text-meathead-red mb-4 uppercase tracking-tighter">THE PROMISE</h3>
+            <h3 className="font-heading text-xl text-meathead-red mb-4 uppercase tracking-heading">THE PROMISE</h3>
             <p className="text-gray-400 text-sm">
               24G+ Protein
               <br />

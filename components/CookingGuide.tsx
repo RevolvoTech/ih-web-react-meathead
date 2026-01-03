@@ -8,27 +8,27 @@ import Image from "next/image";
 const steps = [
   {
     step: "01",
-    title: "HEAT THE IRON",
-    description: "Cast iron at 100% heat. No compromises. Let it smoke.",
+    title: "HIGH-THERMAL SEAR",
+    description: "We use custom cast iron at 250°C+ to trigger the Maillard reaction. No compromises.",
     temp: "250°C+",
   },
   {
     step: "02",
-    title: "THE SMASH",
-    description: "Drop the patty. Smash HARD with a spatula. Maillard crust = flavor.",
-    temp: "2-3 min",
+    title: "THE ULTRA-SMASH",
+    description: "40lbs of pressure applied to create that signature lacey, crispy edge.",
+    temp: "40lbs pressure",
   },
   {
     step: "03",
-    title: "FLIP ONCE",
-    description: "When edges crisp up, flip. Cook other side til crust forms.",
-    temp: "2 min",
+    title: "PRECISION FLIP",
+    description: "One flip. 120 seconds. Locking in the grass-fed juices.",
+    temp: "120 sec",
   },
   {
     step: "04",
-    title: "OPTIONAL ADD-ON",
-    description: "Want Sea Salt or Masala? We'll add it on the patty. FREE. Let rest 30 seconds. Devour.",
-    temp: "30 sec",
+    title: "THE REST",
+    description: "Every patty rests for 60 seconds before bagging to ensure maximum tenderness.",
+    temp: "60 sec",
   },
 ];
 
@@ -45,11 +45,11 @@ export default function CookingGuide() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-tighter">
-            3-MINUTE <span className="text-meathead-red">MASTERCLASS</span>
+          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-heading">
+            THE SCIENCE OF <span className="text-meathead-red">THE SMASH</span>
           </h2>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
-            How to cook a perfect patty. No fluff, just results.
+            How we engineered your perfect bite.
           </p>
         </motion.div>
 
@@ -80,12 +80,12 @@ export default function CookingGuide() {
               transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
               className="relative bg-meathead-charcoal p-6 rounded-xl border-2 border-meathead-red/20 hover:border-meathead-red/50 transition-all duration-300 group"
             >
-              <div className="absolute top-0 left-0 bg-meathead-red text-white font-heading text-sm px-3 py-1 rounded-br-xl rounded-tl-xl">
+              <div className="absolute top-0 left-0 bg-meathead-red text-white font-heading text-sm px-3 py-1 rounded-br-xl rounded-tl-xl tracking-heading">
                 STEP {item.step}
               </div>
 
               <div className="mt-8 mb-4">
-                <h3 className="font-heading font-bold text-2xl text-white mb-2 uppercase tracking-tighter">
+                <h3 className="font-heading text-2xl text-white mb-2 uppercase tracking-heading">
                   {item.title}
                 </h3>
                 <div className="inline-block bg-meathead-red/20 text-meathead-red font-bold text-xs px-3 py-1 rounded-full">
@@ -116,7 +116,7 @@ export default function CookingGuide() {
           className="mt-12 text-center"
         >
           <p className="text-gray-500 text-sm italic">
-            Pro tip: That dry-aged funk and grass-fed richness? That's what you paid for. Don't overcook it.
+            This is why your patty tastes better than any random joint in F-7. We engineered it that way.
           </p>
         </motion.div>
       </div>

@@ -43,7 +43,7 @@ export default function ProductShowcase() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-tighter">
+          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-heading">
             FUEL YOUR <span className="text-meathead-red">GAINS</span>
           </h2>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
@@ -80,7 +80,7 @@ export default function ProductShowcase() {
             >
               <div className="w-2 h-2 bg-meathead-red rounded-full mt-2 flex-shrink-0" />
               <div>
-                <h3 className="font-heading font-bold text-2xl text-meathead-red mb-2 tracking-tight">
+                <h3 className="font-heading text-2xl text-meathead-red mb-2 tracking-heading">
                   {feature.title}
                 </h3>
                 <p className="text-gray-300">{feature.description}</p>

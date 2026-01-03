@@ -24,14 +24,16 @@ export default function FoundersNote() {
   useEffect(() => {
     // Fetch real order count from API
     fetch("/api/get-order-count")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("API not available");
+        return res.json();
+      })
       .then((data) => {
         setOrderData(data);
         setIsLoading(false);
       })
-      .catch((error) => {
-        console.error("Failed to fetch order count:", error);
-        // Fallback to fake data if API fails
+      .catch(() => {
+        // Fallback to fake data if API fails (dev mode)
         const randomDecrease = Math.floor(Math.random() * 15) + 5;
         setOrderData({
           totalOrders: randomDecrease,
@@ -43,7 +45,7 @@ export default function FoundersNote() {
   }, []);
 
   return (
-    <section ref={ref} className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">
+    <section id="founders" ref={ref} className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-meathead-black/50 via-transparent to-meathead-black/50" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
@@ -53,7 +55,7 @@ export default function FoundersNote() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="font-heading text-5xl md:text-6xl mb-4 uppercase tracking-tighter">
+          <h2 className="font-heading text-5xl md:text-6xl mb-4 uppercase tracking-heading">
             FROM THE <span className="text-meathead-red">FOUNDERS</span>
           </h2>
           <p className="text-gray-400 text-lg">Why Meathead exists</p>
@@ -69,7 +71,7 @@ export default function FoundersNote() {
             <div className="flex items-start gap-4 mb-6">
               <div className="flex-shrink-0">
                 <div className="w-16 h-16 bg-meathead-red rounded-full flex items-center justify-center">
-                  <span className="font-heading text-2xl text-white">SA</span>
+                  <span className="font-heading text-2xl text-white tracking-heading">SA</span>
                 </div>
               </div>
               <div className="flex-1">
@@ -96,7 +98,7 @@ export default function FoundersNote() {
             <div className="flex items-start gap-4 mb-6">
               <div className="flex-shrink-0">
                 <div className="w-16 h-16 bg-meathead-red rounded-full flex items-center justify-center">
-                  <span className="font-heading text-2xl text-white">KK</span>
+                  <span className="font-heading text-2xl text-white tracking-heading">KK</span>
                 </div>
               </div>
               <div className="flex-1">
@@ -136,21 +138,21 @@ export default function FoundersNote() {
               <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 flex-1">
                 <div className="text-center">
                   <p className="text-gray-400 text-sm mb-1 font-data">ORDERS OPEN</p>
-                  <p className="font-heading text-xl text-white uppercase tracking-tighter">
+                  <p className="font-heading text-xl text-white uppercase tracking-heading">
                     Friday 10 AM
                   </p>
                 </div>
                 <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>
                 <div className="text-center">
                   <p className="text-gray-400 text-sm mb-1 font-data">ORDERS CLOSE</p>
-                  <p className="font-heading text-xl text-white uppercase tracking-tighter">
+                  <p className="font-heading text-xl text-white uppercase tracking-heading">
                     Friday 2 PM
                   </p>
                 </div>
                 <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>
                 <div className="text-center">
                   <p className="text-gray-400 text-sm mb-1 font-data">OR WHEN</p>
-                  <p className="font-heading text-xl text-meathead-red uppercase tracking-tighter">
+                  <p className="font-heading text-xl text-meathead-red uppercase tracking-heading">
                     50 SLOTS HIT
                   </p>
                 </div>

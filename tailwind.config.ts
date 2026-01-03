@@ -17,12 +17,13 @@ const config: Config = {
         },
       },
       fontFamily: {
-        heading: ["Anton", "sans-serif"],
-        data: ["Space Grotesk", "monospace"],
-        inter: ["Inter", "sans-serif"],
+        heading: ["var(--font-anton)", "sans-serif"],
+        data: ["var(--font-space-grotesk)", "monospace"],
+        inter: ["var(--font-inter)", "sans-serif"],
       },
       letterSpacing: {
         tighter: "-0.05em",
+        heading: "0", // Normal kerning for Anton
       },
     },
   },

@@ -1,5 +1,27 @@
 import type { Metadata } from "next";
+import { Anton, Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
+
+const anton = Anton({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-anton",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  weight: ["500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+
+const inter = Inter({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "MEATHEAD | Premium Beef Patties for Serious Gains",
@@ -19,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-inter antialiased">
+      <body className={`${anton.variable} ${spaceGrotesk.variable} ${inter.variable} font-inter antialiased`}>
         {children}
       </body>
     </html>

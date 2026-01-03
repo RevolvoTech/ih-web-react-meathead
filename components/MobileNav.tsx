@@ -81,7 +81,7 @@ export default function MobileNav() {
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-8">
-                  <h3 className="font-heading text-2xl text-meathead-red uppercase tracking-tighter">
+                  <h3 className="font-heading text-2xl text-meathead-red uppercase tracking-heading">
                     Menu
                   </h3>
                   <button
@@ -115,7 +115,7 @@ export default function MobileNav() {
                     href="https://wa.me/923354818171"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full bg-green-500 hover:bg-green-600 text-white font-heading text-center py-3 rounded-lg uppercase tracking-wider transition-all duration-300"
+                    className="block w-full bg-green-500 hover:bg-green-600 text-white font-heading text-center py-3 rounded-lg uppercase tracking-heading transition-all duration-300"
                   >
                     Order Now
                   </a>

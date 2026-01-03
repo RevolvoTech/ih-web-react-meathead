@@ -40,7 +40,7 @@ export default function Protocol() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-tighter">
+          <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-heading">
             THE <span className="text-meathead-red">PROTOCOL</span>
           </h2>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
@@ -57,15 +57,15 @@ export default function Protocol() {
               transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
               className="relative bg-meathead-gray/50 backdrop-blur-sm p-8 rounded-xl border border-meathead-red/20 hover:border-meathead-red/50 transition-all duration-300 group overflow-hidden"
             >
-              <div className="absolute top-0 right-0 font-heading text-9xl text-meathead-red/5 leading-none -mr-4 -mt-4">
+              <div className="absolute top-0 right-0 font-heading text-9xl text-meathead-red/5 leading-none -mr-4 -mt-4 tracking-heading">
                 {protocol.number}
               </div>
               <div className="relative z-10">
                 <div className="flex items-center gap-4 mb-4">
-                  <span className="font-heading text-4xl text-meathead-red">
+                  <span className="font-heading text-4xl text-meathead-red tracking-heading">
                     {protocol.number}
                   </span>
-                  <h3 className="font-heading font-bold text-2xl text-white uppercase tracking-tighter">
+                  <h3 className="font-heading text-2xl text-white uppercase tracking-heading">
                     {protocol.title}
                   </h3>
                 </div>

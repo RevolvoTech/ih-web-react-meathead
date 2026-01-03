@@ -1,0 +1,15 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "max-lines": ["error", { "max": 300, "skipBlankLines": false }],
+    "max-lines-per-function": ["error", {
+      "max": 130,
+      "skipBlankLines": true,
+      "skipComments": true
+    }],
+    "max-params": ["error", 7],
+    "max-depth": ["error", 4],
+    "complexity": ["error", 20],
+    "react/no-unescaped-entities": "off"
+  }
+}

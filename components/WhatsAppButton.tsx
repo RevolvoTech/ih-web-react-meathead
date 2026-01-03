@@ -1,27 +1,61 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
   return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
 };
 
+interface OrderData {
+  isSoldOut: boolean;
+}
+
 export default function WhatsAppButton() {
+  const [orderData, setOrderData] = useState<OrderData>({ isSoldOut: false });
+
+  useEffect(() => {
+    // Initial fetch
+    const fetchOrderStatus = () => {
+      fetch("/api/get-order-count")
+        .then((res) => {
+          if (!res.ok) throw new Error("API not available");
+          return res.json();
+        })
+        .then((data) => setOrderData(data))
+        .catch(() => setOrderData({ isSoldOut: false }));
+    };
+
+    fetchOrderStatus();
+
+    // Auto-refresh every 10 seconds
+    const interval = setInterval(fetchOrderStatus, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleClick = () => {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(getWhatsAppMessage())}`;
     window.open(url, "_blank");
   };
 
+  // Hide button when sold out
+  if (orderData.isSoldOut) {
+    return null;
+  }
+
   return (
-    <motion.button
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 1, duration: 0.5 }}
-      onClick={handleClick}
-      className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl hover:shadow-green-500/50 transition-all duration-300 transform hover:scale-110 group"
-      aria-label="Order on WhatsApp"
-    >
+    <AnimatePresence>
+      <motion.button
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0 }}
+        transition={{ delay: 1, duration: 0.5 }}
+        onClick={handleClick}
+        className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl hover:shadow-green-500/50 transition-all duration-300 transform hover:scale-110 group"
+        aria-label="Order on WhatsApp"
+      >
       <svg
         className="w-8 h-8"
         fill="currentColor"
@@ -33,6 +67,7 @@ export default function WhatsAppButton() {
       <span className="absolute -top-1 -right-1 bg-meathead-red text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
         !
       </span>
-    </motion.button>
+      </motion.button>
+    </AnimatePresence>
   );
 }

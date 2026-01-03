@@ -38,7 +38,7 @@ export default function Hero() {
               alt="Meathead Logo"
               width={120}
               height={120}
-              className="mx-auto lg:mx-0 rounded-full"
+              className="w-32 h-32 md:w-36 md:h-36 lg:w-[120px] lg:h-[120px] mx-auto lg:mx-0 rounded-full"
             />
           </motion.div>
 

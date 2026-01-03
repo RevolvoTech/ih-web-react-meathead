@@ -13,7 +13,7 @@ const protocols = [
   {
     number: "02",
     title: "SAME DAY COOK",
-    description: "Get it Thursday morning. Cook it Thursday. Zero freezing, zero aging, zero compromises.",
+    description: "Get it Friday morning. Cook it Friday. Zero freezing, zero aging, zero compromises.",
   },
   {
     number: "03",

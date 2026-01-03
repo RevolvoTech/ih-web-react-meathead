@@ -16,7 +16,7 @@ export default function Footer() {
                 alt="Meathead Logo"
                 width={60}
                 height={60}
-                className="rounded-full"
+                className="w-16 h-16 md:w-[60px] md:h-[60px] rounded-full"
               />
               <span className="font-heading text-3xl text-meathead-red uppercase tracking-tighter">MEATHEAD</span>
             </div>

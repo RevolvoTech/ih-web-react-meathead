@@ -2,12 +2,46 @@
 
 import { useState, useEffect } from "react";
 
+interface OrderData {
+  slotsRemaining: number;
+  isSoldOut: boolean;
+}
+
 export default function StatusBar() {
-  const [slotsRemaining, setSlotsRemaining] = useState(50);
+  const [orderData, setOrderData] = useState<OrderData>({
+    slotsRemaining: 50,
+    isSoldOut: false,
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const randomDecrease = Math.floor(Math.random() * 15) + 5;
-    setSlotsRemaining(50 - randomDecrease);
+    // Fetch real order count from API
+    fetch("/api/get-order-count")
+      .then((res) => res.json())
+      .then((data) => {
+        setOrderData(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch order count:", error);
+        // Fallback to fake data if API fails
+        const randomDecrease = Math.floor(Math.random() * 15) + 5;
+        setOrderData({
+          slotsRemaining: 50 - randomDecrease,
+          isSoldOut: false,
+        });
+        setIsLoading(false);
+      });
+
+    // Refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetch("/api/get-order-count")
+        .then((res) => res.json())
+        .then((data) => setOrderData(data))
+        .catch((error) => console.error("Failed to refresh order count:", error));
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -20,9 +54,20 @@ export default function StatusBar() {
           </div>
           <span className="text-gray-400 font-data">BATCH 01 (FRIDAY):</span>
         </div>
-        <span className="font-data font-bold text-white">
-          <span className="text-meathead-red text-lg">{slotsRemaining}</span>/50 SLOTS REMAINING
-        </span>
+        {orderData.isSoldOut ? (
+          <span className="font-data font-bold text-meathead-red text-lg uppercase animate-pulse">
+            SOLD OUT
+          </span>
+        ) : (
+          <span className="font-data font-bold text-white">
+            {isLoading ? (
+              <span className="text-gray-400">--</span>
+            ) : (
+              <span className="text-meathead-red text-lg">{orderData.slotsRemaining}</span>
+            )}
+            /50 SLOTS REMAINING
+          </span>
+        )}
       </div>
     </div>
   );

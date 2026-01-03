@@ -47,12 +47,12 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-20">
+    <section className="relative min-h-screen flex items-start justify-center overflow-hidden px-4 pt-8 pb-20">
       <div className="absolute inset-0 bg-gradient-to-b from-meathead-black via-meathead-charcoal to-meathead-black opacity-90" />
 
-      <div className="absolute inset-0 bg-[url('/images/product_1.png')] bg-cover bg-center opacity-10 blur-sm" />
+      <div className="absolute inset-0 bg-[url('/images/product_1.webp')] bg-cover bg-center opacity-10 blur-sm" />
 
-      <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-20 items-start">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -63,14 +63,14 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="mb-8"
+            className="mb-4"
           >
             <Image
-              src="/images/logo.png"
+              src="/images/logo.webp"
               alt="Meathead Logo"
-              width={250}
-              height={250}
-              className="w-56 h-56 md:w-64 md:h-64 lg:w-56 lg:h-56 mx-auto"
+              width={300}
+              height={300}
+              className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 mx-auto lg:mx-0"
             />
           </motion.div>
 
@@ -78,32 +78,39 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="font-heading text-5xl md:text-7xl lg:text-8xl leading-none mb-6 uppercase tracking-heading"
+            className="font-heading text-5xl md:text-7xl lg:text-9xl leading-none mb-2 uppercase tracking-heading"
           >
-            FUEL LIKE AN
+            JUST BEEF.
             <br />
-            <span className="text-meathead-red">APEX PREDATOR.</span>
-            <br />
-            <span className="text-white text-4xl md:text-6xl lg:text-7xl">ZERO SEED OILS.</span>
+            <span className="text-meathead-red">NO BULLSH*T.</span>
           </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="text-gray-300 text-lg md:text-xl lg:text-2xl mb-4 max-w-2xl"
+          >
+            Grass-fed ground beef. Seared in tallow. Zero seed oils.
+          </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="flex flex-wrap justify-center lg:justify-start gap-6 mb-8 text-sm md:text-base"
+            className="grid grid-cols-3 gap-4 mb-4"
           >
-            <div className="bg-meathead-gray px-6 py-3 rounded-lg border border-meathead-red/20">
-              <span className="text-meathead-red font-data font-bold text-2xl">24G+</span>
-              <span className="text-gray-400 ml-2 font-data text-sm">PROTEIN</span>
+            <div className="bg-meathead-gray px-4 py-4 rounded-lg border-2 border-meathead-red/30 hover:border-meathead-red/60 transition-all">
+              <div className="text-meathead-red font-data font-bold text-2xl lg:text-3xl mb-1">24G+</div>
+              <div className="text-gray-400 font-data text-xs lg:text-sm">PROTEIN</div>
             </div>
-            <div className="bg-meathead-gray px-6 py-3 rounded-lg border border-meathead-red/20">
-              <span className="text-meathead-red font-data font-bold text-2xl">80/20</span>
-              <span className="text-gray-400 ml-2 font-data text-sm">PRECISION</span>
+            <div className="bg-meathead-gray px-4 py-4 rounded-lg border-2 border-meathead-red/30 hover:border-meathead-red/60 transition-all">
+              <div className="text-meathead-red font-data font-bold text-2xl lg:text-3xl mb-1">80/20</div>
+              <div className="text-gray-400 font-data text-xs lg:text-sm">PRECISION</div>
             </div>
-            <div className="bg-meathead-gray px-6 py-3 rounded-lg border border-meathead-red/20">
-              <span className="text-meathead-red font-data font-bold text-2xl">125G</span>
-              <span className="text-gray-400 ml-2 font-data text-sm">PATTY</span>
+            <div className="bg-meathead-gray px-4 py-4 rounded-lg border-2 border-meathead-red/30 hover:border-meathead-red/60 transition-all">
+              <div className="text-meathead-red font-data font-bold text-2xl lg:text-3xl mb-1">125G</div>
+              <div className="text-gray-400 font-data text-xs lg:text-sm">PATTY</div>
             </div>
           </motion.div>
 
@@ -111,7 +118,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.6 }}
-            className="mb-6"
+            className="mb-3"
           >
             <p className="text-gray-400 text-sm mb-2 font-data">WEEKLY FUEL PACK</p>
             <p className="font-data font-bold text-5xl md:text-6xl text-white mb-1">
@@ -127,13 +134,13 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
             onClick={orderData.isSoldOut ? scrollToPriorityList : handleWhatsAppClick}
-            className={`font-heading text-lg md:text-xl py-4 px-12 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg uppercase tracking-heading ${
+            className={`font-heading text-xl md:text-2xl lg:text-3xl py-5 px-16 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase tracking-heading ${
               orderData.isSoldOut
                 ? "bg-gray-600 hover:bg-gray-700 text-white cursor-pointer"
                 : "bg-meathead-red hover:bg-red-700 text-white hover:shadow-meathead-red/50"
             }`}
           >
-            {orderData.isSoldOut ? "JOIN PRIORITY LIST" : "CLAIM YOUR MACROS"}
+            {orderData.isSoldOut ? "JOIN PRIORITY LIST" : "SECURE YOUR BATCH"}
           </motion.button>
         </motion.div>
 
@@ -141,11 +148,11 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="relative"
+          className="relative self-center mt-12"
         >
           <div className="relative rounded-2xl overflow-hidden shadow-2xl">
             <Image
-              src="/images/patty.png"
+              src="/images/patty.webp"
               alt="Meathead Premium Beef Patty"
               width={800}
               height={800}

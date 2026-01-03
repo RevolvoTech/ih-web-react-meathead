@@ -61,7 +61,7 @@ export default function CookingGuide() {
         >
           <div className="relative rounded-2xl overflow-hidden border-2 border-meathead-red/30">
             <Image
-              src="/images/product_2.png"
+              src="/images/product_2.webp"
               alt="Meathead patties on the grill"
               width={800}
               height={600}

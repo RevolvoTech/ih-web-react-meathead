@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
               <Image
-                src="/images/logo.png"
+                src="/images/logo.webp"
                 alt="Meathead Logo"
                 width={80}
                 height={80}

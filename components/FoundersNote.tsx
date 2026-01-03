@@ -23,25 +23,34 @@ export default function FoundersNote() {
 
   useEffect(() => {
     // Fetch real order count from API
-    fetch("/api/get-order-count")
-      .then((res) => {
-        if (!res.ok) throw new Error("API not available");
-        return res.json();
-      })
-      .then((data) => {
-        setOrderData(data);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        // Fallback to fake data if API fails (dev mode)
-        const randomDecrease = Math.floor(Math.random() * 15) + 5;
-        setOrderData({
-          totalOrders: randomDecrease,
-          slotsRemaining: 50 - randomDecrease,
-          isSoldOut: false,
+    const fetchOrderStatus = () => {
+      fetch("/api/get-order-count")
+        .then((res) => {
+          if (!res.ok) throw new Error("API not available");
+          return res.json();
+        })
+        .then((data) => {
+          setOrderData(data);
+          setIsLoading(false);
+        })
+        .catch(() => {
+          // Fallback to fake data if API fails (dev mode)
+          const randomDecrease = Math.floor(Math.random() * 15) + 5;
+          setOrderData({
+            totalOrders: randomDecrease,
+            slotsRemaining: 50 - randomDecrease,
+            isSoldOut: false,
+          });
+          setIsLoading(false);
         });
-        setIsLoading(false);
-      });
+    };
+
+    fetchOrderStatus();
+
+    // Auto-refresh every 10 seconds
+    const interval = setInterval(fetchOrderStatus, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (

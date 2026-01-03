@@ -43,13 +43,23 @@ export default function BulkPricing() {
   const [orderData, setOrderData] = useState<OrderData>({ isSoldOut: false });
 
   useEffect(() => {
-    fetch("/api/get-order-count")
-      .then((res) => {
-        if (!res.ok) throw new Error("API not available");
-        return res.json();
-      })
-      .then((data) => setOrderData(data))
-      .catch(() => setOrderData({ isSoldOut: false }));
+    // Initial fetch
+    const fetchOrderStatus = () => {
+      fetch("/api/get-order-count")
+        .then((res) => {
+          if (!res.ok) throw new Error("API not available");
+          return res.json();
+        })
+        .then((data) => setOrderData(data))
+        .catch(() => setOrderData({ isSoldOut: false }));
+    };
+
+    fetchOrderStatus();
+
+    // Auto-refresh every 10 seconds
+    const interval = setInterval(fetchOrderStatus, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleOrder = (tier: typeof pricingTiers[0]) => {

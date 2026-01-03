@@ -16,37 +16,31 @@ export default function StatusBar() {
 
   useEffect(() => {
     // Fetch real order count from API
-    fetch("/api/get-order-count")
-      .then((res) => {
-        if (!res.ok) throw new Error("API not available");
-        return res.json();
-      })
-      .then((data) => {
-        setOrderData(data);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        // Fallback to fake data if API fails (dev mode)
-        const randomDecrease = Math.floor(Math.random() * 15) + 5;
-        setOrderData({
-          slotsRemaining: 50 - randomDecrease,
-          isSoldOut: false,
-        });
-        setIsLoading(false);
-      });
-
-    // Refresh every 30 seconds
-    const interval = setInterval(() => {
+    const fetchOrderStatus = () => {
       fetch("/api/get-order-count")
         .then((res) => {
           if (!res.ok) throw new Error("API not available");
           return res.json();
         })
-        .then((data) => setOrderData(data))
+        .then((data) => {
+          setOrderData(data);
+          setIsLoading(false);
+        })
         .catch(() => {
-          // Silently fail in dev mode
+          // Fallback to fake data if API fails (dev mode)
+          const randomDecrease = Math.floor(Math.random() * 15) + 5;
+          setOrderData({
+            slotsRemaining: 50 - randomDecrease,
+            isSoldOut: false,
+          });
+          setIsLoading(false);
         });
-    }, 30000);
+    };
+
+    fetchOrderStatus();
+
+    // Auto-refresh every 10 seconds
+    const interval = setInterval(fetchOrderStatus, 10000);
 
     return () => clearInterval(interval);
   }, []);

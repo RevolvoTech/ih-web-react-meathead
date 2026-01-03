@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
               <Image
-                src="/images/logo.jpg"
+                src="/images/logo.png"
                 alt="Meathead Logo"
                 width={60}
                 height={60}
@@ -30,12 +30,12 @@ export default function Footer() {
           <div className="text-center">
             <h3 className="font-heading font-bold text-xl text-meathead-red mb-4 uppercase tracking-tighter">CONTACT</h3>
             <a
-              href="https://wa.me/923366957572"
+              href="https://wa.me/923354818171"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-300 hover:text-white transition-colors duration-300 block mb-4"
             >
-              WhatsApp: +92 336 6957572
+              WhatsApp: +92 335 4818171
             </a>
             <div className="mt-4 pt-4 border-t border-meathead-gray/30">
               <p className="text-gray-400 text-xs mb-2 font-data">DELIVERY AREAS</p>

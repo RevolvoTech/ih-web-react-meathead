@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 
-const WHATSAPP_NUMBER = "923366957572";
+const WHATSAPP_NUMBER = "923354818171";
 
 const pricingTiers = [
   {

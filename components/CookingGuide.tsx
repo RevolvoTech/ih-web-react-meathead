@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
+import Image from "next/image";
 
 const steps = [
   {
@@ -50,6 +51,24 @@ export default function CookingGuide() {
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
             How to cook a perfect patty. No fluff, just results.
           </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-12 max-w-3xl mx-auto"
+        >
+          <div className="relative rounded-2xl overflow-hidden border-2 border-meathead-red/30">
+            <Image
+              src="/images/product_2.png"
+              alt="Meathead patties on the grill"
+              width={800}
+              height={600}
+              className="w-full h-auto"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-meathead-black/50 to-transparent" />
+          </div>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 
-const WHATSAPP_NUMBER = "923366957572";
+const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
   return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
 };
@@ -56,7 +56,7 @@ export default function OrderCTA() {
           </motion.button>
 
           <p className="text-gray-400 text-sm mt-6">
-            Click to chat with us on WhatsApp: +92 336 6957572
+            Click to chat with us on WhatsApp: +92 335 4818171
           </p>
         </motion.div>
       </div>

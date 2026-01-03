@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-const WHATSAPP_NUMBER = "923366957572";
+const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
   return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
 };

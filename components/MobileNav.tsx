@@ -112,7 +112,7 @@ export default function MobileNav() {
 
                 <div className="mt-8 pt-8 border-t border-meathead-red/20">
                   <a
-                    href="https://wa.me/923366957572"
+                    href="https://wa.me/923354818171"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block w-full bg-green-500 hover:bg-green-600 text-white font-heading text-center py-3 rounded-lg uppercase tracking-wider transition-all duration-300"

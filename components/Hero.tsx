@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-const WHATSAPP_NUMBER = "923366957572";
+const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
   return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
 };
@@ -18,7 +18,7 @@ export default function Hero() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-20">
       <div className="absolute inset-0 bg-gradient-to-b from-meathead-black via-meathead-charcoal to-meathead-black opacity-90" />
 
-      <div className="absolute inset-0 bg-[url('/images/product.jpeg')] bg-cover bg-center opacity-10 blur-sm" />
+      <div className="absolute inset-0 bg-[url('/images/product_1.png')] bg-cover bg-center opacity-10 blur-sm" />
 
       <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
         <motion.div
@@ -34,7 +34,7 @@ export default function Hero() {
             className="mb-6"
           >
             <Image
-              src="/images/logo.jpg"
+              src="/images/logo.png"
               alt="Meathead Logo"
               width={120}
               height={120}
@@ -109,7 +109,7 @@ export default function Hero() {
         >
           <div className="relative rounded-2xl overflow-hidden shadow-2xl">
             <Image
-              src="/images/product.jpeg"
+              src="/images/patty.png"
               alt="Meathead Premium Beef Patty"
               width={800}
               height={800}

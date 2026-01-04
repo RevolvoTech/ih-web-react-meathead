@@ -111,14 +111,12 @@ export default function MobileNav() {
                 </nav>
 
                 <div className="mt-8 pt-8 border-t border-meathead-red/20">
-                  <a
-                    href="https://wa.me/923354818171"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full bg-green-500 hover:bg-green-600 text-white font-heading text-center py-3 rounded-lg uppercase tracking-heading transition-all duration-300"
+                  <button
+                    onClick={() => scrollToSection("order")}
+                    className="block w-full bg-meathead-red hover:bg-red-700 text-white font-heading text-center py-3 rounded-lg uppercase tracking-heading transition-all duration-300"
                   >
                     Order Now
-                  </a>
+                  </button>
                 </div>
               </div>
             </motion.div>

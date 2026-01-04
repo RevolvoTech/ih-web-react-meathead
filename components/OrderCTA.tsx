@@ -256,7 +256,7 @@ export default function OrderCTA() {
               whileTap={{ scale: 0.95 }}
               className="bg-meathead-red hover:bg-red-700 text-white font-heading py-6 px-12 rounded-lg text-xl md:text-2xl transition-all duration-300 transform shadow-2xl hover:shadow-meathead-red/50 uppercase tracking-heading"
             >
-              GET PRIORITY FOR BATCH 02
+              JOIN PRIORITY LIST
             </motion.button>
 
             <p className="text-meathead-red text-sm md:text-base mt-6 font-bold font-data">

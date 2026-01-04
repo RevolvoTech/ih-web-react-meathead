@@ -48,7 +48,9 @@ export default function Home() {
       <div id="pricing">
         <BulkPricing />
       </div>
-      <OrderCTA />
+      <div id="order">
+        <OrderCTA />
+      </div>
       <Footer />
       <WhatsAppButton />
       <MobileNav />

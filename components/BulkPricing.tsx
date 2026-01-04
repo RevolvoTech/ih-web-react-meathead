@@ -4,9 +4,6 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 
-const WHATSAPP_NUMBER = "923354818171";
-const IS_SOLD_OUT = false;
-
 const DELIVERY_CHARGE = 100;
 
 const pricingTiers = [
@@ -39,17 +36,10 @@ const pricingTiers = [
 export default function BulkPricing() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const orderData = { isSoldOut: IS_SOLD_OUT };
 
-  const handleOrder = (tier: typeof pricingTiers[0]) => {
-    const message = `Yo Meathead! I want to order ${tier.patties} patties (${tier.name}) for the Friday Drop. Total: ₨${tier.price}. Let's go!`;
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-  };
-
-  const scrollToPriorityList = () => {
-    const foundersSection = document.getElementById("founders");
-    foundersSection?.scrollIntoView({ behavior: "smooth" });
+  const scrollToOrderForm = () => {
+    const orderSection = document.getElementById("order");
+    orderSection?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -115,16 +105,14 @@ export default function BulkPricing() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={orderData.isSoldOut ? scrollToPriorityList : () => handleOrder(tier)}
+                onClick={scrollToOrderForm}
                 className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
-                  orderData.isSoldOut
-                    ? "bg-gray-600 hover:bg-gray-700 text-white cursor-pointer"
-                    : tier.popular
+                  tier.popular
                     ? "bg-meathead-red hover:bg-red-700 text-white"
                     : "bg-meathead-charcoal hover:bg-meathead-black text-white border border-meathead-red/30"
                 }`}
               >
-                {orderData.isSoldOut ? "SOLD OUT - JOIN LIST" : "ORDER NOW"}
+                ORDER NOW
               </motion.button>
             </motion.div>
           ))}

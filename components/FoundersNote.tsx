@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import PriorityListForm from "./PriorityListForm";
 
 export default function FoundersNote() {
@@ -63,8 +64,15 @@ export default function FoundersNote() {
           >
             <div className="flex items-start gap-4 mb-6">
               <div className="flex-shrink-0">
-                <div className="w-16 h-16 bg-meathead-red rounded-full flex items-center justify-center">
-                  <span className="font-heading text-2xl text-white tracking-heading">SA</span>
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-meathead-red">
+                  <Image
+                    src="/images/saad.webp"
+                    alt="Saad Asghar"
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: 'center 20%' }}
+                  />
                 </div>
               </div>
               <div className="flex-1">
@@ -90,8 +98,14 @@ export default function FoundersNote() {
           >
             <div className="flex items-start gap-4 mb-6">
               <div className="flex-shrink-0">
-                <div className="w-16 h-16 bg-meathead-red rounded-full flex items-center justify-center">
-                  <span className="font-heading text-2xl text-white tracking-heading">KK</span>
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-meathead-red">
+                  <Image
+                    src="/images/khizer.webp"
+                    alt="Khizer Khan"
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover object-top"
+                  />
                 </div>
               </div>
               <div className="flex-1">

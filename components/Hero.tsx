@@ -2,25 +2,38 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
   return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
 };
 
-const IS_SOLD_OUT = false;
-
 export default function Hero() {
-  const orderData = { isSoldOut: IS_SOLD_OUT };
+  const [orderData, setOrderData] = useState({ isSoldOut: false });
 
-  const handleWhatsAppClick = () => {
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(getWhatsAppMessage())}`;
-    window.open(url, "_blank");
-  };
+  // Fetch order count to check if sold out
+  useEffect(() => {
+    const fetchOrderCount = async () => {
+      try {
+        const response = await fetch("/.netlify/functions/get-order-count");
+        const data = await response.json();
+        setOrderData({ isSoldOut: data.isSoldOut });
+      } catch (error) {
+        console.error("Error fetching order count:", error);
+        // Keep fallback value on error
+      }
+    };
 
-  const scrollToPriorityList = () => {
-    const foundersSection = document.getElementById("founders");
-    foundersSection?.scrollIntoView({ behavior: "smooth" });
+    fetchOrderCount();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchOrderCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const scrollToOrderForm = () => {
+    const orderSection = document.getElementById("order");
+    orderSection?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -112,12 +125,8 @@ export default function Hero() {
             transition={{ delay: 0.6, duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={orderData.isSoldOut ? scrollToPriorityList : handleWhatsAppClick}
-            className={`font-heading text-xl md:text-2xl lg:text-3xl py-5 px-16 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase tracking-heading ${
-              orderData.isSoldOut
-                ? "bg-gray-600 hover:bg-gray-700 text-white cursor-pointer"
-                : "bg-meathead-red hover:bg-red-700 text-white hover:shadow-meathead-red/50"
-            }`}
+            onClick={scrollToOrderForm}
+            className="bg-meathead-red hover:bg-red-700 text-white font-heading text-xl md:text-2xl lg:text-3xl py-5 px-16 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-meathead-red/50 uppercase tracking-heading"
           >
             {orderData.isSoldOut ? "JOIN PRIORITY LIST" : "SECURE YOUR BATCH"}
           </motion.button>

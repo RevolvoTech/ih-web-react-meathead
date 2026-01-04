@@ -17,6 +17,19 @@ export const handler: Handler = async (event) => {
   try {
     const data = JSON.parse(event.body || '{}');
 
+    // Parse location string to extract latitude and longitude
+    // Format: "Lat: 33.5431205, Lng: 73.0989075"
+    let latitude = '';
+    let longitude = '';
+
+    if (data.location) {
+      const latMatch = data.location.match(/Lat:\s*([-\d.]+)/);
+      const lngMatch = data.location.match(/Lng:\s*([-\d.]+)/);
+
+      if (latMatch) latitude = latMatch[1];
+      if (lngMatch) longitude = lngMatch[1];
+    }
+
     // Authenticate with Google Sheets API
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -31,7 +44,7 @@ export const handler: Handler = async (event) => {
     // Append row to "Orders" sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:J',
+      range: 'Orders!A:L',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
@@ -43,6 +56,8 @@ export const handler: Handler = async (event) => {
           data.status,
           data.customer_name || '',
           data.delivery_address || '',
+          longitude,
+          latitude,
           data.total_amount || 0,
           data.addon || 'NONE',
         ]],

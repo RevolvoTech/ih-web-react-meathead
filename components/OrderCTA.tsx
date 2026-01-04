@@ -58,6 +58,7 @@ export default function OrderCTA() {
           status: "pending",
           customer_name: formData.name,
           delivery_address: formData.address,
+          location: formData.location,
           total_amount: selectedPkg ? selectedPkg.price + DELIVERY_CHARGE : 0,
           addon: formData.addon,
         }),

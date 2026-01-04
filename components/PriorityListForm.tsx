@@ -222,9 +222,13 @@ export default function PriorityListForm() {
               required
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              pattern="^(\+92[0-9]{10}|0[0-9]{10})$"
               className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors"
-              placeholder="+92 3XX XXXXXXX"
+              placeholder="+923XXXXXXXXX or 03XXXXXXXXX"
             />
+            <p className="text-gray-500 text-xs mt-1">
+              Format: +923XXXXXXXXX (13 digits) or 03XXXXXXXXX (11 digits)
+            </p>
           </div>
         </div>
 

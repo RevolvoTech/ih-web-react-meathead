@@ -221,28 +221,50 @@ export default function OrderCTA() {
   if (orderData.isSoldOut) {
     return (
       <section ref={ref} className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-meathead-red/10 via-transparent to-meathead-red/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-meathead-red/20 via-transparent to-meathead-red/20 animate-pulse" />
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6 }}
-            className="bg-meathead-gray/80 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-12 md:p-16"
+            className="bg-meathead-gray/90 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-12 md:p-16 relative"
           >
-            <h2 className="font-heading text-5xl md:text-7xl mb-6 uppercase tracking-heading">
-              READY TO <span className="text-meathead-red">FUEL UP?</span>
+            {/* SOLD OUT Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="inline-block bg-meathead-red text-white font-heading text-sm md:text-base px-6 py-2 rounded-full mb-6 tracking-heading animate-pulse"
+            >
+              🔥 BATCH 01 - SOLD OUT IN HOURS
+            </motion.div>
+
+            <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading">
+              YOU <span className="text-meathead-red">MISSED OUT</span>
             </h2>
+
+            <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+              All 50 slots gone. Don't let it happen again.
+            </p>
+
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
               onClick={scrollToPriorityList}
-              className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-5 px-16 rounded-lg text-xl md:text-2xl transition-all duration-300 transform hover:scale-105 shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-meathead-red hover:bg-red-700 text-white font-heading py-6 px-12 rounded-lg text-xl md:text-2xl transition-all duration-300 transform shadow-2xl hover:shadow-meathead-red/50 uppercase tracking-heading"
             >
-              JOIN PRIORITY LIST
+              GET PRIORITY FOR BATCH 02
             </motion.button>
-            <p className="text-gray-400 text-sm mt-6">
-              Batch 01 is sold out. Join the priority list for Batch 02.
+
+            <p className="text-meathead-red text-sm md:text-base mt-6 font-bold font-data">
+              Priority list gets access <span className="text-white">30 MINUTES BEFORE</span> everyone else
+            </p>
+
+            <p className="text-gray-500 text-xs mt-4 italic">
+              Next drop: Friday. Be first or be last.
             </p>
           </motion.div>
         </div>
@@ -296,9 +318,13 @@ export default function OrderCTA() {
                   required
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  pattern="^(\+92[0-9]{10}|0[0-9]{10})$"
                   className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors"
-                  placeholder="+92 3XX XXXXXXX"
+                  placeholder="+923XXXXXXXXX or 03XXXXXXXXX"
                 />
+                <p className="text-gray-500 text-xs mt-1">
+                  Format: +923XXXXXXXXX (13 digits) or 03XXXXXXXXX (11 digits)
+                </p>
               </div>
             </div>
 

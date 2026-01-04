@@ -42,7 +42,7 @@ export default function CookingGuide() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           className="text-center mb-16"
         >
           <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-heading">
@@ -54,9 +54,9 @@ export default function CookingGuide() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="mb-12 max-w-3xl mx-auto"
         >
           <div className="relative rounded-2xl overflow-hidden border-2 border-meathead-red/30">
@@ -75,9 +75,10 @@ export default function CookingGuide() {
           {steps.map((item, index) => (
             <motion.div
               key={item.step}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ duration: 0.3, delay: 0.15 + index * 0.05, ease: "easeOut" }}
+              whileHover={{ scale: 1.03, y: -5 }}
               className="relative bg-meathead-charcoal p-6 rounded-xl border-2 border-meathead-red/20 hover:border-meathead-red/50 transition-all duration-300 group"
             >
               <div className="absolute top-0 left-0 bg-meathead-red text-white font-heading text-sm px-3 py-1 rounded-br-xl rounded-tl-xl tracking-heading">
@@ -101,7 +102,7 @@ export default function CookingGuide() {
                 <motion.div
                   initial={{ width: "0%" }}
                   animate={isInView ? { width: "100%" } : {}}
-                  transition={{ duration: 0.8, delay: 0.4 + index * 0.1 }}
+                  transition={{ duration: 0.5, delay: 0.25 + index * 0.05, ease: "easeOut" }}
                   className="h-full bg-meathead-red"
                 />
               </div>
@@ -112,7 +113,7 @@ export default function CookingGuide() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.8 }}
+          transition={{ duration: 0.3, delay: 0.5, ease: "easeOut" }}
           className="mt-12 text-center"
         >
           <p className="text-gray-500 text-sm italic">

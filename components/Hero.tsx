@@ -47,7 +47,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-start justify-center overflow-hidden px-4 pt-8 pb-20">
+    <section className="relative min-h-screen flex items-start justify-center overflow-hidden px-4 pt-2 lg:pt-8 pb-20">
       <div className="absolute inset-0 bg-gradient-to-b from-meathead-black via-meathead-charcoal to-meathead-black opacity-90" />
 
       <div className="absolute inset-0 bg-[url('/images/product_1.webp')] bg-cover bg-center opacity-10 blur-sm" />
@@ -56,14 +56,14 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
           className="text-center lg:text-left"
         >
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="mb-4"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1, duration: 0.3, ease: "easeOut" }}
+            className="mb-0 lg:mb-2"
           >
             <Image
               src="/images/logo.webp"
@@ -75,10 +75,10 @@ export default function Hero() {
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="font-heading text-5xl md:text-7xl lg:text-9xl leading-none mb-2 uppercase tracking-heading"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="font-heading text-5xl md:text-7xl lg:text-9xl leading-none mb-2 uppercase tracking-heading -mt-8 lg:-mt-12"
           >
             JUST BEEF.
             <br />
@@ -88,16 +88,16 @@ export default function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+            transition={{ delay: 0.3, duration: 0.3, ease: "easeOut" }}
             className="text-gray-300 text-lg md:text-xl lg:text-2xl mb-4 max-w-2xl"
           >
             Grass-fed ground beef. Seared in tallow. Zero seed oils.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
             className="grid grid-cols-3 gap-4 mb-4"
           >
             <div className="bg-meathead-gray px-4 py-4 rounded-lg border-2 border-meathead-red/30 hover:border-meathead-red/60 transition-all">
@@ -117,7 +117,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
+            transition={{ delay: 0.5, duration: 0.3, ease: "easeOut" }}
             className="mb-3"
           >
             <p className="text-gray-400 text-sm mb-2 font-data">WEEKLY FUEL PACK</p>
@@ -130,9 +130,11 @@ export default function Hero() {
           </motion.div>
 
           <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={orderData.isSoldOut ? scrollToPriorityList : handleWhatsAppClick}
             className={`font-heading text-xl md:text-2xl lg:text-3xl py-5 px-16 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase tracking-heading ${
               orderData.isSoldOut
@@ -145,9 +147,9 @@ export default function Hero() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
+          initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ delay: 0.3, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="relative self-center mt-12"
         >
           <div className="relative rounded-2xl overflow-hidden shadow-2xl">

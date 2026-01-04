@@ -5,10 +5,10 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 
 const comparisons = [
-  { category: "Protein Source", them: "Mystery cuts, grain-fed", us: "100% Grass-fed Beef" },
+  { category: "Protein Source", them: "Mystery cuts, grain-fed", us: "Grass-fed Beef" },
   { category: "Fillers", them: "Soy, breadcrumbs, grains", us: "ZERO. Just beef." },
   { category: "Cooking Fat", them: "Vegetable oils, seed oils", us: "Pure Beef Tallow" },
-  { category: "Processing", them: "Factory ground, weeks old", us: "Fresh ground Friday" },
+  { category: "Processing", them: "Factory ground, weeks old", us: "FRESH, COOKED, DELIVERED" },
   { category: "Ingredients", them: "15+ mystery additives", us: "Beef, Salt, Pepper. Done." },
 ];
 

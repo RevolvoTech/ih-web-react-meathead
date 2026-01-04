@@ -68,7 +68,7 @@ export default function Hero() {
             transition={{ delay: 0.3, duration: 0.3, ease: "easeOut" }}
             className="text-gray-300 text-lg md:text-xl lg:text-2xl mb-4 max-w-2xl"
           >
-            Grass-fed ground beef. Seared in tallow. Zero seed oils.
+            Grass-fed beef. Cooked & smashed. Seared in tallow. FRESH, never frozen.
           </motion.p>
 
           <motion.div

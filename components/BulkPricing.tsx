@@ -7,6 +7,8 @@ import { useRef } from "react";
 const WHATSAPP_NUMBER = "923354818171";
 const IS_SOLD_OUT = false;
 
+const DELIVERY_CHARGE = 100;
+
 const pricingTiers = [
   {
     name: "SINGLE",
@@ -96,8 +98,11 @@ export default function BulkPricing() {
               </div>
 
               <div className="text-center mb-6">
-                <p className="font-heading text-5xl text-white mb-2 tracking-heading">
+                <p className="font-heading text-5xl text-white mb-1 tracking-heading">
                   ₨{tier.price}
+                </p>
+                <p className="text-gray-500 text-xs mb-3">
+                  +₨{DELIVERY_CHARGE} delivery
                 </p>
                 <p className="text-gray-400">
                   {tier.patties} {tier.patties === 1 ? "Patty" : "Patties"}
@@ -143,7 +148,7 @@ export default function BulkPricing() {
               </div>
               <div>
                 <p className="text-gray-400 mb-1">TIMING</p>
-                <p className="text-white font-bold">Friday 6-8 PM</p>
+                <p className="text-white font-bold">Friday 3pm Onwards</p>
                 <p className="text-gray-500 text-xs mt-1">No exceptions</p>
               </div>
               <div>

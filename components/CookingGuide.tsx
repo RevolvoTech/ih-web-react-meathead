@@ -21,7 +21,7 @@ const steps = [
   {
     step: "03",
     title: "PRECISION FLIP",
-    description: "One flip. 120 seconds. Locking in the grass-fed juices.",
+    description: "One flip. 120 seconds. Locking in the beefy juices.",
     temp: "120 sec",
   },
   {

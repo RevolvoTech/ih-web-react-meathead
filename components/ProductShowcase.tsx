@@ -25,8 +25,8 @@ const features = [
     description: "24g+ of quality protein per 125g patty",
   },
   {
-    title: "READY TO COOK",
-    description: "Pre-portioned for convenience",
+    title: "COOKED & READY",
+    description: "Pre-portioned, already cooked patties",
   },
 ];
 

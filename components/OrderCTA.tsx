@@ -2,76 +2,479 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
-
-const WHATSAPP_NUMBER = "923354818171";
-const getWhatsAppMessage = () => {
-  return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
-};
+import { useRef, useState, useEffect } from "react";
 
 const IS_SOLD_OUT = false;
+const DELIVERY_CHARGE = 100;
+
+const packages = [
+  { name: "SINGLE", qty: 1, price: 350 },
+  { name: "WEEKLY FUEL", qty: 4, price: 1200 },
+  { name: "BULK PREP", qty: 12, price: 3300 },
+];
 
 export default function OrderCTA() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
   const orderData = { isSoldOut: IS_SOLD_OUT };
 
-  const handleWhatsAppClick = () => {
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(getWhatsAppMessage())}`;
-    window.open(url, "_blank");
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    package: "WEEKLY FUEL",
+    address: "",
+    addon: "NONE",
+    location: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [mapCoords, setMapCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const markerRef = useRef<L.Marker | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      const selectedPkg = packages.find(p => p.name === formData.package);
+
+      const response = await fetch("/.netlify/functions/submit-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          whatsapp_number: formData.phone,
+          order_type: formData.package,
+          quantity: selectedPkg?.qty,
+          batch_number: "BATCH 01",
+          status: "pending",
+          customer_name: formData.name,
+          delivery_address: formData.address,
+          total_amount: selectedPkg ? selectedPkg.price + DELIVERY_CHARGE : 0,
+          addon: formData.addon,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Submission failed');
+      }
+
+      setSubmitStatus("success");
+      setFormData({
+        name: "",
+        phone: "",
+        package: "WEEKLY FUEL",
+        address: "",
+        addon: "NONE",
+        location: "",
+      });
+      setShowMap(false);
+      setMapCoords(null);
+
+      setTimeout(() => setSubmitStatus("idle"), 5000);
+    } catch (error) {
+      setSubmitStatus("error");
+      console.error("Order submission failed:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // Initialize map when coords are set
+  useEffect(() => {
+    if (!showMap || !mapCoords || !mapContainerRef.current) return;
+    if (typeof window === 'undefined') return; // Only run on client side
+
+    // Cleanup existing map
+    if (mapRef.current) {
+      mapRef.current.remove();
+      mapRef.current = null;
+    }
+
+    // Dynamically import Leaflet only on client side
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+
+      if (!mapContainerRef.current) return;
+
+      // Create map without attribution control
+      const map = L.map(mapContainerRef.current, {
+        attributionControl: false,
+      }).setView([mapCoords.lat, mapCoords.lng], 17);
+      mapRef.current = map;
+
+      // Add OpenStreetMap tiles (colorful, detailed)
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+      }).addTo(map);
+
+      // Custom red marker icon
+      const redIcon = L.divIcon({
+        className: 'custom-marker',
+        html: `<div style="background-color: #ef4444; width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+      });
+
+      // Add draggable marker
+      const marker = L.marker([mapCoords.lat, mapCoords.lng], {
+        draggable: true,
+        icon: redIcon,
+      }).addTo(map);
+      markerRef.current = marker;
+
+      // Update coordinates when marker is dragged
+      marker.on('dragend', () => {
+        const position = marker.getLatLng();
+        setMapCoords({ lat: position.lat, lng: position.lng });
+        setFormData((prev) => ({
+          ...prev,
+          location: `Lat: ${position.lat.toFixed(7)}, Lng: ${position.lng.toFixed(7)}`
+        }));
+      });
+    };
+
+    initMap();
+
+    // Cleanup on unmount
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [showMap, mapCoords?.lat, mapCoords?.lng]);
 
   const scrollToPriorityList = () => {
     const foundersSection = document.getElementById("founders");
     foundersSection?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const getLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsGettingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const locationString = `Lat: ${latitude.toFixed(7)}, Lng: ${longitude.toFixed(7)}`;
+          setFormData({ ...formData, location: locationString });
+          setMapCoords({ lat: latitude, lng: longitude });
+          setShowMap(true);
+        } catch (error) {
+          console.error("Error getting location:", error);
+          const locationString = `Lat: ${latitude.toFixed(7)}, Lng: ${longitude.toFixed(7)}`;
+          setFormData({ ...formData, location: locationString });
+          setMapCoords({ lat: latitude, lng: longitude });
+          setShowMap(true);
+        } finally {
+          setIsGettingLocation(false);
+        }
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert("Unable to get your location. Please allow location access and ensure GPS is enabled for best accuracy.");
+        setIsGettingLocation(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 30000,
+        maximumAge: 0,
+      }
+    );
+  };
+
+  if (orderData.isSoldOut) {
+    return (
+      <section ref={ref} className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-meathead-red/10 via-transparent to-meathead-red/10" />
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.6 }}
+            className="bg-meathead-gray/80 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-12 md:p-16"
+          >
+            <h2 className="font-heading text-5xl md:text-7xl mb-6 uppercase tracking-heading">
+              READY TO <span className="text-meathead-red">FUEL UP?</span>
+            </h2>
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              onClick={scrollToPriorityList}
+              className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-5 px-16 rounded-lg text-xl md:text-2xl transition-all duration-300 transform hover:scale-105 shadow-xl"
+            >
+              JOIN PRIORITY LIST
+            </motion.button>
+            <p className="text-gray-400 text-sm mt-6">
+              Batch 01 is sold out. Join the priority list for Batch 02.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section ref={ref} className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-meathead-red/10 via-transparent to-meathead-red/10" />
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
+      <div className="relative z-10 max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6 }}
-          className="bg-meathead-gray/80 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-12 md:p-16"
+          className="bg-meathead-gray/80 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-8 md:p-12"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-6 uppercase tracking-heading">
+          <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading text-center">
             READY TO <span className="text-meathead-red">FUEL UP?</span>
           </h2>
 
-          <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+          <p className="text-gray-300 text-lg mb-8 text-center max-w-2xl mx-auto">
             Stop wasting money on processed protein. Pure beef. Pure gains. Pure simplicity.
           </p>
 
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            onClick={orderData.isSoldOut ? scrollToPriorityList : handleWhatsAppClick}
-            className={`font-bold py-5 px-16 rounded-lg text-xl md:text-2xl transition-all duration-300 transform hover:scale-105 shadow-xl inline-flex items-center gap-3 ${
-              orderData.isSoldOut
-                ? "bg-gray-600 hover:bg-gray-700 text-white cursor-pointer"
-                : "bg-meathead-red hover:bg-red-700 text-white hover:shadow-meathead-red/50"
-            }`}
-          >
-            <svg
-              className="w-8 h-8"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-            </svg>
-            {orderData.isSoldOut ? "JOIN PRIORITY LIST" : "CLAIM YOUR MACROS"}
-          </motion.button>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors"
+                  placeholder="Your name"
+                />
+              </div>
 
-          <p className="text-gray-400 text-sm mt-6">
-            {orderData.isSoldOut
-              ? "Batch 01 is sold out. Join the priority list for Batch 02."
-              : "Click to chat with us on WhatsApp: +92 335 4818171"}
-          </p>
+              <div>
+                <label htmlFor="phone" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+                  Phone *
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  required
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors"
+                  placeholder="+92 3XX XXXXXXX"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="package" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+                Package *
+              </label>
+              <select
+                id="package"
+                required
+                value={formData.package}
+                onChange={(e) => {
+                  const newPackage = e.target.value;
+                  setFormData({
+                    ...formData,
+                    package: newPackage,
+                    addon: newPackage === "SINGLE" && formData.addon === "HALF AND HALF" ? "NONE" : formData.addon
+                  });
+                }}
+                className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23ef4444' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                  backgroundPosition: 'right 0.5rem center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '1.5em 1.5em',
+                  paddingRight: '2.5rem',
+                }}
+              >
+                {packages.map((pkg) => (
+                  <option key={pkg.name} value={pkg.name} className="bg-meathead-charcoal text-white">
+                    {pkg.name} - {pkg.qty} {pkg.qty === 1 ? 'patty' : 'patties'} (₨{pkg.price + DELIVERY_CHARGE})
+                  </option>
+                ))}
+              </select>
+              <p className="text-gray-500 text-xs mt-2">
+                {(() => {
+                  const selectedPkg = packages.find(p => p.name === formData.package);
+                  return selectedPkg ? `₨${selectedPkg.price} + ₨${DELIVERY_CHARGE} delivery = ₨${selectedPkg.price + DELIVERY_CHARGE}` : '';
+                })()}
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="addon" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+                Add-On
+              </label>
+              <select
+                id="addon"
+                required
+                value={formData.addon}
+                onChange={(e) => setFormData({ ...formData, addon: e.target.value })}
+                className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23ef4444' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                  backgroundPosition: 'right 0.5rem center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '1.5em 1.5em',
+                  paddingRight: '2.5rem',
+                }}
+              >
+                <option value="NONE" className="bg-meathead-charcoal text-white">NONE</option>
+                <option value="SEA SALT" className="bg-meathead-charcoal text-white">SEA SALT</option>
+                <option value="MASALA" className="bg-meathead-charcoal text-white">MASALA</option>
+                {formData.package === "WEEKLY FUEL" && (
+                  <option value="HALF AND HALF" className="bg-meathead-charcoal text-white">HALF AND HALF (2 Sea Salt, 2 Masala)</option>
+                )}
+                {formData.package === "BULK PREP" && (
+                  <option value="HALF AND HALF" className="bg-meathead-charcoal text-white">HALF AND HALF (6 Sea Salt, 6 Masala)</option>
+                )}
+              </select>
+              <p className="text-gray-500 text-xs mt-2">
+                {formData.package === "SINGLE"
+                  ? "HALF AND HALF only available for packs of 4 and 12"
+                  : formData.addon === "HALF AND HALF"
+                  ? formData.package === "WEEKLY FUEL"
+                    ? "2 Patties in Sea Salt, 2 Patties in Masala"
+                    : "6 Patties in Sea Salt, 6 Patties in Masala"
+                  : "Choose your seasoning preference"}
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="address" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+                Delivery Address *
+              </label>
+              <textarea
+                id="address"
+                required
+                rows={3}
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors resize-none"
+                placeholder="House/Apt, Street, Area, City"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+                GPS Location (Required for accurate delivery) *
+              </label>
+              {formData.location ? (
+                <div className="space-y-3">
+                  {showMap && (
+                    <div className="space-y-3">
+                      <div
+                        ref={mapContainerRef}
+                        className="w-full h-80 rounded-lg overflow-hidden border-2 border-meathead-red/30"
+                      />
+                      <div className="flex items-center justify-between">
+                        <p className="text-gray-400 text-xs">
+                          <span className="text-meathead-red font-bold">Drag the red pin</span> to adjust your exact location
+                        </p>
+                        <button
+                          type="button"
+                          onClick={getLocation}
+                          disabled={isGettingLocation}
+                          className="text-meathead-red hover:text-red-600 text-sm font-data uppercase tracking-wider transition-colors font-bold"
+                        >
+                          Update
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <motion.button
+                  type="button"
+                  onClick={getLocation}
+                  disabled={isGettingLocation}
+                  whileHover={{ scale: isGettingLocation ? 1 : 1.02 }}
+                  whileTap={{ scale: isGettingLocation ? 1 : 0.98 }}
+                  className="w-full bg-meathead-red hover:bg-red-700 rounded-lg px-6 py-5 text-white transition-all duration-300 shadow-lg hover:shadow-meathead-red/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-600"
+                >
+                  <div className="flex items-center justify-center gap-3">
+                    <svg
+                      className={`w-7 h-7 ${isGettingLocation ? 'animate-pulse' : ''}`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-heading text-xl uppercase tracking-heading">
+                      {isGettingLocation ? "Getting Location..." : "Allow Location Access"}
+                    </span>
+                  </div>
+                </motion.button>
+              )}
+              <p className="text-gray-500 text-xs mt-2">
+                {formData.location ? "" : "We need your exact GPS coordinates for precise delivery"}
+              </p>
+            </div>
+
+            <div className="bg-meathead-black/50 border border-meathead-red/20 rounded-lg p-4">
+              <p className="text-gray-400 text-xs leading-relaxed">
+                By submitting this order, you consent to us contacting you on WhatsApp for order confirmation and delivery updates on delivery day.
+              </p>
+            </div>
+
+            <motion.button
+              type="submit"
+              disabled={isSubmitting}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              whileHover={{ scale: isSubmitting ? 1 : 1.03 }}
+              whileTap={{ scale: isSubmitting ? 1 : 0.97 }}
+              className={`w-full text-white font-heading text-2xl md:text-3xl py-5 rounded-lg transition-all duration-300 shadow-xl uppercase tracking-heading ${
+                isSubmitting
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-meathead-red hover:bg-red-700 hover:shadow-meathead-red/50"
+              }`}
+            >
+              {isSubmitting ? "SUBMITTING..." : "PLACE ORDER"}
+            </motion.button>
+
+            {submitStatus === "success" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-green-500/20 border border-green-500 rounded-lg p-4 text-center"
+              >
+                <p className="text-green-500 font-bold">Order submitted successfully!</p>
+                <p className="text-gray-300 text-sm mt-1">We'll contact you shortly on WhatsApp.</p>
+              </motion.div>
+            )}
+
+            {submitStatus === "error" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-500/20 border border-red-500 rounded-lg p-4 text-center"
+              >
+                <p className="text-red-500 font-bold">Submission failed. Please try again.</p>
+              </motion.div>
+            )}
+          </form>
         </motion.div>
       </div>
     </section>

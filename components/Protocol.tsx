@@ -8,12 +8,12 @@ const protocols = [
   {
     number: "01",
     title: "ELITE SOURCES",
-    description: "100% grass-fed beef from elite local suppliers. Same-day sourcing for maximum freshness.",
+    description: "Grass-fed beef from elite local suppliers. Same-day sourcing for maximum freshness.",
   },
   {
     number: "02",
-    title: "SAME DAY COOK",
-    description: "Get it Friday morning. Cook it Friday. Zero freezing, zero aging, zero compromises.",
+    title: "COOKED & SMASHED",
+    description: "Delivered FRESH, never frozen. Cooked and smashed patties. Zero freezing, zero aging, zero compromises.",
   },
   {
     number: "03",

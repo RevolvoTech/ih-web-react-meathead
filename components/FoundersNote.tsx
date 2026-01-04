@@ -112,15 +112,15 @@ export default function FoundersNote() {
               <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 flex-1">
                 <div className="text-center">
                   <p className="text-gray-400 text-sm mb-1 font-data">ORDERS OPEN</p>
-                  <p className="font-heading text-xl text-white uppercase tracking-heading">
-                    Friday 10 AM
+                  <p className="font-heading text-xl text-meathead-red uppercase tracking-heading">
+                    NOW
                   </p>
                 </div>
                 <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>
                 <div className="text-center">
                   <p className="text-gray-400 text-sm mb-1 font-data">ORDERS CLOSE</p>
                   <p className="font-heading text-xl text-white uppercase tracking-heading">
-                    Friday 2 PM
+                    Thursday Midnight
                   </p>
                 </div>
                 <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>

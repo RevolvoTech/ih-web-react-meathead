@@ -1,39 +1,16 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
 
 const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
   return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
 };
 
-interface OrderData {
-  isSoldOut: boolean;
-}
+const IS_SOLD_OUT = false;
 
 export default function WhatsAppButton() {
-  const [orderData, setOrderData] = useState<OrderData>({ isSoldOut: false });
-
-  useEffect(() => {
-    // Initial fetch
-    const fetchOrderStatus = () => {
-      fetch("/api/get-order-count")
-        .then((res) => {
-          if (!res.ok) throw new Error("API not available");
-          return res.json();
-        })
-        .then((data) => setOrderData(data))
-        .catch(() => setOrderData({ isSoldOut: false }));
-    };
-
-    fetchOrderStatus();
-
-    // Auto-refresh every 10 seconds
-    const interval = setInterval(fetchOrderStatus, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const orderData = { isSoldOut: IS_SOLD_OUT };
 
   const handleClick = () => {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(getWhatsAppMessage())}`;

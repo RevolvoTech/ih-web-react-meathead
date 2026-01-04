@@ -2,13 +2,10 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 
 const WHATSAPP_NUMBER = "923354818171";
-
-interface OrderData {
-  isSoldOut: boolean;
-}
+const IS_SOLD_OUT = false;
 
 const pricingTiers = [
   {
@@ -40,27 +37,7 @@ const pricingTiers = [
 export default function BulkPricing() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const [orderData, setOrderData] = useState<OrderData>({ isSoldOut: false });
-
-  useEffect(() => {
-    // Initial fetch
-    const fetchOrderStatus = () => {
-      fetch("/api/get-order-count")
-        .then((res) => {
-          if (!res.ok) throw new Error("API not available");
-          return res.json();
-        })
-        .then((data) => setOrderData(data))
-        .catch(() => setOrderData({ isSoldOut: false }));
-    };
-
-    fetchOrderStatus();
-
-    // Auto-refresh every 10 seconds
-    const interval = setInterval(fetchOrderStatus, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const orderData = { isSoldOut: IS_SOLD_OUT };
 
   const handleOrder = (tier: typeof pricingTiers[0]) => {
     const message = `Yo Meathead! I want to order ${tier.patties} patties (${tier.name}) for the Friday Drop. Total: ₨${tier.price}. Let's go!`;

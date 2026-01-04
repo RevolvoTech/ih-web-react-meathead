@@ -2,56 +2,21 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import PriorityListForm from "./PriorityListForm";
 
-interface OrderData {
-  totalOrders: number;
-  slotsRemaining: number;
-  isSoldOut: boolean;
-}
+const TOTAL_ORDERS = 13;
+const SLOTS_REMAINING = 37;
+const IS_SOLD_OUT = false;
 
 export default function FoundersNote() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const [orderData, setOrderData] = useState<OrderData>({
-    totalOrders: 0,
-    slotsRemaining: 50,
-    isSoldOut: false,
-  });
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Fetch real order count from API
-    const fetchOrderStatus = () => {
-      fetch("/api/get-order-count")
-        .then((res) => {
-          if (!res.ok) throw new Error("API not available");
-          return res.json();
-        })
-        .then((data) => {
-          setOrderData(data);
-          setIsLoading(false);
-        })
-        .catch(() => {
-          // Fallback to fake data if API fails (dev mode)
-          const randomDecrease = Math.floor(Math.random() * 15) + 5;
-          setOrderData({
-            totalOrders: randomDecrease,
-            slotsRemaining: 50 - randomDecrease,
-            isSoldOut: false,
-          });
-          setIsLoading(false);
-        });
-    };
-
-    fetchOrderStatus();
-
-    // Auto-refresh every 10 seconds
-    const interval = setInterval(fetchOrderStatus, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const orderData = {
+    totalOrders: TOTAL_ORDERS,
+    slotsRemaining: SLOTS_REMAINING,
+    isSoldOut: IS_SOLD_OUT,
+  };
 
   return (
     <section id="founders" ref={ref} className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">
@@ -175,11 +140,7 @@ export default function FoundersNote() {
                 <div className="text-left">
                   <p className="text-gray-400 text-xs uppercase tracking-wider font-data">BATCH 01</p>
                   <p className="font-data font-bold text-2xl text-white">
-                    {isLoading ? (
-                      <span className="text-gray-400">--</span>
-                    ) : (
-                      <span className="text-meathead-red">{orderData.slotsRemaining}</span>
-                    )}
+                    <span className="text-meathead-red">{orderData.slotsRemaining}</span>
                     /50
                   </p>
                   <p className="text-gray-400 text-xs font-data">Slots Remaining</p>

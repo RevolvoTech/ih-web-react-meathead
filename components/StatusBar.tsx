@@ -1,49 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
-interface OrderData {
-  slotsRemaining: number;
-  isSoldOut: boolean;
-}
+const SLOTS_REMAINING = 37;
+const IS_SOLD_OUT = false;
 
 export default function StatusBar() {
-  const [orderData, setOrderData] = useState<OrderData>({
-    slotsRemaining: 50,
-    isSoldOut: false,
-  });
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Fetch real order count from API
-    const fetchOrderStatus = () => {
-      fetch("/api/get-order-count")
-        .then((res) => {
-          if (!res.ok) throw new Error("API not available");
-          return res.json();
-        })
-        .then((data) => {
-          setOrderData(data);
-          setIsLoading(false);
-        })
-        .catch(() => {
-          // Fallback to fake data if API fails (dev mode)
-          const randomDecrease = Math.floor(Math.random() * 15) + 5;
-          setOrderData({
-            slotsRemaining: 50 - randomDecrease,
-            isSoldOut: false,
-          });
-          setIsLoading(false);
-        });
-    };
-
-    fetchOrderStatus();
-
-    // Auto-refresh every 10 seconds
-    const interval = setInterval(fetchOrderStatus, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const orderData = {
+    slotsRemaining: SLOTS_REMAINING,
+    isSoldOut: IS_SOLD_OUT,
+  };
 
   return (
     <div className="bg-meathead-charcoal border-b border-meathead-red/30 py-3 px-4 sticky top-0 z-50">
@@ -61,11 +25,7 @@ export default function StatusBar() {
           </span>
         ) : (
           <span className="font-data font-bold text-white">
-            {isLoading ? (
-              <span className="text-gray-400">--</span>
-            ) : (
-              <span className="text-meathead-red text-lg">{orderData.slotsRemaining}</span>
-            )}
+            <span className="text-meathead-red text-lg">{orderData.slotsRemaining}</span>
             /50 SLOTS REMAINING
           </span>
         )}

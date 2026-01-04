@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
-const IS_SOLD_OUT = false;
 const DELIVERY_CHARGE = 100;
 
 const packages = [
@@ -16,7 +15,8 @@ const packages = [
 export default function OrderCTA() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const orderData = { isSoldOut: IS_SOLD_OUT };
+
+  const [orderData, setOrderData] = useState({ isSoldOut: false });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -88,6 +88,25 @@ export default function OrderCTA() {
       setIsSubmitting(false);
     }
   };
+
+  // Fetch order count to check if sold out
+  useEffect(() => {
+    const fetchOrderCount = async () => {
+      try {
+        const response = await fetch("/.netlify/functions/get-order-count");
+        const data = await response.json();
+        setOrderData({ isSoldOut: data.isSoldOut });
+      } catch (error) {
+        console.error("Error fetching order count:", error);
+        // Keep fallback value on error
+      }
+    };
+
+    fetchOrderCount();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchOrderCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Initialize map when coords are set
   useEffect(() => {

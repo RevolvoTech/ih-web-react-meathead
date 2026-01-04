@@ -2,21 +2,40 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import PriorityListForm from "./PriorityListForm";
-
-const TOTAL_ORDERS = 13;
-const SLOTS_REMAINING = 37;
-const IS_SOLD_OUT = false;
 
 export default function FoundersNote() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const orderData = {
-    totalOrders: TOTAL_ORDERS,
-    slotsRemaining: SLOTS_REMAINING,
-    isSoldOut: IS_SOLD_OUT,
-  };
+
+  const [orderData, setOrderData] = useState({
+    totalOrders: 0,
+    slotsRemaining: 50,
+    isSoldOut: false,
+  });
+
+  useEffect(() => {
+    const fetchOrderCount = async () => {
+      try {
+        const response = await fetch("/.netlify/functions/get-order-count");
+        const data = await response.json();
+        setOrderData({
+          totalOrders: data.totalOrders,
+          slotsRemaining: data.slotsRemaining,
+          isSoldOut: data.isSoldOut,
+        });
+      } catch (error) {
+        console.error("Error fetching order count:", error);
+        // Keep fallback values on error
+      }
+    };
+
+    fetchOrderCount();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchOrderCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section id="founders" ref={ref} className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">

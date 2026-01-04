@@ -1,13 +1,33 @@
 "use client";
 
-const SLOTS_REMAINING = 37;
-const IS_SOLD_OUT = false;
+import { useState, useEffect } from "react";
 
 export default function StatusBar() {
-  const orderData = {
-    slotsRemaining: SLOTS_REMAINING,
-    isSoldOut: IS_SOLD_OUT,
-  };
+  const [orderData, setOrderData] = useState({
+    slotsRemaining: 50,
+    isSoldOut: false,
+  });
+
+  useEffect(() => {
+    const fetchOrderCount = async () => {
+      try {
+        const response = await fetch("/.netlify/functions/get-order-count");
+        const data = await response.json();
+        setOrderData({
+          slotsRemaining: data.slotsRemaining,
+          isSoldOut: data.isSoldOut,
+        });
+      } catch (error) {
+        console.error("Error fetching order count:", error);
+        // Keep fallback values on error
+      }
+    };
+
+    fetchOrderCount();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchOrderCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="bg-meathead-charcoal border-b border-meathead-red/30 py-3 px-4 sticky top-0 z-50">

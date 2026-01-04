@@ -23,7 +23,7 @@ export default function OrderCTA() {
     phone: "",
     package: "WEEKLY FUEL",
     address: "",
-    addon: "NONE",
+    addon: "Original",
     location: "",
   });
 
@@ -74,7 +74,7 @@ export default function OrderCTA() {
         phone: "",
         package: "WEEKLY FUEL",
         address: "",
-        addon: "NONE",
+        addon: "Original",
         location: "",
       });
       setShowMap(false);
@@ -296,7 +296,7 @@ export default function OrderCTA() {
                   setFormData({
                     ...formData,
                     package: newPackage,
-                    addon: newPackage === "SINGLE" && formData.addon === "HALF AND HALF" ? "NONE" : formData.addon
+                    addon: newPackage === "SINGLE" && formData.addon === "Hybrid" ? "Original" : formData.addon
                   });
                 }}
                 className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors appearance-none cursor-pointer"
@@ -340,23 +340,29 @@ export default function OrderCTA() {
                   paddingRight: '2.5rem',
                 }}
               >
-                <option value="NONE" className="bg-meathead-charcoal text-white">NONE</option>
-                <option value="SEA SALT" className="bg-meathead-charcoal text-white">SEA SALT</option>
-                <option value="MASALA" className="bg-meathead-charcoal text-white">MASALA</option>
+                <option value="Original" className="bg-meathead-charcoal text-white">Original</option>
+                <option value="Sea Salt" className="bg-meathead-charcoal text-white">Sea Salt</option>
+                <option value="Spiced" className="bg-meathead-charcoal text-white">Spiced</option>
                 {formData.package === "WEEKLY FUEL" && (
-                  <option value="HALF AND HALF" className="bg-meathead-charcoal text-white">HALF AND HALF (2 Sea Salt, 2 Masala)</option>
+                  <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (2 Sea Salt / 2 Spiced)</option>
                 )}
                 {formData.package === "BULK PREP" && (
-                  <option value="HALF AND HALF" className="bg-meathead-charcoal text-white">HALF AND HALF (6 Sea Salt, 6 Masala)</option>
+                  <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (6 Sea Salt / 6 Spiced)</option>
                 )}
               </select>
               <p className="text-gray-500 text-xs mt-2">
                 {formData.package === "SINGLE"
-                  ? "HALF AND HALF only available for packs of 4 and 12"
-                  : formData.addon === "HALF AND HALF"
+                  ? "Hybrid only available for packs of 4 and 12"
+                  : formData.addon === "Original"
+                  ? "No seasoning (Just the beef)."
+                  : formData.addon === "Sea Salt"
+                  ? "Precision mineral finish."
+                  : formData.addon === "Spiced"
+                  ? "Our custom spice blend finish."
+                  : formData.addon === "Hybrid"
                   ? formData.package === "WEEKLY FUEL"
-                    ? "2 Patties in Sea Salt, 2 Patties in Masala"
-                    : "6 Patties in Sea Salt, 6 Patties in Masala"
+                    ? "The Hybrid: 2 Sea Salt / 2 Spiced."
+                    : "The Hybrid: 6 Sea Salt / 6 Spiced."
                   : "Choose your seasoning preference"}
               </p>
             </div>

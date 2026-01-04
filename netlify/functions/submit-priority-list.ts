@@ -1,64 +1,67 @@
-import { Handler, HandlerEvent, HandlerResponse } from '@netlify/functions';
-import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { JWT } from 'google-auth-library';
+import { Handler } from '@netlify/functions';
+import { google } from 'googleapis';
 
-export const handler: Handler = async (event: HandlerEvent): Promise<HandlerResponse> => {
+const SHEET_ID = process.env.GOOGLE_SHEET_ID;
+const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
+const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+export const handler: Handler = async (event) => {
+  // Only allow POST
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Method Not Allowed' }),
+      body: JSON.stringify({ error: 'Method not allowed' }),
     };
   }
 
   try {
-    const { whatsappNumber } = JSON.parse(event.body || '{}');
+    const data = JSON.parse(event.body || '{}');
 
-    if (!whatsappNumber || !/^92\d{10}$/.test(whatsappNumber)) {
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'Invalid WhatsApp number format (use 923XXXXXXXXX)' }),
-      };
+    // Parse location string to extract latitude and longitude
+    // Format: "Lat: 33.5431205, Lng: 73.0989075"
+    let latitude = '';
+    let longitude = '';
+
+    if (data.location) {
+      const latMatch = data.location.match(/Lat:\s*([-\d.]+)/);
+      const lngMatch = data.location.match(/Lng:\s*([-\d.]+)/);
+
+      if (latMatch) latitude = latMatch[1];
+      if (lngMatch) longitude = lngMatch[1];
     }
 
-    const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
-    const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
-    const SHEET_ID = process.env.GOOGLE_SHEET_ID;
-
-    if (!PRIVATE_KEY || !CLIENT_EMAIL || !SHEET_ID) {
-      throw new Error('Missing Google Sheets credentials');
-    }
-
-    const serviceAccountAuth = new JWT({
-      email: CLIENT_EMAIL,
-      key: PRIVATE_KEY,
+    // Authenticate with Google Sheets API
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: CLIENT_EMAIL,
+        private_key: PRIVATE_KEY,
+      },
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
-    const doc = new GoogleSpreadsheet(SHEET_ID, serviceAccountAuth);
-    await doc.loadInfo();
+    const sheets = google.sheets({ version: 'v4', auth });
 
-    const sheet = doc.sheetsByIndex[1]; // Priority list on second sheet
-
-    // Check if number already exists
-    const rows = await sheet.getRows();
-    const exists = rows.some((row: any) => row.get('whatsapp_number') === whatsappNumber);
-
-    if (exists) {
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'This number is already on the priority list' }),
-      };
-    }
-
-    // Add to priority list
-    await sheet.addRow({
-      timestamp: new Date().toISOString(),
-      whatsapp_number: whatsappNumber,
-      batch_number: '02',
-      status: 'priority_list',
+    // Append row to "Priority List" sheet (second sheet, index 1)
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: 'Priority List!A:L',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[
+          data.timestamp,
+          data.whatsapp_number,
+          data.order_type,
+          data.quantity,
+          data.batch_number,
+          data.status,
+          data.customer_name || '',
+          data.delivery_address || '',
+          longitude,
+          latitude,
+          data.total_amount || 0,
+          data.addon || 'Original',
+        ]],
+      },
     });
 
     return {
@@ -67,17 +70,17 @@ export const handler: Handler = async (event: HandlerEvent): Promise<HandlerResp
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({
-        success: true,
-        message: 'Added to priority list for Batch 02',
-      }),
+      body: JSON.stringify({ success: true, message: 'Added to priority list for Batch 02' }),
     };
   } catch (error) {
-    console.error('Error submitting to priority list:', error);
+    console.error('Priority list submission error:', error);
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Failed to submit to priority list' }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({ error: 'Failed to submit to priority list', details: error instanceof Error ? error.message : 'Unknown error' }),
     };
   }
 };

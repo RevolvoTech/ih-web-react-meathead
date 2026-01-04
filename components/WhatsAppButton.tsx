@@ -7,20 +7,11 @@ const getWhatsAppMessage = () => {
   return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
 };
 
-const IS_SOLD_OUT = false;
-
 export default function WhatsAppButton() {
-  const orderData = { isSoldOut: IS_SOLD_OUT };
-
   const handleClick = () => {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(getWhatsAppMessage())}`;
     window.open(url, "_blank");
   };
-
-  // Hide button when sold out
-  if (orderData.isSoldOut) {
-    return null;
-  }
 
   return (
     <AnimatePresence>

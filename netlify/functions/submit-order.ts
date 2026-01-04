@@ -59,7 +59,7 @@ export const handler: Handler = async (event) => {
           longitude,
           latitude,
           data.total_amount || 0,
-          data.addon || 'NONE',
+          data.addon || 'Original',
         ]],
       },
     });

@@ -25,6 +25,8 @@ export default function OrderCTA() {
     address: "",
     addon: "Original",
     location: "",
+    area: "DHA",
+    phase: "1",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,6 +85,8 @@ export default function OrderCTA() {
         address: "",
         addon: "Original",
         location: "",
+        area: "DHA",
+        phase: "1",
       });
       setShowMap(false);
       setMapCoords(null);
@@ -335,6 +339,71 @@ export default function OrderCTA() {
               </div>
             </div>
 
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="area" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+                  Area *
+                </label>
+                <select
+                  id="area"
+                  required
+                  value={formData.area}
+                  onChange={(e) => {
+                    const newArea = e.target.value;
+                    setFormData({
+                      ...formData,
+                      area: newArea,
+                      phase: newArea === "DHA" ? "1" : "7"
+                    });
+                  }}
+                  className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors appearance-none cursor-pointer"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23ef4444' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                    backgroundPosition: 'right 0.5rem center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '1.5em 1.5em',
+                    paddingRight: '2.5rem',
+                  }}
+                >
+                  <option value="DHA" className="bg-meathead-charcoal text-white">DHA</option>
+                  <option value="Bahria" className="bg-meathead-charcoal text-white">Bahria Town</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="phase" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+                  {formData.area === "DHA" ? "Phase *" : "Phase *"}
+                </label>
+                <select
+                  id="phase"
+                  required
+                  value={formData.phase}
+                  onChange={(e) => setFormData({ ...formData, phase: e.target.value })}
+                  className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors appearance-none cursor-pointer"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23ef4444' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                    backgroundPosition: 'right 0.5rem center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '1.5em 1.5em',
+                    paddingRight: '2.5rem',
+                  }}
+                >
+                  {formData.area === "DHA" ? (
+                    <>
+                      <option value="1" className="bg-meathead-charcoal text-white">Phase 1</option>
+                      <option value="2" className="bg-meathead-charcoal text-white">Phase 2</option>
+                      <option value="4" className="bg-meathead-charcoal text-white">Phase 4</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="7" className="bg-meathead-charcoal text-white">Phase 7</option>
+                      <option value="8" className="bg-meathead-charcoal text-white">Phase 8</option>
+                    </>
+                  )}
+                </select>
+              </div>
+            </div>
+
             <div>
               <label htmlFor="package" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
                 Package *
@@ -430,7 +499,7 @@ export default function OrderCTA() {
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors resize-none"
-                placeholder="House/Apt, Street, Area, City"
+                placeholder="Sector, Street/Lane, House/Apartment"
               />
             </div>
 

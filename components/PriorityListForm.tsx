@@ -145,7 +145,7 @@ export default function PriorityListForm() {
       // Concatenate area, phase, and address for delivery_address
       const fullAddress = `${formData.area} Phase ${formData.phase}, ${formData.address}`;
 
-      const response = await fetch("/.netlify/functions/submit-priority-list", {
+      const response = await fetch("/api/submit-priority-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

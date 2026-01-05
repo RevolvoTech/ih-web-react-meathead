@@ -11,7 +11,7 @@ export default function StatusBar() {
   useEffect(() => {
     const fetchOrderCount = async () => {
       try {
-        const response = await fetch("/.netlify/functions/get-order-count");
+        const response = await fetch("/api/get-order-count");
         const data = await response.json();
         setOrderData({
           slotsRemaining: data.slotsRemaining,

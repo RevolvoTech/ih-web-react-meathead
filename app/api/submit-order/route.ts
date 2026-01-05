@@ -1,21 +1,13 @@
-import { Handler } from '@netlify/functions';
+import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
 const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
-export const handler: Handler = async (event) => {
-  // Only allow POST
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    };
-  }
-
+export async function POST(request: Request) {
   try {
-    const data = JSON.parse(event.body || '{}');
+    const data = await request.json();
 
     // Parse location string to extract latitude and longitude
     // Format: "Lat: 33.5431205, Lng: 73.0989075"
@@ -41,10 +33,10 @@ export const handler: Handler = async (event) => {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // Append row to "Priority List" sheet (second sheet, index 1)
+    // Append row to "Orders" sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Priority List!A:L',
+      range: 'Orders!A:L',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
@@ -64,23 +56,17 @@ export const handler: Handler = async (event) => {
       },
     });
 
-    return {
-      statusCode: 200,
+    return NextResponse.json({ success: true, message: 'Order submitted successfully' }, {
       headers: {
-        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ success: true, message: 'Added to priority list for Batch 02' }),
-    };
+      }
+    });
+
   } catch (error) {
-    console.error('Priority list submission error:', error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ error: 'Failed to submit to priority list', details: error instanceof Error ? error.message : 'Unknown error' }),
-    };
+    console.error('Order submission error:', error);
+    return NextResponse.json({ 
+      error: 'Failed to submit order', 
+      details: error instanceof Error ? error.message : 'Unknown error' 
+    }, { status: 500 });
   }
-};
+}

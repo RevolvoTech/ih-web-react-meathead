@@ -56,7 +56,7 @@ export default function OrderCTA() {
       // Concatenate area, phase, and address for delivery_address
       const fullAddress = `${formData.area} Phase ${formData.phase}, ${formData.address}`;
 
-      const response = await fetch("/.netlify/functions/submit-order", {
+      const response = await fetch("/api/submit-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -107,7 +107,7 @@ export default function OrderCTA() {
   useEffect(() => {
     const fetchOrderCount = async () => {
       try {
-        const response = await fetch("/.netlify/functions/get-order-count");
+        const response = await fetch("/api/get-order-count");
         const data = await response.json();
         setOrderData({ isSoldOut: data.isSoldOut });
       } catch (error) {

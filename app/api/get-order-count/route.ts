@@ -1,25 +1,14 @@
-import { Handler } from '@netlify/functions';
+import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
+
+export const dynamic = 'force-dynamic';
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
 const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const TOTAL_SLOTS = 50;
 
-export const handler: Handler = async (event) => {
-  // Allow GET requests
-  if (event.httpMethod !== 'GET') {
-    return {
-      statusCode: 405,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=10',
-      },
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    };
-  }
-
+export async function GET() {
   try {
     // Authenticate with Google Sheets API
     const auth = new google.auth.GoogleAuth({
@@ -52,37 +41,27 @@ export const handler: Handler = async (event) => {
     const slotsRemaining = Math.max(0, TOTAL_SLOTS - totalOrders);
     const isSoldOut = slotsRemaining === 0;
 
-    return {
-      statusCode: 200,
+    return NextResponse.json({
+      totalOrders,
+      slotsRemaining,
+      isSoldOut,
+      totalSlots: TOTAL_SLOTS,
+    }, {
       headers: {
-        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=10',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=10', // Cache for 10 seconds
-      },
-      body: JSON.stringify({
-        totalOrders,
-        slotsRemaining,
-        isSoldOut,
-        totalSlots: TOTAL_SLOTS,
-      }),
-    };
+      }
+    });
+
   } catch (error) {
     console.error('Error fetching order count:', error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=10',
-      },
-      body: JSON.stringify({
-        error: 'Failed to fetch order count',
-        // Return fallback data
-        totalOrders: 0,
-        slotsRemaining: TOTAL_SLOTS,
-        isSoldOut: false,
-        totalSlots: TOTAL_SLOTS,
-      }),
-    };
+    return NextResponse.json({
+      error: 'Failed to fetch order count',
+      // Return fallback data
+      totalOrders: 0,
+      slotsRemaining: TOTAL_SLOTS,
+      isSoldOut: false,
+      totalSlots: TOTAL_SLOTS,
+    }, { status: 500 });
   }
-};
+}

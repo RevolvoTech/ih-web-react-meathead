@@ -82,7 +82,13 @@ export default function BulkPricing() {
 
               <div className="text-center mb-6">
                 <h3 className="font-heading text-2xl text-white mb-2 uppercase tracking-heading">
-                  {tier.name}
+                  {tier.name === "GAINda 🦏" ? (
+                    <>
+                      <span className="text-meathead-red">GAIN</span>da 🦏
+                    </>
+                  ) : (
+                    tier.name
+                  )}
                 </h3>
                 <p className="text-gray-400 text-sm">{tier.label}</p>
               </div>

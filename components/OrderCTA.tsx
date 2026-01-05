@@ -272,7 +272,7 @@ export default function OrderCTA() {
             </h2>
 
             <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-              Officially occupied by the <span className="text-white font-bold">Gaindas 🦏</span>.
+              Officially occupied by the <span className="text-white font-bold"><span className="text-meathead-red">GAIN</span>das 🦏</span>.
               <br className="mb-4" />
               Don't stay a <span className="text-meathead-red font-bold italic">Chotu Baby 👶🏻</span> for another month. Join the priority list below.
             </p>

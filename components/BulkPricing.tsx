@@ -16,7 +16,7 @@ const pricingTiers = [
     popular: false,
   },
   {
-    name: "Oh Bhai 🤦🏻‍♀️",
+    name: "Oh Bhai 🤦🏻‍♂️",
     qty: 4,
     price: 1200,
     perPatty: 300,

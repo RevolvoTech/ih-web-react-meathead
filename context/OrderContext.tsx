@@ -39,10 +39,20 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const fetchOrderCount = async () => {
     try {
       const response = await fetch("/api/get-order-count");
-      if (!response.ok) throw new Error("Failed to fetch");
+      if (!response.ok) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn("API returned error. This is normal in dev if GOOGLE_SHEET environment variables are missing.");
+          return;
+        }
+        throw new Error("Failed to fetch");
+      }
       const data = await response.json();
       setOrderData(data);
     } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn("Could not fetch order count. Using default values for development.");
+        return;
+      }
       console.error("Error fetching order count:", error);
     } finally {
       setIsLoading(false);

@@ -109,7 +109,7 @@ export default function FoundersNote() {
             className="text-center mb-12"
           >
             <div className="inline-block bg-meathead-red text-white font-heading text-sm md:text-base px-6 py-2 rounded-full mb-6 tracking-heading">
-              Oh bhai 🤦🏻‍♀️ - YOU MISSED THE SLOTS
+              Oh bhai 🤦🏻‍♂️ - YOU MISSED THE SLOTS
             </div>
             <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading text-white">
               BATCH 01 <span className="text-meathead-red">(50/50)</span> IS OCCUPIED

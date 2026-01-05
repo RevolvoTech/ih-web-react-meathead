@@ -9,7 +9,7 @@ const DELIVERY_CHARGE = 100;
 
 const packages = [
   { name: "Chotu Baby 👶🏻", qty: 1, price: 350 },
-  { name: "Oh Bhai 🤦🏻‍♀️", qty: 4, price: 1200 },
+  { name: "Oh Bhai 🤦🏻‍♂️", qty: 4, price: 1200 },
   { name: "GAINda 🦏", qty: 12, price: 3300 },
 ];
 
@@ -99,7 +99,7 @@ export default function OrderCTA() {
       setFormData({
         name: "",
         phone: "",
-        package: "Oh Bhai 🤦🏻‍♀️",
+        package: "Oh Bhai 🤦🏻‍♂️",
         address: "",
         addon: "Original",
         location: "",
@@ -418,7 +418,7 @@ export default function OrderCTA() {
                 <option value="Original" className="bg-meathead-charcoal text-white">Original</option>
                 <option value="Sea Salt" className="bg-meathead-charcoal text-white">Sea Salt</option>
                 <option value="Spiced" className="bg-meathead-charcoal text-white">Spiced</option>
-                {formData.package === "Oh Bhai 🤦🏻‍♀️" && (
+                {formData.package === "Oh Bhai 🤦🏻‍♂️" && (
                   <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (2 Sea Salt / 2 Spiced)</option>
                 )}
                 {formData.package === "GAINda 🦏" && (
@@ -435,7 +435,7 @@ export default function OrderCTA() {
                   : formData.addon === "Spiced"
                   ? "Our custom spice blend finish."
                   : formData.addon === "Hybrid"
-                  ? formData.package === "Oh Bhai 🤦🏻‍♀️"
+                  ? formData.package === "Oh Bhai 🤦🏻‍♂️"
                     ? "The Hybrid: 2 Sea Salt / 2 Spiced."
                     : "The Hybrid: 6 Sea Salt / 6 Spiced."
                   : "Choose your seasoning preference"}

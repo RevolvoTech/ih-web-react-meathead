@@ -78,7 +78,33 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, message: 'Order submitted successfully' }, {
+    // 4. Get fresh count after insertion to return to client
+    const freshResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Orders!A:F',
+    });
+
+    const freshRows = freshResponse.data.values || [];
+    const freshBatch01Orders = freshRows.slice(1).filter((row) => {
+      const batchNumber = row[4];
+      const status = row[5];
+      return batchNumber === 'BATCH 01' && status !== 'cancelled';
+    });
+
+    const totalOrders = freshBatch01Orders.length;
+    const slotsRemaining = Math.max(0, TOTAL_SLOTS - totalOrders);
+    const isSoldOut = slotsRemaining === 0;
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Order submitted successfully',
+      orderCount: {
+        totalOrders,
+        slotsRemaining,
+        isSoldOut,
+        totalSlots: TOTAL_SLOTS,
+      }
+    }, {
       headers: {
         'Access-Control-Allow-Origin': '*',
       }

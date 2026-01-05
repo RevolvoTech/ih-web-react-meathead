@@ -17,7 +17,7 @@ export default function OrderCTA() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
-  const { orderData, refreshOrderCount, markAsSoldOut } = useOrder();
+  const { orderData, refreshOrderCount, markAsSoldOut, setOrderData } = useOrder();
   // const [orderData, setOrderData] = useState({ isSoldOut: false }); // Removed local state
 
   const [formData, setFormData] = useState({
@@ -90,6 +90,12 @@ export default function OrderCTA() {
       }
 
       setSubmitStatus("success");
+      
+      // Update with fresh count from the submission response
+      if (data.orderCount) {
+        setOrderData(data.orderCount);
+      }
+      
       setFormData({
         name: "",
         phone: "",
@@ -102,12 +108,6 @@ export default function OrderCTA() {
       });
       setShowMap(false);
       setMapCoords(null);
-
-      setMapCoords(null);
-      setMapCoords(null);
-      
-      // Refresh order count immediately after successful order
-      await refreshOrderCount();
 
       setTimeout(() => setSubmitStatus("idle"), 5000);
     } catch (error) {

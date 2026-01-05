@@ -14,6 +14,7 @@ interface OrderContextType {
   isLoading: boolean;
   refreshOrderCount: () => Promise<void>;
   markAsSoldOut: () => void;
+  setOrderData: (data: OrderData) => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -53,7 +54,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <OrderContext.Provider value={{ orderData, isLoading, refreshOrderCount: fetchOrderCount, markAsSoldOut }}>
+    <OrderContext.Provider value={{ orderData, isLoading, refreshOrderCount: fetchOrderCount, markAsSoldOut, setOrderData }}>
       {children}
     </OrderContext.Provider>
   );

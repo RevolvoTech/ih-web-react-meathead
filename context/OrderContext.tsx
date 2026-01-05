@@ -13,6 +13,7 @@ interface OrderContextType {
   orderData: OrderData;
   isLoading: boolean;
   refreshOrderCount: () => Promise<void>;
+  markAsSoldOut: () => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -25,6 +26,14 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     totalSlots: 50,
   });
   const [isLoading, setIsLoading] = useState(true);
+
+  const markAsSoldOut = () => {
+    setOrderData(prev => ({
+      ...prev,
+      isSoldOut: true,
+      slotsRemaining: 0,
+    }));
+  };
 
   const fetchOrderCount = async () => {
     try {
@@ -44,7 +53,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <OrderContext.Provider value={{ orderData, isLoading, refreshOrderCount: fetchOrderCount }}>
+    <OrderContext.Provider value={{ orderData, isLoading, refreshOrderCount: fetchOrderCount, markAsSoldOut }}>
       {children}
     </OrderContext.Provider>
   );

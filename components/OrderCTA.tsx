@@ -17,7 +17,7 @@ export default function OrderCTA() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
-  const { orderData, refreshOrderCount } = useOrder();
+  const { orderData, refreshOrderCount, markAsSoldOut } = useOrder();
   // const [orderData, setOrderData] = useState({ isSoldOut: false }); // Removed local state
 
   const [formData, setFormData] = useState({
@@ -82,7 +82,7 @@ export default function OrderCTA() {
 
       if (!response.ok) {
         if (response.status === 409 && data.error === 'SOLD_OUT') {
-          await refreshOrderCount();
+          markAsSoldOut();
           alert("Batch 01 just sold out! You are being redirected to the priority list.");
           return;
         }

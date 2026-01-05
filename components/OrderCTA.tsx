@@ -38,6 +38,13 @@ export default function OrderCTA() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate GPS location is captured
+    if (!formData.location) {
+      alert("Please allow location access to continue. We need your GPS coordinates for accurate delivery.");
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus("idle");
 

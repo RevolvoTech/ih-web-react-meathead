@@ -268,13 +268,13 @@ export default function OrderCTA() {
             </motion.div>
 
             <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading">
-              BATCH 01 <span className="text-meathead-red">(100/100 PATTIES)</span> IS OCCUPIED
+              BATCH 01 <span className="text-meathead-red">PRE-ORDERS FULL</span>
             </h2>
 
             <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-              All 100 patties have been claimed.
+              All 100 patties pre-ordered for Friday's launch.
               <br className="mb-4" />
-              Don't miss out again. Join the priority list below.
+              Don't miss the next drop. Join the priority list for instant restock alerts.
             </p>
 
             <motion.button
@@ -290,11 +290,11 @@ export default function OrderCTA() {
             </motion.button>
 
             <p className="text-meathead-red text-sm md:text-base mt-6 font-bold font-data">
-              Priority list gets access <span className="text-white">30 MINUTES BEFORE</span> everyone else
+              Get instant restock alerts + pre-order access <span className="text-white">30 MINUTES BEFORE</span> Instagram
             </p>
 
             <p className="text-gray-500 text-xs mt-4 italic">
-              Next drop: Friday. Be first or be last.
+              Never miss a drop again.
             </p>
           </motion.div>
         </div>
@@ -314,11 +314,11 @@ export default function OrderCTA() {
           className="bg-meathead-gray/80 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-8 md:p-12"
         >
           <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading text-center">
-            READY TO <span className="text-meathead-red">FUEL UP?</span>
+            READY TO <span className="text-meathead-red">PRE-ORDER?</span>
           </h2>
 
           <p className="text-gray-300 text-lg mb-8 text-center max-w-2xl mx-auto">
-            Stop wasting money on processed protein. Pure beef. Pure gains. Pure simplicity.
+            Launching Friday 3pm. Pre-order now. Pure beef. Pure gains. Pure simplicity.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -588,7 +588,7 @@ export default function OrderCTA() {
 
             <div className="bg-meathead-black/50 border border-meathead-red/20 rounded-lg p-4">
               <p className="text-gray-400 text-xs leading-relaxed">
-                By submitting this order, you consent to us contacting you on WhatsApp for order confirmation and delivery updates on delivery day.
+                By submitting this pre-order, you consent to us contacting you on WhatsApp for order confirmation and delivery updates for the Friday 3pm launch.
               </p>
             </div>
 

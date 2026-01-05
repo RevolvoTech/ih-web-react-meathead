@@ -131,9 +131,9 @@ export default function BulkPricing() {
                 <p className="text-gray-500 text-xs mt-1">Freshness requires tight radius</p>
               </div>
               <div>
-                <p className="text-gray-400 mb-1">TIMING</p>
-                <p className="text-white font-bold">Friday 3pm Onwards</p>
-                <p className="text-gray-500 text-xs mt-1">No exceptions</p>
+                <p className="text-gray-400 mb-1">LAUNCH</p>
+                <p className="text-white font-bold">Friday 3pm</p>
+                <p className="text-gray-500 text-xs mt-1">Pre-orders open now</p>
               </div>
               <div>
                 <p className="text-gray-400 mb-1">PAYMENT</p>

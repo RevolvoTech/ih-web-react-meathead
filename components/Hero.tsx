@@ -6,7 +6,7 @@ import { useOrder } from "@/context/OrderContext";
 
 const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
-  return "Yo Meathead! I want to order beef patties for the Friday Drop. Let's go!";
+  return "Yo Meathead! I want to pre-order beef patties for the Friday 3pm launch. Let's go!";
 };
 
 export default function Hero() {
@@ -109,7 +109,7 @@ export default function Hero() {
             onClick={scrollToOrderForm}
             className="bg-meathead-red hover:bg-red-700 text-white font-heading text-xl md:text-2xl lg:text-3xl py-5 px-16 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-meathead-red/50 uppercase tracking-heading"
           >
-            {orderData.isSoldOut ? "JOIN PRIORITY LIST" : "SECURE YOUR BATCH"}
+            {orderData.isSoldOut ? "JOIN PRIORITY LIST" : "PRE-ORDER NOW"}
           </motion.button>
         </motion.div>
 

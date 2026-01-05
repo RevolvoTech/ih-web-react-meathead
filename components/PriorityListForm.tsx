@@ -166,7 +166,7 @@ export default function PriorityListForm() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ type: "success", text: "You're on the priority list for Batch 02!" });
+        setMessage({ type: "success", text: "You're on the priority list! You'll get instant restock alerts and pre-order access 30 minutes before everyone else." });
         setFormData({
           name: "",
           phone: "",
@@ -201,11 +201,11 @@ export default function PriorityListForm() {
           BATCH 01 - SOLD OUT
         </div>
         <h2 className="font-heading text-4xl md:text-5xl mb-4 uppercase tracking-heading">
-          GET PRIORITY ACCESS <span className="text-meathead-red">FOR BATCH 02</span>
+          GET INSTANT UPDATES <span className="text-meathead-red">WHEN WE RESTOCK</span>
         </h2>
         <p className="text-gray-300 text-lg">
-          We drop Batch 02 next Friday. People on this list get the link{" "}
-          <span className="text-meathead-red font-bold">30 minutes before Instagram.</span>
+          Priority list gets pre-order access{" "}
+          <span className="text-meathead-red font-bold">30 minutes before Instagram</span> when we restock.
         </p>
       </div>
 
@@ -492,7 +492,7 @@ export default function PriorityListForm() {
       )}
 
       <p className="text-gray-500 text-sm mt-8 text-center italic">
-        By joining, you agree to receive order notifications via WhatsApp for Batch 02.
+        By joining, you agree to receive instant restock alerts and pre-order notifications via WhatsApp.
       </p>
     </motion.div>
   );

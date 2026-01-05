@@ -13,7 +13,7 @@ export default function StatusBar() {
             <span className="absolute inline-flex h-3 w-3 animate-ping bg-meathead-red rounded-full opacity-75"></span>
             <span className="relative inline-flex h-2 w-2 bg-meathead-red rounded-full"></span>
           </div>
-          <span className="text-gray-400 font-data">BATCH 01 (FRIDAY):</span>
+          <span className="text-gray-400 font-data">LAUNCHING FRIDAY 3PM:</span>
         </div>
         {orderData.isSoldOut ? (
           <span className="font-data font-bold text-meathead-red text-lg uppercase animate-pulse">

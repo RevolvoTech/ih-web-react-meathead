@@ -112,12 +112,12 @@ export default function FoundersNote() {
               YOU MISSED IT
             </div>
             <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading text-white">
-              BATCH 01 <span className="text-meathead-red">(100/100 PATTIES)</span> IS OCCUPIED
+              BATCH 01 <span className="text-meathead-red">PRE-ORDERS FULL</span>
             </h2>
             <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-              All 100 patties have been claimed.
+              All 100 patties pre-ordered for Friday's launch.
               <br />
-              Don't miss out again. Join the priority list below.
+              Don't miss the next drop. Join the priority list for instant restock alerts.
             </p>
             <PriorityListForm />
           </motion.div>
@@ -131,23 +131,23 @@ export default function FoundersNote() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 flex-1">
                 <div className="text-center">
-                  <p className="text-gray-400 text-sm mb-1 font-data">ORDERS OPEN</p>
+                  <p className="text-gray-400 text-sm mb-1 font-data">PRE-ORDERS</p>
                   <p className="font-heading text-xl text-meathead-red uppercase tracking-heading">
-                    NOW
+                    OPEN NOW
                   </p>
                 </div>
                 <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>
                 <div className="text-center">
-                  <p className="text-gray-400 text-sm mb-1 font-data">ORDERS CLOSE</p>
+                  <p className="text-gray-400 text-sm mb-1 font-data">LAUNCH DAY</p>
                   <p className="font-heading text-xl text-white uppercase tracking-heading">
-                    Thursday Midnight
+                    Friday 3pm
                   </p>
                 </div>
                 <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>
                 <div className="text-center">
-                  <p className="text-gray-400 text-sm mb-1 font-data">OR WHEN</p>
+                  <p className="text-gray-400 text-sm mb-1 font-data">PRE-ORDERS CLOSE AT</p>
                   <p className="font-heading text-xl text-meathead-red uppercase tracking-heading">
-                    100 PATTIES HIT
+                    100 PATTIES
                   </p>
                 </div>
               </div>
@@ -168,7 +168,7 @@ export default function FoundersNote() {
               </div>
             </div>
             <p className="text-gray-500 text-xs mt-6 text-center italic">
-              Zero exceptions. First come, first served.
+              Pre-order now. Launch Friday 3pm. First come, first served.
             </p>
           </motion.div>
         )}

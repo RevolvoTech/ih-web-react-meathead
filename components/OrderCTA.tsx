@@ -264,7 +264,7 @@ export default function OrderCTA() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="inline-block bg-meathead-red text-white font-heading text-sm md:text-base px-6 py-2 rounded-full mb-6 tracking-heading animate-pulse"
             >
-              Oh bhai 🤦🏻‍♀️ - YOU MISSED THE SLOTS
+              YOU MISSED IT
             </motion.div>
 
             <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading">

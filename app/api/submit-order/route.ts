@@ -4,23 +4,11 @@ import { google } from 'googleapis';
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
 const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const TOTAL_SLOTS = 50;
 
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-
-    // Parse location string to extract latitude and longitude
-    // Format: "Lat: 33.5431205, Lng: 73.0989075"
-    let latitude = '';
-    let longitude = '';
-
-    if (data.location) {
-      const latMatch = data.location.match(/Lat:\s*([-\d.]+)/);
-      const lngMatch = data.location.match(/Lng:\s*([-\d.]+)/);
-
-      if (latMatch) latitude = latMatch[1];
-      if (lngMatch) longitude = lngMatch[1];
-    }
 
     // Authenticate with Google Sheets API
     const auth = new google.auth.GoogleAuth({
@@ -33,7 +21,41 @@ export async function POST(request: Request) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // Append row to "Orders" sheet
+    // 1. Check current order count before appending
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Orders!A:F', // Get columns A-F (up to status column)
+    });
+
+    const rows = response.data.values || [];
+    
+    // Filter for BATCH 01 orders that aren't cancelled
+    const batch01Orders = rows.slice(1).filter((row) => {
+      const batchNumber = row[4]; 
+      const status = row[5]; 
+      return batchNumber === 'BATCH 01' && status !== 'cancelled';
+    });
+
+    if (batch01Orders.length >= TOTAL_SLOTS) {
+      return NextResponse.json({ 
+        error: 'SOLD_OUT', 
+        message: 'Batch 01 is fully booked. Please join the priority list.' 
+      }, { status: 409 });
+    }
+
+    // 2. Parse location string
+    let latitude = '';
+    let longitude = '';
+
+    if (data.location) {
+      const latMatch = data.location.match(/Lat:\s*([-\d.]+)/);
+      const lngMatch = data.location.match(/Lng:\s*([-\d.]+)/);
+
+      if (latMatch) latitude = latMatch[1];
+      if (lngMatch) longitude = lngMatch[1];
+    }
+
+    // 3. Append row to "Orders" sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
       range: 'Orders!A:L',

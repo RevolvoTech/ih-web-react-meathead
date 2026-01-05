@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { useOrder } from "@/context/OrderContext";
 
 const DELIVERY_CHARGE = 100;
 
@@ -16,7 +17,8 @@ export default function OrderCTA() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
-  const [orderData, setOrderData] = useState({ isSoldOut: false });
+  const { orderData, refreshOrderCount } = useOrder();
+  // const [orderData, setOrderData] = useState({ isSoldOut: false }); // Removed local state
 
   const [formData, setFormData] = useState({
     name: "",
@@ -76,8 +78,15 @@ export default function OrderCTA() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Submission failed');
+        if (response.status === 409 && data.error === 'SOLD_OUT') {
+          await refreshOrderCount();
+          alert("Batch 01 just sold out! You are being redirected to the priority list.");
+          return;
+        }
+        throw new Error(data.error || 'Submission failed');
       }
 
       setSubmitStatus("success");
@@ -95,9 +104,10 @@ export default function OrderCTA() {
       setMapCoords(null);
 
       setMapCoords(null);
+      setMapCoords(null);
       
       // Refresh order count immediately after successful order
-      fetchOrderCount();
+      await refreshOrderCount();
 
       setTimeout(() => setSubmitStatus("idle"), 5000);
     } catch (error) {
@@ -108,6 +118,8 @@ export default function OrderCTA() {
     }
   };
 
+  // Fetch order count handled by context
+  /*
   const fetchOrderCount = async () => {
     try {
       const response = await fetch("/api/get-order-count");
@@ -122,6 +134,7 @@ export default function OrderCTA() {
   useEffect(() => {
     fetchOrderCount();
   }, []);
+  */
 
   // Initialize map when coords are set
   useEffect(() => {

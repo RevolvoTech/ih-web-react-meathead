@@ -1,31 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useOrder } from "@/context/OrderContext";
 
 export default function StatusBar() {
-  const [orderData, setOrderData] = useState({
-    slotsRemaining: 50,
-    isSoldOut: false,
-  });
-
-  useEffect(() => {
-    const fetchOrderCount = async () => {
-      try {
-        const response = await fetch("/api/get-order-count");
-        const data = await response.json();
-        setOrderData({
-          slotsRemaining: data.slotsRemaining,
-          isSoldOut: data.isSoldOut,
-        });
-      } catch (error) {
-        console.error("Error fetching order count:", error);
-        // Keep fallback values on error
-      }
-    };
-
-    fetchOrderCount();
-    fetchOrderCount();
-  }, []);
+  const { orderData } = useOrder();
 
   return (
     <div className="bg-meathead-charcoal border-b border-meathead-red/30 py-3 px-4 sticky top-0 z-50">

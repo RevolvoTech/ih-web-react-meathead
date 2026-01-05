@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
+import { OrderProvider } from "@/context/OrderContext";
 
 const anton = Anton({
   weight: "400",
@@ -45,7 +46,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${anton.variable} ${spaceGrotesk.variable} ${inter.variable} font-inter antialiased`}>
-        {children}
+        <OrderProvider>
+          {children}
+        </OrderProvider>
       </body>
     </html>
   );

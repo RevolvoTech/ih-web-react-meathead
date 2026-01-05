@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useOrder } from "@/context/OrderContext";
 
 const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
@@ -10,26 +10,7 @@ const getWhatsAppMessage = () => {
 };
 
 export default function Hero() {
-  const [orderData, setOrderData] = useState({ isSoldOut: false });
-
-  // Fetch order count to check if sold out
-  useEffect(() => {
-    const fetchOrderCount = async () => {
-      try {
-        const response = await fetch("/.netlify/functions/get-order-count");
-        const data = await response.json();
-        setOrderData({ isSoldOut: data.isSoldOut });
-      } catch (error) {
-        console.error("Error fetching order count:", error);
-        // Keep fallback value on error
-      }
-    };
-
-    fetchOrderCount();
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchOrderCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  const { orderData } = useOrder();
 
   const scrollToOrderForm = () => {
     const orderSection = document.getElementById("order");

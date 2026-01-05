@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         meathead: {
-          red: "#C41E3A",
+          red: "#D2001B",
           black: "#0A0A0A",
           charcoal: "#1A1A1A",
           gray: "#2A2A2A",

@@ -53,6 +53,9 @@ export default function OrderCTA() {
     try {
       const selectedPkg = packages.find(p => p.name === formData.package);
 
+      // Concatenate area, phase, and address for delivery_address
+      const fullAddress = `${formData.area} Phase ${formData.phase}, ${formData.address}`;
+
       const response = await fetch("/.netlify/functions/submit-order", {
         method: "POST",
         headers: {
@@ -66,7 +69,7 @@ export default function OrderCTA() {
           batch_number: "BATCH 01",
           status: "pending",
           customer_name: formData.name,
-          delivery_address: formData.address,
+          delivery_address: fullAddress,
           location: formData.location,
           total_amount: selectedPkg ? selectedPkg.price + DELIVERY_CHARGE : 0,
           addon: formData.addon,

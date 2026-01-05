@@ -142,6 +142,9 @@ export default function PriorityListForm() {
     try {
       const selectedPkg = packages.find(p => p.name === formData.package);
 
+      // Concatenate area, phase, and address for delivery_address
+      const fullAddress = `${formData.area} Phase ${formData.phase}, ${formData.address}`;
+
       const response = await fetch("/.netlify/functions/submit-priority-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -153,7 +156,7 @@ export default function PriorityListForm() {
           batch_number: "BATCH 02",
           status: "priority_list",
           customer_name: formData.name,
-          delivery_address: formData.address,
+          delivery_address: fullAddress,
           location: formData.location,
           total_amount: selectedPkg ? selectedPkg.price + DELIVERY_CHARGE : 0,
           addon: formData.addon,

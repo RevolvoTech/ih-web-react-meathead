@@ -24,9 +24,7 @@ export default function StatusBar() {
     };
 
     fetchOrderCount();
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchOrderCount, 30000);
-    return () => clearInterval(interval);
+    fetchOrderCount();
   }, []);
 
   return (

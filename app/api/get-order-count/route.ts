@@ -48,7 +48,7 @@ export async function GET() {
       totalSlots: TOTAL_SLOTS,
     }, {
       headers: {
-        'Cache-Control': 'public, max-age=10',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
         'Access-Control-Allow-Origin': '*',
       }
     });

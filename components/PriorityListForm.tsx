@@ -143,7 +143,7 @@ export default function PriorityListForm() {
       const selectedPkg = packages.find(p => p.name === formData.package);
 
       // Concatenate area, phase, and address for delivery_address
-      const fullAddress = `${formData.area} Phase ${formData.phase}, ${formData.address}`;
+      const fullAddress = `${formData.address}, ${formData.area} Phase ${formData.phase}`;
 
       const response = await fetch("/api/submit-priority-list", {
         method: "POST",

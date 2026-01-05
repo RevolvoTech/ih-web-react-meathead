@@ -54,7 +54,7 @@ export default function OrderCTA() {
       const selectedPkg = packages.find(p => p.name === formData.package);
 
       // Concatenate area, phase, and address for delivery_address
-      const fullAddress = `${formData.area} Phase ${formData.phase}, ${formData.address}`;
+      const fullAddress = `${formData.address}, ${formData.area} Phase ${formData.phase}`;
 
       const response = await fetch("/api/submit-order", {
         method: "POST",
@@ -94,6 +94,11 @@ export default function OrderCTA() {
       setShowMap(false);
       setMapCoords(null);
 
+      setMapCoords(null);
+      
+      // Refresh order count immediately after successful order
+      fetchOrderCount();
+
       setTimeout(() => setSubmitStatus("idle"), 5000);
     } catch (error) {
       setSubmitStatus("error");
@@ -103,23 +108,19 @@ export default function OrderCTA() {
     }
   };
 
+  const fetchOrderCount = async () => {
+    try {
+      const response = await fetch("/api/get-order-count");
+      const data = await response.json();
+      setOrderData({ isSoldOut: data.isSoldOut });
+    } catch (error) {
+      console.error("Error fetching order count:", error);
+    }
+  };
+
   // Fetch order count to check if sold out
   useEffect(() => {
-    const fetchOrderCount = async () => {
-      try {
-        const response = await fetch("/api/get-order-count");
-        const data = await response.json();
-        setOrderData({ isSoldOut: data.isSoldOut });
-      } catch (error) {
-        console.error("Error fetching order count:", error);
-        // Keep fallback value on error
-      }
-    };
-
     fetchOrderCount();
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchOrderCount, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   // Initialize map when coords are set

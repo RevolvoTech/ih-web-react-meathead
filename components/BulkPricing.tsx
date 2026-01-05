@@ -8,27 +8,27 @@ const DELIVERY_CHARGE = 100;
 
 const pricingTiers = [
   {
-    name: "SINGLE",
-    patties: 1,
+    name: "Chotu Baby 👶🏻",
+    qty: 1,
     price: 350,
     perPatty: 350,
-    label: "Try it",
+    label: "Dudh Chhod De",
     popular: false,
   },
   {
-    name: "WEEKLY FUEL",
-    patties: 4,
+    name: "Oh Bhai 🤦🏻‍♀️",
+    qty: 4,
     price: 1200,
     perPatty: 300,
-    label: "Most Popular",
+    label: "Bhai Ap Serious Hogae",
     popular: true,
   },
   {
-    name: "BULK PREP",
-    patties: 12,
+    name: "GAINda 🦏",
+    qty: 12,
     price: 3300,
     perPatty: 275,
-    label: "Meal Prep King",
+    label: "Oye Hoye, Bautistay",
     popular: false,
   },
 ];
@@ -75,7 +75,7 @@ export default function BulkPricing() {
               {tier.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <span className="bg-meathead-red text-white font-heading text-sm px-4 py-1 rounded-full tracking-heading">
-                    {tier.label}
+                    MOST POPULAR
                   </span>
                 </div>
               )}
@@ -84,7 +84,7 @@ export default function BulkPricing() {
                 <h3 className="font-heading text-2xl text-white mb-2 uppercase tracking-heading">
                   {tier.name}
                 </h3>
-                <p className="text-gray-400 text-sm">{!tier.popular && tier.label}</p>
+                <p className="text-gray-400 text-sm">{tier.label}</p>
               </div>
 
               <div className="text-center mb-6">
@@ -95,7 +95,7 @@ export default function BulkPricing() {
                   +₨{DELIVERY_CHARGE} delivery
                 </p>
                 <p className="text-gray-400">
-                  {tier.patties} {tier.patties === 1 ? "Patty" : "Patties"}
+                  {tier.qty} {tier.qty === 1 ? "Patty" : "Patties"}
                 </p>
                 <p className="text-meathead-red font-bold text-sm mt-2">
                   ₨{tier.perPatty} per patty

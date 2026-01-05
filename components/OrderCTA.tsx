@@ -8,9 +8,9 @@ import { useOrder } from "@/context/OrderContext";
 const DELIVERY_CHARGE = 100;
 
 const packages = [
-  { name: "SINGLE", qty: 1, price: 350 },
-  { name: "WEEKLY FUEL", qty: 4, price: 1200 },
-  { name: "BULK PREP", qty: 12, price: 3300 },
+  { name: "Chotu Baby 👶🏻", qty: 1, price: 350 },
+  { name: "Oh Bhai 🤦🏻‍♀️", qty: 4, price: 1200 },
+  { name: "GAINda 🦏", qty: 12, price: 3300 },
 ];
 
 export default function OrderCTA() {
@@ -23,7 +23,7 @@ export default function OrderCTA() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    package: "WEEKLY FUEL",
+    package: "OH BHAI",
     address: "",
     addon: "Original",
     location: "",
@@ -99,7 +99,7 @@ export default function OrderCTA() {
       setFormData({
         name: "",
         phone: "",
-        package: "WEEKLY FUEL",
+        package: "Oh Bhai 🤦🏻‍♀️",
         address: "",
         addon: "Original",
         location: "",
@@ -257,22 +257,24 @@ export default function OrderCTA() {
             transition={{ duration: 0.6 }}
             className="bg-meathead-gray/90 backdrop-blur-sm border-2 border-meathead-red rounded-2xl p-12 md:p-16 relative"
           >
-            {/* SOLD OUT Badge */}
+            {/* Humorous SOLD OUT Header */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="inline-block bg-meathead-red text-white font-heading text-sm md:text-base px-6 py-2 rounded-full mb-6 tracking-heading animate-pulse"
             >
-              🔥 BATCH 01 - SOLD OUT IN HOURS
+              Oh bhai 🤦🏻‍♀️ - YOU MISSED THE SLOTS
             </motion.div>
 
             <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading">
-              YOU <span className="text-meathead-red">MISSED OUT</span>
+              BATCH 01 <span className="text-meathead-red">(50/50)</span> IS OCCUPIED
             </h2>
 
-            <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-              All 50 slots gone. Don't let it happen again.
+            <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
+              Officially occupied by the <span className="text-white font-bold">Gaindas 🦏</span>.
+              <br className="mb-4" />
+              Don't stay a <span className="text-meathead-red font-bold italic">Chotu Baby 👶🏻</span> for another month. Join the priority list below.
             </p>
 
             <motion.button
@@ -369,7 +371,7 @@ export default function OrderCTA() {
                   setFormData({
                     ...formData,
                     package: newPackage,
-                    addon: newPackage === "SINGLE" && formData.addon === "Hybrid" ? "Original" : formData.addon
+                    addon: newPackage === "Chotu Baby 👶🏻" && formData.addon === "Hybrid" ? "Original" : formData.addon
                   });
                 }}
                 className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors appearance-none cursor-pointer"
@@ -416,15 +418,15 @@ export default function OrderCTA() {
                 <option value="Original" className="bg-meathead-charcoal text-white">Original</option>
                 <option value="Sea Salt" className="bg-meathead-charcoal text-white">Sea Salt</option>
                 <option value="Spiced" className="bg-meathead-charcoal text-white">Spiced</option>
-                {formData.package === "WEEKLY FUEL" && (
+                {formData.package === "Oh Bhai 🤦🏻‍♀️" && (
                   <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (2 Sea Salt / 2 Spiced)</option>
                 )}
-                {formData.package === "BULK PREP" && (
+                {formData.package === "GAINda 🦏" && (
                   <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (6 Sea Salt / 6 Spiced)</option>
                 )}
               </select>
               <p className="text-gray-500 text-xs mt-2">
-                {formData.package === "SINGLE"
+                {formData.package === "Chotu Baby 👶🏻"
                   ? "Hybrid only available for packs of 4 and 12"
                   : formData.addon === "Original"
                   ? "No seasoning (Just the beef)."
@@ -433,7 +435,7 @@ export default function OrderCTA() {
                   : formData.addon === "Spiced"
                   ? "Our custom spice blend finish."
                   : formData.addon === "Hybrid"
-                  ? formData.package === "WEEKLY FUEL"
+                  ? formData.package === "Oh Bhai 🤦🏻‍♀️"
                     ? "The Hybrid: 2 Sea Salt / 2 Spiced."
                     : "The Hybrid: 6 Sea Salt / 6 Spiced."
                   : "Choose your seasoning preference"}

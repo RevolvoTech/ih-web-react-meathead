@@ -106,7 +106,19 @@ export default function FoundersNote() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.5 }}
+            className="text-center mb-12"
           >
+            <div className="inline-block bg-meathead-red text-white font-heading text-sm md:text-base px-6 py-2 rounded-full mb-6 tracking-heading">
+              Oh bhai 🤦🏻‍♀️ - YOU MISSED THE SLOTS
+            </div>
+            <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading text-white">
+              BATCH 01 <span className="text-meathead-red">(50/50)</span> IS OCCUPIED
+            </h2>
+            <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
+              Officially occupied by the <span className="text-white font-bold">Gaindas 🦏</span>.
+              <br />
+              Don't stay a <span className="text-meathead-red font-bold italic">Chotu Baby 👶🏻</span> for another month. Join the priority list below.
+            </p>
             <PriorityListForm />
           </motion.div>
         ) : (

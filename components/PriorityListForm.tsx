@@ -6,16 +6,16 @@ import { useState, useRef, useEffect } from "react";
 const DELIVERY_CHARGE = 100;
 
 const packages = [
-  { name: "SINGLE", qty: 1, price: 350 },
-  { name: "WEEKLY FUEL", qty: 4, price: 1200 },
-  { name: "BULK PREP", qty: 12, price: 3300 },
+  { name: "Chotu Baby 👶🏻", qty: 1, price: 350 },
+  { name: "Oh Bhai 🤦🏻‍♀️", qty: 4, price: 1200 },
+  { name: "GAINda 🦏", qty: 12, price: 3300 },
 ];
 
 export default function PriorityListForm() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    package: "WEEKLY FUEL",
+    package: "Oh Bhai 🤦🏻‍♀️",
     address: "",
     addon: "Original",
     location: "",
@@ -259,7 +259,7 @@ export default function PriorityListForm() {
               setFormData({
                 ...formData,
                 package: newPackage,
-                addon: newPackage === "SINGLE" && formData.addon === "Hybrid" ? "Original" : formData.addon
+                addon: newPackage === "Chotu Baby 👶🏻" && formData.addon === "Hybrid" ? "Original" : formData.addon
               });
             }}
             className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors appearance-none cursor-pointer"
@@ -306,15 +306,15 @@ export default function PriorityListForm() {
             <option value="Original" className="bg-meathead-charcoal text-white">Original</option>
             <option value="Sea Salt" className="bg-meathead-charcoal text-white">Sea Salt</option>
             <option value="Spiced" className="bg-meathead-charcoal text-white">Spiced</option>
-            {formData.package === "WEEKLY FUEL" && (
+            {formData.package === "Oh Bhai 🤦🏻‍♀️" && (
               <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (2 Sea Salt / 2 Spiced)</option>
             )}
-            {formData.package === "BULK PREP" && (
+            {formData.package === "GAINda 🦏" && (
               <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (6 Sea Salt / 6 Spiced)</option>
             )}
           </select>
           <p className="text-gray-500 text-xs mt-2">
-            {formData.package === "SINGLE"
+            {formData.package === "Chotu Baby 👶🏻"
               ? "Hybrid only available for packs of 4 and 12"
               : formData.addon === "Original"
               ? "No seasoning (Just the beef)."
@@ -323,7 +323,7 @@ export default function PriorityListForm() {
               : formData.addon === "Spiced"
               ? "Our custom spice blend finish."
               : formData.addon === "Hybrid"
-              ? formData.package === "WEEKLY FUEL"
+              ? formData.package === "Oh Bhai 🤦🏻‍♀️"
                 ? "The Hybrid: 2 Sea Salt / 2 Spiced."
                 : "The Hybrid: 6 Sea Salt / 6 Spiced."
               : "Choose your seasoning preference"}

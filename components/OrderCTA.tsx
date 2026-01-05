@@ -8,9 +8,9 @@ import { useOrder } from "@/context/OrderContext";
 const DELIVERY_CHARGE = 100;
 
 const packages = [
-  { name: "Chotu Baby 👶🏻", qty: 1, price: 350 },
-  { name: "Oh Bhai 🤦🏻‍♂️", qty: 4, price: 1200 },
-  { name: "GAINda 🦏", qty: 12, price: 3300 },
+  { name: "Little Boy", qty: 1, price: 350 },
+  { name: "Double", qty: 2, price: 650 },
+  { name: "Big Man", qty: 4, price: 1200 },
 ];
 
 export default function OrderCTA() {
@@ -23,7 +23,7 @@ export default function OrderCTA() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    package: "OH BHAI",
+    package: "Double",
     address: "",
     addon: "Original",
     location: "",
@@ -99,7 +99,7 @@ export default function OrderCTA() {
       setFormData({
         name: "",
         phone: "",
-        package: "Oh Bhai 🤦🏻‍♂️",
+        package: "Double",
         address: "",
         addon: "Original",
         location: "",
@@ -268,13 +268,13 @@ export default function OrderCTA() {
             </motion.div>
 
             <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading">
-              BATCH 01 <span className="text-meathead-red">(50/50)</span> IS OCCUPIED
+              BATCH 01 <span className="text-meathead-red">(100/100 PATTIES)</span> IS OCCUPIED
             </h2>
 
             <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-              Officially occupied by the <span className="text-white font-bold"><span className="text-meathead-red">GAIN</span>das 🦏</span>.
+              All 100 patties have been claimed.
               <br className="mb-4" />
-              Don't stay a <span className="text-meathead-red font-bold italic">Chotu Baby 👶🏻</span> for another month. Join the priority list below.
+              Don't miss out again. Join the priority list below.
             </p>
 
             <motion.button
@@ -371,7 +371,7 @@ export default function OrderCTA() {
                   setFormData({
                     ...formData,
                     package: newPackage,
-                    addon: newPackage === "Chotu Baby 👶🏻" && formData.addon === "Hybrid" ? "Original" : formData.addon
+                    addon: newPackage === "Little Boy" && formData.addon === "Hybrid" ? "Original" : formData.addon
                   });
                 }}
                 className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-3 text-white focus:border-meathead-red outline-none transition-colors appearance-none cursor-pointer"
@@ -383,11 +383,19 @@ export default function OrderCTA() {
                   paddingRight: '2.5rem',
                 }}
               >
-                {packages.map((pkg) => (
-                  <option key={pkg.name} value={pkg.name} className="bg-meathead-charcoal text-white">
-                    {pkg.name} - {pkg.qty} {pkg.qty === 1 ? 'patty' : 'patties'} (₨{pkg.price + DELIVERY_CHARGE})
-                  </option>
-                ))}
+                {packages.map((pkg) => {
+                  const isAvailable = orderData.pattiesRemaining >= pkg.qty;
+                  return (
+                    <option
+                      key={pkg.name}
+                      value={pkg.name}
+                      className="bg-meathead-charcoal text-white"
+                      disabled={!isAvailable}
+                    >
+                      {pkg.name} - {pkg.qty} {pkg.qty === 1 ? 'patty' : 'patties'} (₨{pkg.price + DELIVERY_CHARGE}){!isAvailable ? ' - SOLD OUT' : ''}
+                    </option>
+                  );
+                })}
               </select>
               <p className="text-gray-500 text-xs mt-2">
                 {(() => {
@@ -418,16 +426,16 @@ export default function OrderCTA() {
                 <option value="Original" className="bg-meathead-charcoal text-white">Original</option>
                 <option value="Sea Salt" className="bg-meathead-charcoal text-white">Sea Salt</option>
                 <option value="Spiced" className="bg-meathead-charcoal text-white">Spiced</option>
-                {formData.package === "Oh Bhai 🤦🏻‍♂️" && (
-                  <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (2 Sea Salt / 2 Spiced)</option>
+                {formData.package === "Double" && (
+                  <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (1 Sea Salt / 1 Spiced)</option>
                 )}
-                {formData.package === "GAINda 🦏" && (
-                  <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (6 Sea Salt / 6 Spiced)</option>
+                {formData.package === "Big Man" && (
+                  <option value="Hybrid" className="bg-meathead-charcoal text-white">Hybrid (2 Sea Salt / 2 Spiced)</option>
                 )}
               </select>
               <p className="text-gray-500 text-xs mt-2">
-                {formData.package === "Chotu Baby 👶🏻"
-                  ? "Hybrid only available for packs of 4 and 12"
+                {formData.package === "Little Boy"
+                  ? "Hybrid only available for packs of 2 and 4"
                   : formData.addon === "Original"
                   ? "No seasoning (Just the beef)."
                   : formData.addon === "Sea Salt"
@@ -435,9 +443,9 @@ export default function OrderCTA() {
                   : formData.addon === "Spiced"
                   ? "Our custom spice blend finish."
                   : formData.addon === "Hybrid"
-                  ? formData.package === "Oh Bhai 🤦🏻‍♂️"
-                    ? "The Hybrid: 2 Sea Salt / 2 Spiced."
-                    : "The Hybrid: 6 Sea Salt / 6 Spiced."
+                  ? formData.package === "Double"
+                    ? "The Hybrid: 1 Sea Salt / 1 Spiced."
+                    : "The Hybrid: 2 Sea Salt / 2 Spiced."
                   : "Choose your seasoning preference"}
               </p>
             </div>

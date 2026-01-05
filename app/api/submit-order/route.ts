@@ -4,7 +4,7 @@ import { google } from 'googleapis';
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
 const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const TOTAL_SLOTS = 50;
+const TOTAL_PATTIES = 100;
 
 export async function POST(request: Request) {
   try {
@@ -21,25 +21,34 @@ export async function POST(request: Request) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // 1. Check current order count before appending
+    // 1. Check current patty count before appending
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
       range: 'Orders!A:F', // Get columns A-F (up to status column)
     });
 
     const rows = response.data.values || [];
-    
+
     // Filter for BATCH 01 orders that aren't cancelled
     const batch01Orders = rows.slice(1).filter((row) => {
-      const batchNumber = row[4]; 
-      const status = row[5]; 
+      const batchNumber = row[4];
+      const status = row[5];
       return batchNumber === 'BATCH 01' && status !== 'cancelled';
     });
 
-    if (batch01Orders.length >= TOTAL_SLOTS) {
-      return NextResponse.json({ 
-        error: 'SOLD_OUT', 
-        message: 'Batch 01 is fully booked. Please join the priority list.' 
+    // Calculate total patties used
+    const pattiesUsed = batch01Orders.reduce((sum, row) => {
+      const quantity = parseInt(row[3]) || 0; // Column D (quantity)
+      return sum + quantity;
+    }, 0);
+
+    const pattiesRemaining = TOTAL_PATTIES - pattiesUsed;
+
+    // Check if there are enough patties remaining for this order
+    if (pattiesRemaining < data.quantity) {
+      return NextResponse.json({
+        error: 'SOLD_OUT',
+        message: `Not enough patties remaining. Only ${pattiesRemaining} patties left.`
       }, { status: 409 });
     }
 
@@ -92,17 +101,25 @@ export async function POST(request: Request) {
     });
 
     const totalOrders = freshBatch01Orders.length;
-    const slotsRemaining = Math.max(0, TOTAL_SLOTS - totalOrders);
-    const isSoldOut = slotsRemaining === 0;
 
-    return NextResponse.json({ 
-      success: true, 
+    // Calculate total patties used
+    const freshPattiesUsed = freshBatch01Orders.reduce((sum, row) => {
+      const quantity = parseInt(row[3]) || 0;
+      return sum + quantity;
+    }, 0);
+
+    const freshPattiesRemaining = Math.max(0, TOTAL_PATTIES - freshPattiesUsed);
+    const isSoldOut = freshPattiesRemaining === 0;
+
+    return NextResponse.json({
+      success: true,
       message: 'Order submitted successfully',
       orderCount: {
         totalOrders,
-        slotsRemaining,
+        pattiesUsed: freshPattiesUsed,
+        pattiesRemaining: freshPattiesRemaining,
         isSoldOut,
-        totalSlots: TOTAL_SLOTS,
+        totalPatties: TOTAL_PATTIES,
       }
     }, {
       headers: {

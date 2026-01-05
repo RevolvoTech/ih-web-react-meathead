@@ -21,8 +21,8 @@ export default function StatusBar() {
           </span>
         ) : (
           <span className="font-data font-bold text-white">
-            <span className="text-meathead-red text-lg">{orderData.slotsRemaining}</span>
-            /50 SLOTS REMAINING
+            <span className="text-meathead-red text-lg">{orderData.pattiesRemaining}</span>
+            /100 PATTIES REMAINING
           </span>
         )}
       </div>

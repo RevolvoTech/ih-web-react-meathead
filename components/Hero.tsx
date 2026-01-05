@@ -91,12 +91,12 @@ export default function Hero() {
             transition={{ delay: 0.5, duration: 0.3, ease: "easeOut" }}
             className="mb-3"
           >
-            <p className="text-gray-400 text-sm mb-2 font-data">Oh Bhai 🤦🏻‍♂️ PACK</p>
+            <p className="text-gray-400 text-sm mb-2 font-data">DOUBLE PACK</p>
             <p className="font-data font-bold text-5xl md:text-6xl text-white mb-1">
-              ₨1,200
+              ₨650
             </p>
             <p className="text-gray-400 text-base font-data">
-              4 Patties | ₨300 each
+              2 Patties | ₨325 each
             </p>
           </motion.div>
 

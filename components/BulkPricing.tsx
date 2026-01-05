@@ -8,27 +8,24 @@ const DELIVERY_CHARGE = 100;
 
 const pricingTiers = [
   {
-    name: "Chotu Baby 👶🏻",
+    name: "Little Boy",
     qty: 1,
     price: 350,
     perPatty: 350,
-    label: "Dudh Chhod De",
     popular: false,
   },
   {
-    name: "Oh Bhai 🤦🏻‍♂️",
-    qty: 4,
-    price: 1200,
-    perPatty: 300,
-    label: "Bhai Ap Serious Hogae",
+    name: "Double",
+    qty: 2,
+    price: 650,
+    perPatty: 325,
     popular: true,
   },
   {
-    name: "GAINda 🦏",
-    qty: 12,
-    price: 3300,
-    perPatty: 275,
-    label: "Oye Hoye, Bautistay",
+    name: "Big Man",
+    qty: 4,
+    price: 1200,
+    perPatty: 300,
     popular: false,
   },
 ];
@@ -82,15 +79,8 @@ export default function BulkPricing() {
 
               <div className="text-center mb-6">
                 <h3 className="font-heading text-2xl text-white mb-2 uppercase tracking-heading">
-                  {tier.name === "GAINda 🦏" ? (
-                    <>
-                      <span className="text-meathead-red">GAIN</span>da 🦏
-                    </>
-                  ) : (
-                    tier.name
-                  )}
+                  {tier.name}
                 </h3>
-                <p className="text-gray-400 text-sm">{tier.label}</p>
               </div>
 
               <div className="text-center mb-6">

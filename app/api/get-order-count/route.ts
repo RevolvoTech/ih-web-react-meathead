@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
 const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const TOTAL_SLOTS = 50;
+const TOTAL_PATTIES = 100;
 
 export async function GET() {
   try {
@@ -38,14 +38,22 @@ export async function GET() {
     });
 
     const totalOrders = batch01Orders.length;
-    const slotsRemaining = Math.max(0, TOTAL_SLOTS - totalOrders);
-    const isSoldOut = slotsRemaining === 0;
+
+    // Calculate total patties used by summing quantities
+    const pattiesUsed = batch01Orders.reduce((sum, row) => {
+      const quantity = parseInt(row[3]) || 0; // Column D (quantity)
+      return sum + quantity;
+    }, 0);
+
+    const pattiesRemaining = Math.max(0, TOTAL_PATTIES - pattiesUsed);
+    const isSoldOut = pattiesRemaining === 0;
 
     return NextResponse.json({
       totalOrders,
-      slotsRemaining,
+      pattiesUsed,
+      pattiesRemaining,
       isSoldOut,
-      totalSlots: TOTAL_SLOTS,
+      totalPatties: TOTAL_PATTIES,
     }, {
       headers: {
         'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=300',
@@ -59,9 +67,10 @@ export async function GET() {
       error: 'Failed to fetch order count',
       // Return fallback data
       totalOrders: 0,
-      slotsRemaining: TOTAL_SLOTS,
+      pattiesUsed: 0,
+      pattiesRemaining: TOTAL_PATTIES,
       isSoldOut: false,
-      totalSlots: TOTAL_SLOTS,
+      totalPatties: TOTAL_PATTIES,
     }, { status: 500 });
   }
 }

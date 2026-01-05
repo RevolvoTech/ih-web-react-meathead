@@ -109,15 +109,15 @@ export default function FoundersNote() {
             className="text-center mb-12"
           >
             <div className="inline-block bg-meathead-red text-white font-heading text-sm md:text-base px-6 py-2 rounded-full mb-6 tracking-heading">
-              Oh bhai 🤦🏻‍♂️ - YOU MISSED THE SLOTS
+              YOU MISSED IT
             </div>
             <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading text-white">
-              BATCH 01 <span className="text-meathead-red">(50/50)</span> IS OCCUPIED
+              BATCH 01 <span className="text-meathead-red">(100/100 PATTIES)</span> IS OCCUPIED
             </h2>
             <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-              Officially occupied by the <span className="text-white font-bold"><span className="text-meathead-red">GAIN</span>das 🦏</span>.
+              All 100 patties have been claimed.
               <br />
-              Don't stay a <span className="text-meathead-red font-bold italic">Chotu Baby 👶🏻</span> for another month. Join the priority list below.
+              Don't miss out again. Join the priority list below.
             </p>
             <PriorityListForm />
           </motion.div>
@@ -147,7 +147,7 @@ export default function FoundersNote() {
                 <div className="text-center">
                   <p className="text-gray-400 text-sm mb-1 font-data">OR WHEN</p>
                   <p className="font-heading text-xl text-meathead-red uppercase tracking-heading">
-                    50 SLOTS HIT
+                    100 PATTIES HIT
                   </p>
                 </div>
               </div>
@@ -160,10 +160,10 @@ export default function FoundersNote() {
                 <div className="text-left">
                   <p className="text-gray-400 text-xs uppercase tracking-wider font-data">BATCH 01</p>
                   <p className="font-data font-bold text-2xl text-white">
-                    <span className="text-meathead-red">{orderData.slotsRemaining}</span>
-                    /50
+                    <span className="text-meathead-red">{orderData.pattiesRemaining}</span>
+                    /100
                   </p>
-                  <p className="text-gray-400 text-xs font-data">Slots Remaining</p>
+                  <p className="text-gray-400 text-xs font-data">Patties Remaining</p>
                 </div>
               </div>
             </div>

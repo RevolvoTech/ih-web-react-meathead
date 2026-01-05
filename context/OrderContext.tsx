@@ -4,9 +4,10 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 interface OrderData {
   totalOrders: number;
-  slotsRemaining: number;
+  pattiesUsed: number;
+  pattiesRemaining: number;
   isSoldOut: boolean;
-  totalSlots: number;
+  totalPatties: number;
 }
 
 interface OrderContextType {
@@ -22,9 +23,10 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 export function OrderProvider({ children }: { children: ReactNode }) {
   const [orderData, setOrderData] = useState<OrderData>({
     totalOrders: 0,
-    slotsRemaining: 50,
+    pattiesUsed: 0,
+    pattiesRemaining: 100,
     isSoldOut: false,
-    totalSlots: 50,
+    totalPatties: 100,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,7 +34,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     setOrderData(prev => ({
       ...prev,
       isSoldOut: true,
-      slotsRemaining: 0,
+      pattiesRemaining: 0,
     }));
   };
 

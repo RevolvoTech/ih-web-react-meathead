@@ -67,7 +67,7 @@ export default function Footer() {
                 Bahria 7, 8 | DHA 1, 2
               </p>
               <p className="text-gray-500 text-xs mt-1">
-                Launching Friday 3pm
+                Launching Saturday afternoon
               </p>
             </div>
           </div>

@@ -132,7 +132,7 @@ export default function BulkPricing() {
               </div>
               <div>
                 <p className="text-gray-400 mb-1">LAUNCH</p>
-                <p className="text-white font-bold">Friday 3pm</p>
+                <p className="text-white font-bold">Saturday afternoon</p>
                 <p className="text-gray-500 text-xs mt-1">Pre-orders open now</p>
               </div>
               <div>

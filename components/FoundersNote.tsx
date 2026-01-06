@@ -115,7 +115,7 @@ export default function FoundersNote() {
               BATCH 01 <span className="text-meathead-red">PRE-ORDERS FULL</span>
             </h2>
             <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-              All 100 patties pre-ordered for Friday's launch.
+              All 100 patties pre-ordered for Saturday's launch.
               <br />
               Don't miss the next drop. Join the priority list for instant restock alerts.
             </p>
@@ -140,7 +140,7 @@ export default function FoundersNote() {
                 <div className="text-center">
                   <p className="text-gray-400 text-sm mb-1 font-data">LAUNCH DAY</p>
                   <p className="font-heading text-xl text-white uppercase tracking-heading">
-                    Friday 3pm
+                    Saturday afternoon
                   </p>
                 </div>
                 <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>
@@ -168,7 +168,7 @@ export default function FoundersNote() {
               </div>
             </div>
             <p className="text-gray-500 text-xs mt-6 text-center italic">
-              Pre-order now. Launch Friday 3pm. First come, first served.
+              Pre-order now. Launch Saturday afternoon. First come, first served.
             </p>
           </motion.div>
         )}

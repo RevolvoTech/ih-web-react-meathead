@@ -272,7 +272,7 @@ export default function OrderCTA() {
             </h2>
 
             <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-              All 100 patties pre-ordered for Friday's launch.
+              All 100 patties pre-ordered for Saturday's launch.
               <br className="mb-4" />
               Don't miss the next drop. Join the priority list for instant restock alerts.
             </p>
@@ -318,7 +318,7 @@ export default function OrderCTA() {
           </h2>
 
           <p className="text-gray-300 text-lg mb-8 text-center max-w-2xl mx-auto">
-            Launching Friday 3pm. Pre-order now. Pure beef. Pure gains. Pure simplicity.
+            Launching Saturday afternoon. Pre-order now. Pure beef. Pure gains. Pure simplicity.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -587,7 +587,7 @@ export default function OrderCTA() {
 
             <div className="bg-meathead-black/50 border border-meathead-red/20 rounded-lg p-4">
               <p className="text-gray-400 text-xs leading-relaxed">
-                By submitting this pre-order, you consent to us contacting you on WhatsApp for order confirmation and delivery updates for the Friday 3pm launch.
+                By submitting this pre-order, you consent to us contacting you on WhatsApp for order confirmation and delivery updates for the Saturday afternoon launch.
               </p>
             </div>
 

@@ -6,7 +6,7 @@ import { useOrder } from "@/context/OrderContext";
 
 const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
-  return "Yo Meathead! I want to pre-order beef patties for the Friday 3pm launch. Let's go!";
+  return "Yo Meathead! I want to pre-order beef patties for the Saturday afternoon launch. Let's go!";
 };
 
 export default function Hero() {

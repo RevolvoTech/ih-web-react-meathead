@@ -127,7 +127,7 @@ export default function BulkPricing() {
             <div className="grid md:grid-cols-3 gap-6 text-sm">
               <div>
                 <p className="text-gray-400 mb-1">AREAS</p>
-                <p className="text-white font-bold">Bahria 7, 8 | DHA 1, 2, 4</p>
+                <p className="text-white font-bold">Bahria 7, 8 | DHA 1, 2</p>
                 <p className="text-gray-500 text-xs mt-1">Freshness requires tight radius</p>
               </div>
               <div>

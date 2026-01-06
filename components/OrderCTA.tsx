@@ -503,7 +503,6 @@ export default function OrderCTA() {
                     <>
                       <option value="1" className="bg-meathead-charcoal text-white">Phase 1</option>
                       <option value="2" className="bg-meathead-charcoal text-white">Phase 2</option>
-                      <option value="4" className="bg-meathead-charcoal text-white">Phase 4</option>
                     </>
                   ) : (
                     <>

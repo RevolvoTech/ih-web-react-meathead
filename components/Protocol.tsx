@@ -23,7 +23,7 @@ const protocols = [
   {
     number: "04",
     title: "FRIDAY LAUNCH",
-    description: "Delivered fresh in insulated bags. Launching Friday 3pm. Bahria 7, 8 | DHA 1, 2, 4 only.",
+    description: "Delivered fresh in insulated bags. Launching Friday 3pm. Bahria 7, 8 | DHA 1, 2 only.",
   },
 ];
 

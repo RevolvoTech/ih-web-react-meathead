@@ -64,7 +64,7 @@ export default function Footer() {
             <div className="mt-4 pt-4 border-t border-meathead-gray/30">
               <p className="text-gray-400 text-xs mb-2 font-data">DELIVERY AREAS</p>
               <p className="text-gray-300 text-sm">
-                Bahria 7, 8 | DHA 1, 2, 4
+                Bahria 7, 8 | DHA 1, 2
               </p>
               <p className="text-gray-500 text-xs mt-1">
                 Launching Friday 3pm

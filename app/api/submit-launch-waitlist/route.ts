@@ -9,6 +9,34 @@ import {
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
 const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const REFERRAL_CODE_PATTERN = /MEAT[A-Z0-9]{7}/i;
+
+function extractReferralCode(input: string): string {
+  const raw = (input || '').trim();
+  if (!raw) return '';
+
+  try {
+    const parsedUrl = new URL(raw);
+    const fromUrlParams = (parsedUrl.searchParams.get('ref') || parsedUrl.searchParams.get('') || '').trim().toUpperCase();
+    if (fromUrlParams) return fromUrlParams;
+  } catch {
+    // Not a full URL string, continue with other parsing strategies.
+  }
+
+  if (raw.includes('?')) {
+    const search = raw.slice(raw.indexOf('?') + 1);
+    const fromSearchParams = (new URLSearchParams(search).get('ref') || new URLSearchParams(search).get('') || '').trim().toUpperCase();
+    if (fromSearchParams) return fromSearchParams;
+  }
+
+  const fromRawParams = (new URLSearchParams(raw).get('ref') || new URLSearchParams(raw).get('') || '').trim().toUpperCase();
+  if (fromRawParams) return fromRawParams;
+
+  const codeMatch = raw.match(REFERRAL_CODE_PATTERN);
+  if (codeMatch?.[0]) return codeMatch[0].toUpperCase();
+
+  return raw.toUpperCase();
+}
 
 export async function POST(request: Request) {
   try {
@@ -71,7 +99,9 @@ export async function POST(request: Request) {
     }
 
     const nextBatchNumber = existingWaitlistEntries.length + 1;
-    const submittedReferralCode = (data.referral_code || '').trim().toUpperCase();
+    const bodyReferralCode = extractReferralCode(data.referral_code || '');
+    const refererReferralCode = extractReferralCode(request.headers.get('referer') || '');
+    const submittedReferralCode = bodyReferralCode || refererReferralCode;
 
     // If a valid referral code was used, increment referred_count for that referrer's row.
     if (submittedReferralCode) {

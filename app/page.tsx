@@ -25,7 +25,7 @@ export default function Home() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const refCode = params.get("ref");
+      const refCode = (params.get("ref") || params.get("") || "").trim().toUpperCase();
 
       if (refCode) {
         // Store referral code in localStorage

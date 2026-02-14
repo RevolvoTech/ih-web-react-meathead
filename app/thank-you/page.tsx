@@ -266,7 +266,7 @@ function ThankYouContent() {
             <p className="text-gray-300 text-lg">YOUR FIRST ORDER</p>
           </div>
           <p className="text-gray-300 text-lg mb-6">
-            Share your referral link with 3 gym buddies. When they join the waitlist, you get <span className="text-meathead-red font-bold">25% OFF</span> your first order!
+            For every 3 successful referrals, you get <span className="text-meathead-red font-bold">25% OFF</span> 1 order.
           </p>
           <motion.div
             whileHover={{ scale: 1.02 }}
@@ -274,7 +274,7 @@ function ThankYouContent() {
             className="bg-meathead-charcoal/80 border-2 border-meathead-red/30 rounded-lg p-6 max-w-md mx-auto cursor-pointer hover:border-meathead-red transition-all"
             onClick={() => {
               navigator.clipboard.writeText(referralLink);
-              alert("Link copied! Share with 3 gym buddies to unlock 25% OFF");
+              alert("Link copied! Every 3 successful referrals unlock 25% OFF on 1 order.");
             }}
           >
             <p className="text-gray-400 text-sm mb-3 uppercase tracking-wider font-data text-center">
@@ -293,7 +293,7 @@ function ThankYouContent() {
             </div>
           </motion.div>
           <p className="text-gray-500 text-sm mt-6 italic">
-            Track your referrals - when 3 friends join with your link, we'll WhatsApp you the discount!
+            Every 3 successful referrals unlock another 25% OFF on 1 order.
           </p>
         </motion.div>
 

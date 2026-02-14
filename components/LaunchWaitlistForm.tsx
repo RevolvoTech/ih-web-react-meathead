@@ -85,10 +85,21 @@ export default function LaunchWaitlistForm() {
     setIsSubmitting(true);
     setMessage(null);
 
-    // Get referral code from localStorage
-    const referralCode = typeof window !== "undefined"
-      ? localStorage.getItem("meathead_referral") || ""
-      : "";
+    // Prefer referral code from current URL, then fallback to localStorage.
+    const referralCode = (() => {
+      if (typeof window === "undefined") return "";
+
+      const params = new URLSearchParams(window.location.search);
+      const urlRefCode = (params.get("ref") || params.get("") || "").trim().toUpperCase();
+      const storedRefCode = (localStorage.getItem("meathead_referral") || "").trim().toUpperCase();
+      const resolvedRefCode = urlRefCode || storedRefCode;
+
+      if (urlRefCode) {
+        localStorage.setItem("meathead_referral", urlRefCode);
+      }
+
+      return resolvedRefCode;
+    })();
 
     try {
       const response = await fetch("/api/submit-launch-waitlist", {

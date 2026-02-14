@@ -14,6 +14,7 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     const incomingPhone = normalizePakistaniPhone(data.whatsapp_number || '');
+    const ownReferralCode = getDeterministicReferralCode(incomingPhone);
 
     if (!incomingPhone) {
       return NextResponse.json(
@@ -36,7 +37,7 @@ export async function POST(request: Request) {
     // First, get current data to check for duplicates and determine next batch number
     const existingResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:N', // Includes referral_code and referred_count columns
+      range: 'Orders!A:O', // Includes own_referral_code, referred_count, and referred_by_code
     });
 
     const existingRows = existingResponse.data.values || [];
@@ -82,8 +83,8 @@ export async function POST(request: Request) {
         const referrerPhone = normalizePakistaniPhone(row[1] || '');
         if (!referrerPhone || referrerPhone === incomingPhone) return false;
 
-        const referrerCode = getDeterministicReferralCode(referrerPhone);
-        return referrerCode === submittedReferralCode;
+        const calculatedOwnReferralCode = getDeterministicReferralCode(referrerPhone);
+        return calculatedOwnReferralCode === submittedReferralCode;
       });
 
       if (referrerIndex >= 0) {
@@ -107,7 +108,7 @@ export async function POST(request: Request) {
     // Using: whatsapp_number, customer_name, delivery_address (for area)
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:N',
+      range: 'Orders!A:O',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
@@ -123,8 +124,9 @@ export async function POST(request: Request) {
           '',                       // Column J: longitude (empty for waitlist)
           0,                        // Column K: total_amount (0 for waitlist)
           'N/A',                    // Column L: addon (N/A for waitlist)
-          submittedReferralCode,    // Column M: referral_code used (if any)
+          ownReferralCode,          // Column M: own_referral_code for this row
           0,                        // Column N: referred_count for this row starts at 0
+          submittedReferralCode,    // Column O: referred_by_code used for this signup
         ]],
       },
     });

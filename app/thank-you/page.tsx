@@ -83,6 +83,8 @@ function ThankYouContent() {
   const remainingToLaunch = Math.max(LAUNCH_GOAL - currentWaitlistCount, 0);
   const launchMilestone = getLaunchMilestone(currentWaitlistCount, LAUNCH_GOAL);
   const visualProgress = launchProgress;
+  const launchProgressLabel =
+    launchProgress >= 100 ? "100" : launchProgress.toFixed(1);
 
   let launchStatusTitle = "BUILDING MOMENTUM";
   let launchStatusCopy = "Founding waitlist is live. Share your referral link to accelerate launch.";
@@ -233,8 +235,8 @@ function ThankYouContent() {
                     />
                   </motion.div>
                 </div>
-                <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-white font-bold text-base sm:text-lg font-data whitespace-nowrap">
-                  {Math.round(launchProgress)}%
+                <div className="mt-2 text-center text-white font-bold text-base sm:text-lg font-data whitespace-nowrap">
+                  {launchProgressLabel}%
                 </div>
               </div>
 

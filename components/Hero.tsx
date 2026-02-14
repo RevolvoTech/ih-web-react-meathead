@@ -101,25 +101,24 @@ export default function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            style={{ display: 'inline-block' }}
             animate={{
-              opacity: 1,
-              y: [0, -6, 0],
+              y: [0, -8, 0],
             }}
             transition={{
-              opacity: { delay: 0.6, duration: 0.4 },
               y: {
-                delay: 0.6,
-                duration: 1.6,
+                duration: 1.4,
                 repeat: Infinity,
+                repeatType: "loop",
                 ease: "easeInOut",
               },
             }}
-            className="inline-block"
           >
             <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{
-                scale: [1, 1.05, 1],
+                opacity: 1,
+                scale: 1,
                 boxShadow: [
                   "0 10px 40px rgba(239, 68, 68, 0.5)",
                   "0 15px 50px rgba(239, 68, 68, 0.9)",
@@ -127,18 +126,16 @@ export default function Hero() {
                 ],
               }}
               transition={{
-                scale: {
-                  duration: 1.6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                },
+                opacity: { delay: 0.6, duration: 0.4, ease: [0.34, 1.56, 0.64, 1] },
+                scale: { delay: 0.6, duration: 0.4, ease: [0.34, 1.56, 0.64, 1] },
                 boxShadow: {
-                  duration: 1.6,
+                  duration: 1.4,
                   repeat: Infinity,
+                  repeatType: "loop",
                   ease: "easeInOut",
                 },
               }}
-              whileHover={{ scale: 1.12 }}
+              whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               onClick={scrollToOrderForm}
               className="bg-meathead-red hover:bg-red-700 text-white font-heading text-xl md:text-2xl lg:text-3xl py-5 px-16 rounded-lg transition-all duration-300 transform shadow-2xl hover:shadow-meathead-red/50 uppercase tracking-heading relative overflow-hidden"

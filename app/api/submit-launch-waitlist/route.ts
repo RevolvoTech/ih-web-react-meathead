@@ -20,6 +20,23 @@ export async function POST(request: Request) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
+    // First, get current count to determine next batch number
+    const existingResponse = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Orders!A:F',
+    });
+
+    const existingRows = existingResponse.data.values || [];
+
+    // Filter for Twin City launch waitlist entries (numeric batch_number)
+    const existingWaitlistEntries = existingRows.slice(1).filter((row) => {
+      const orderType = row[2]; // Column C (order_type)
+      const status = row[5]; // Column F (status)
+      return orderType === 'WAITLIST' && status === 'launch_waitlist';
+    });
+
+    const nextBatchNumber = existingWaitlistEntries.length + 1;
+
     // Append row to "Orders" sheet using existing columns
     // Using: whatsapp_number, customer_name, delivery_address (for area)
     await sheets.spreadsheets.values.append({
@@ -32,7 +49,7 @@ export async function POST(request: Request) {
           data.whatsapp_number,     // Column B: whatsapp_number
           'WAITLIST',               // Column C: order_type (using as marker)
           1,                        // Column D: quantity
-          'TWIN_CITY_LAUNCH',       // Column E: batch_number (marker for Twin City launch)
+          nextBatchNumber,          // Column E: batch_number (auto-incrementing number)
           'launch_waitlist',        // Column F: status
           data.customer_name || 'Not provided', // Column G: customer_name
           data.area,                // Column H: delivery_address (storing area here)
@@ -44,22 +61,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // Get count of Twin City launch waitlist entries
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SHEET_ID,
-      range: 'Orders!A:F',
-    });
-
-    const rows = response.data.values || [];
-
-    // Filter for Twin City launch waitlist entries
-    const waitlistEntries = rows.slice(1).filter((row) => {
-      const batchNumber = row[4]; // Column E (batch_number)
-      const status = row[5]; // Column F (status)
-      return batchNumber === 'TWIN_CITY_LAUNCH' && status === 'launch_waitlist';
-    });
-
-    const waitlistCount = waitlistEntries.length;
+    const waitlistCount = nextBatchNumber;
 
     return NextResponse.json({
       success: true,

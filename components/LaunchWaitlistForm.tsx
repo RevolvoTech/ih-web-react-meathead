@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const AREAS = [
   // Islamabad
@@ -44,6 +44,11 @@ const AREAS = [
   { value: "Other", label: "Other" },
 ];
 
+interface RecentEntry {
+  name: string;
+  timestamp: string;
+}
+
 export default function LaunchWaitlistForm() {
   const [formData, setFormData] = useState({
     name: "",
@@ -52,6 +57,27 @@ export default function LaunchWaitlistForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [recentEntries, setRecentEntries] = useState<RecentEntry[]>([]);
+
+  // Fetch recent entries on component mount
+  useEffect(() => {
+    fetchRecentEntries();
+    // Poll every 30 seconds to show new registrations
+    const interval = setInterval(fetchRecentEntries, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchRecentEntries = async () => {
+    try {
+      const response = await fetch("/api/get-recent-waitlist");
+      const data = await response.json();
+      if (data.recentEntries) {
+        setRecentEntries(data.recentEntries);
+      }
+    } catch (error) {
+      console.error("Failed to fetch recent entries:", error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +109,8 @@ export default function LaunchWaitlistForm() {
           phone: "",
           area: "F-7",
         });
+        // Refresh recent entries after successful submission
+        setTimeout(fetchRecentEntries, 1000);
       } else {
         setMessage({ type: "error", text: data.error || "Failed to submit" });
       }
@@ -113,6 +141,58 @@ export default function LaunchWaitlistForm() {
           <span className="text-meathead-red font-bold">Instant WhatsApp notifications.</span>
         </p>
       </div>
+
+      {/* Recent Registrations Feed */}
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        className="mb-6 bg-meathead-charcoal/50 border border-meathead-red/30 rounded-lg p-4 max-h-48 overflow-y-auto"
+      >
+        <div className="text-gray-400 text-xs uppercase tracking-wider mb-3 font-data">
+          🔥 Recent Sign-ups
+        </div>
+
+        {recentEntries.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-6"
+          >
+            <div className="text-meathead-red font-heading text-lg mb-2">
+              BE THE FIRST ON THIS LIST
+            </div>
+            <p className="text-gray-500 text-sm">
+              Join the waitlist and see your name here!
+            </p>
+          </motion.div>
+        ) : (
+          <div className="space-y-2">
+            <AnimatePresence mode="popLayout">
+              {recentEntries.slice(0, 5).map((entry, index) => (
+                <motion.div
+                  key={`${entry.timestamp}-${index}`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <div className="w-2 h-2 bg-meathead-red rounded-full animate-pulse" />
+                  <span className="text-white font-medium">{entry.name}</span>
+                  <span className="text-gray-500">has registered</span>
+                  <span className="text-gray-600 text-xs ml-auto">
+                    {new Date(entry.timestamp).toLocaleTimeString('en-US', {
+                      hour: 'numeric',
+                      minute: '2-digit',
+                      hour12: true
+                    })}
+                  </span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </motion.div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -216,7 +296,31 @@ export default function LaunchWaitlistForm() {
             }}
             className="w-full bg-meathead-red hover:bg-red-700 disabled:bg-gray-600 text-white font-heading text-2xl py-5 rounded-lg transition-all duration-300 uppercase tracking-heading shadow-xl hover:shadow-meathead-red/50 relative overflow-hidden"
           >
-            <span className="relative z-10">{isSubmitting ? "JOINING..." : "NOTIFY ME ON LAUNCH"}</span>
+            <span className="relative z-10 flex items-center justify-center gap-3">
+              {isSubmitting && (
+                <svg
+                  className="animate-spin h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              )}
+              {isSubmitting ? "JOINING..." : "NOTIFY ME ON LAUNCH"}
+            </span>
             {!isSubmitting && (
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"

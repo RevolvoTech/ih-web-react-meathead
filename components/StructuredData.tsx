@@ -1,4 +1,4 @@
-"use client";
+import { faqData } from "@/lib/faqData";
 
 export default function StructuredData() {
   const siteUrl = "https://meatheadpakistan.vercel.app";
@@ -100,7 +100,29 @@ export default function StructuredData() {
     "url": siteUrl,
     "areaServed": ["Islamabad", "Rawalpindi"],
     "priceRange": "PKR 325-650",
-    "paymentAccepted": "Cash, Bank Transfer"
+    "paymentAccepted": "Cash, Bank Transfer",
+    "sameAs": ["https://instagram.com/meatheadpakistan"]
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "MEATHEAD Pakistan",
+    "url": siteUrl,
+    "inLanguage": "en-PK",
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqData.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer,
+      },
+    })),
   };
 
   return (
@@ -121,6 +143,18 @@ export default function StructuredData() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(localBusinessSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema)
         }}
       />
     </>

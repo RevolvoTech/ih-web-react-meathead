@@ -25,11 +25,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MEATHEAD | High-Protein Beef Patties in Islamabad & Rawalpindi",
-  description: "Premium halal beef patties for smash burgers and high-protein meals in Islamabad and Rawalpindi. 24g+ protein per patty, 85/15 ratio, zero fillers.",
+  title: "MEATHEAD | Halal Beef Patties in Islamabad & Rawalpindi",
+  description: "Premium halal beef patties for smash burgers and high-protein meals in Islamabad and Rawalpindi (Twin Cities). 24g+ protein per patty, 85/15 ratio, zero fillers.",
   authors: [{ name: "MEATHEAD Pakistan" }],
   creator: "MEATHEAD",
   publisher: "MEATHEAD",
+  keywords: [
+    "beef patties Islamabad",
+    "beef patties Rawalpindi",
+    "halal beef patties Pakistan",
+    "high protein beef patties",
+    "smash burger patties Islamabad",
+    "Twin Cities beef patties",
+    "MEATHEAD Pakistan",
+    "protein meals Islamabad Rawalpindi",
+  ],
 
   icons: {
     icon: '/images/logo.webp',

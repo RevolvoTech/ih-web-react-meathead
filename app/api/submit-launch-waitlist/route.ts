@@ -9,7 +9,14 @@ import {
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
 const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const REFERRAL_CODE_PATTERN = /MEAT[A-Z0-9]{7}/i;
+const REFERRAL_CODE_EXACT_PATTERN = /^MEAT[A-Z0-9]{7}$/i;
+const REFERRAL_CODE_TOKEN_PATTERN = /\bMEAT[A-Z0-9]{7}\b/i;
+
+function toValidReferralCode(value: string): string {
+  const candidate = (value || '').trim().toUpperCase();
+  if (!candidate) return '';
+  return REFERRAL_CODE_EXACT_PATTERN.test(candidate) ? candidate : '';
+}
 
 function extractReferralCode(input: string): string {
   const raw = (input || '').trim();
@@ -17,25 +24,39 @@ function extractReferralCode(input: string): string {
 
   try {
     const parsedUrl = new URL(raw);
-    const fromUrlParams = (parsedUrl.searchParams.get('ref') || parsedUrl.searchParams.get('') || '').trim().toUpperCase();
+    const fromUrlParams = toValidReferralCode(
+      parsedUrl.searchParams.get('ref') || parsedUrl.searchParams.get('') || ''
+    );
     if (fromUrlParams) return fromUrlParams;
+
+    // URL provided but it doesn't contain a valid referral code.
+    return '';
   } catch {
     // Not a full URL string, continue with other parsing strategies.
   }
 
   if (raw.includes('?')) {
     const search = raw.slice(raw.indexOf('?') + 1);
-    const fromSearchParams = (new URLSearchParams(search).get('ref') || new URLSearchParams(search).get('') || '').trim().toUpperCase();
+    const searchParams = new URLSearchParams(search);
+    const fromSearchParams = toValidReferralCode(
+      searchParams.get('ref') || searchParams.get('') || ''
+    );
     if (fromSearchParams) return fromSearchParams;
   }
 
-  const fromRawParams = (new URLSearchParams(raw).get('ref') || new URLSearchParams(raw).get('') || '').trim().toUpperCase();
+  const rawParams = new URLSearchParams(raw);
+  const fromRawParams = toValidReferralCode(
+    rawParams.get('ref') || rawParams.get('') || ''
+  );
   if (fromRawParams) return fromRawParams;
 
-  const codeMatch = raw.match(REFERRAL_CODE_PATTERN);
-  if (codeMatch?.[0]) return codeMatch[0].toUpperCase();
+  const exactCode = toValidReferralCode(raw);
+  if (exactCode) return exactCode;
 
-  return raw.toUpperCase();
+  const tokenMatch = raw.match(REFERRAL_CODE_TOKEN_PATTERN);
+  if (tokenMatch?.[0]) return tokenMatch[0].toUpperCase();
+
+  return '';
 }
 
 export async function POST(request: Request) {

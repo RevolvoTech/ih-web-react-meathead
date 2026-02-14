@@ -48,5 +48,5 @@ export function getDeterministicReferralCode(phone: string): string {
 }
 
 export function getReferralLink(referralCode: string): string {
-  return `${SITE_ORIGIN}/ref?=${encodeURIComponent(referralCode)}`;
+  return `${SITE_ORIGIN}/ref?ref=${encodeURIComponent(referralCode)}`;
 }

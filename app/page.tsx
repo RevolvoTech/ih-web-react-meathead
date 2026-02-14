@@ -14,10 +14,13 @@ import LaunchWaitlistForm from "@/components/LaunchWaitlistForm";
 import Footer from "@/components/Footer";
 // import WhatsAppButton from "@/components/WhatsAppButton"; // Hidden for launch waitlist phase
 import MobileNav from "@/components/MobileNav";
+import SEOContent from "@/components/SEOContent";
+import FAQ from "@/components/FAQ";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
+      <SEOContent />
       <StatusBar />
       <div id="hero">
         <Hero />
@@ -48,6 +51,9 @@ export default function Home() {
       </div>
       <div id="pricing">
         <BulkPricing />
+      </div>
+      <div id="faq">
+        <FAQ />
       </div>
       <div id="order">
         <section className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">

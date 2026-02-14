@@ -38,7 +38,7 @@ export default function Hero() {
           >
             <Image
               src="/images/logo.webp"
-              alt="Meathead Logo"
+              alt="MEATHEAD Premium Beef Patties Islamabad - High Protein Gym Food Logo Pakistan"
               width={300}
               height={300}
               className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 mx-auto lg:mx-0"
@@ -62,7 +62,7 @@ export default function Hero() {
             transition={{ delay: 0.3, duration: 0.3, ease: "easeOut" }}
             className="text-gray-300 text-lg md:text-xl lg:text-2xl mb-4 max-w-2xl"
           >
-            100% Beef Patty. Cooked & smashed. Seared in tallow. FRESH, never frozen.
+            Premium Beef Patties & Smash Burger Patties in Islamabad. Better than protein powder, meal replacement bars & protein shakes. 100% Beef. Cooked fresh. ZERO fillers.
           </motion.p>
 
           <motion.div
@@ -166,7 +166,7 @@ export default function Hero() {
           <div className="relative rounded-2xl overflow-hidden shadow-2xl">
             <Image
               src="/images/patty.webp"
-              alt="Meathead Premium Beef Patty"
+              alt="Premium 125g beef patty 24g protein MEATHEAD smash burger halal beef Islamabad Rawalpindi Pakistan"
               width={800}
               height={800}
               className="w-full h-auto"

@@ -2,18 +2,20 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function ThankYouPage() {
+function ThankYouContent() {
   const searchParams = useSearchParams();
   const [waitlistPosition, setWaitlistPosition] = useState<number | null>(null);
   const [totalWaitlist, setTotalWaitlist] = useState<number | null>(null);
   const [referralCode, setReferralCode] = useState<string>("");
+  const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
   const area = searchParams.get("area") || "your area";
-  const name = searchParams.get("name") || "there";
+  const name = searchParams.get("name") || "";
   const phone = searchParams.get("phone") || "";
+  const duplicate = searchParams.get("duplicate") === "true";
 
   // Generate deterministic referral code from phone number
   const generateReferralCode = (phoneNumber: string): string => {
@@ -33,6 +35,9 @@ export default function ThankYouPage() {
     // Generate referral code
     const code = generateReferralCode(phone);
     setReferralCode(code);
+
+    // Set duplicate flag from URL
+    setIsDuplicate(duplicate);
 
     // Fetch waitlist count
     const fetchWaitlistCount = async () => {
@@ -131,7 +136,11 @@ export default function ThankYouPage() {
             transition={{ delay: 0.4 }}
             className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-heading"
           >
-            YOU'RE <span className="text-meathead-red">IN!</span>
+            {isDuplicate ? (
+              <>WELCOME <span className="text-meathead-red">BACK!</span></>
+            ) : (
+              <>YOU'RE <span className="text-meathead-red">IN!</span></>
+            )}
           </motion.h1>
 
           <motion.p
@@ -140,37 +149,133 @@ export default function ThankYouPage() {
             transition={{ delay: 0.5 }}
             className="text-gray-300 text-xl md:text-2xl mb-2"
           >
-            Welcome to MEATHEAD, {name}! 💪
+            {isDuplicate ? (
+              <>You're already on the MEATHEAD waitlist{name ? `, ${name}` : ''}! 💪</>
+            ) : (
+              <>Welcome to MEATHEAD{name ? `, ${name}` : ''}! 💪</>
+            )}
           </motion.p>
         </motion.div>
 
-        {/* Waitlist Position Card */}
-        {waitlistPosition && (
+        {/* Progress to 1K Goal - Prominent Display */}
+        {totalWaitlist && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6 }}
-            className="bg-gradient-to-br from-meathead-red/20 to-meathead-red/5 border-2 border-meathead-red rounded-2xl p-8 mb-8 text-center"
+            className="bg-gradient-to-br from-meathead-red/20 to-meathead-red/5 border-2 border-meathead-red rounded-2xl p-8 mb-8"
           >
-            <div className="text-gray-400 text-sm uppercase tracking-wider mb-2 font-data">
-              Your Waitlist Position
+            <div className="text-center mb-6">
+              <h2 className="font-heading text-3xl md:text-5xl mb-2 uppercase tracking-heading">
+                PROGRESS TO <span className="text-meathead-red">LAUNCH</span>
+              </h2>
+              <p className="text-gray-400">
+                We launch when we hit 1,000 signups. Help us get there faster!
+              </p>
             </div>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.8, type: "spring", bounce: 0.6 }}
-              className="font-heading text-7xl md:text-9xl text-meathead-red mb-2"
-            >
-              #{waitlistPosition}
-            </motion.div>
-            <div className="text-gray-300 text-lg">
-              Out of {totalWaitlist} total gym bros on the waitlist
-            </div>
-            <div className="mt-4 text-yellow-400 font-bold">
-              🔥 You'll get priority access when we launch in {area}!
+
+            <div className="max-w-2xl mx-auto">
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-center">
+                  <div className="text-gray-400 text-xs uppercase tracking-wider mb-1 font-data">Your Position</div>
+                  <div className="font-heading text-4xl text-meathead-red">#{waitlistPosition}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-400 text-xs uppercase tracking-wider mb-1 font-data">Total Signups</div>
+                  <div className="font-heading text-4xl text-white">{totalWaitlist}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-400 text-xs uppercase tracking-wider mb-1 font-data">Goal</div>
+                  <div className="font-heading text-4xl text-white">1,000</div>
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="relative">
+                <div className="w-full bg-meathead-black rounded-full h-6 overflow-hidden border-2 border-meathead-red/30">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min((totalWaitlist / 1000) * 100, 100)}%` }}
+                    transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
+                    className="bg-gradient-to-r from-meathead-red to-red-600 h-full rounded-full relative overflow-hidden"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      animate={{
+                        x: ["-200%", "200%"],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                    />
+                  </motion.div>
+                </div>
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-white font-bold text-lg font-data">
+                  {Math.round((totalWaitlist / 1000) * 100)}%
+                </div>
+              </div>
+
+              <div className="mt-4 text-center">
+                <p className="text-gray-400 text-lg">
+                  <span className="text-meathead-red font-bold">{1000 - totalWaitlist}</span> more signups until launch!
+                </p>
+                <p className="text-gray-500 text-sm mt-2">
+                  Share your referral link below to help us launch faster! 🚀
+                </p>
+              </div>
             </div>
           </motion.div>
         )}
+
+        {/* Referral Bonus - MOVED UP */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="bg-gradient-to-br from-meathead-red/20 to-meathead-red/5 border-2 border-meathead-red/50 rounded-2xl p-8 mb-8 text-center"
+        >
+          <div className="text-5xl mb-3">💪</div>
+          <h2 className="font-heading text-3xl md:text-4xl mb-4 uppercase tracking-heading">
+            REFER & <span className="text-meathead-red">EARN</span>
+          </h2>
+          <div className="bg-meathead-red/20 border-2 border-meathead-red rounded-lg p-6 mb-6 inline-block">
+            <p className="text-5xl md:text-6xl font-heading text-meathead-red mb-2">25% OFF</p>
+            <p className="text-gray-300 text-lg">YOUR FIRST ORDER</p>
+          </div>
+          <p className="text-gray-300 text-lg mb-6">
+            Share your referral link with 3 gym buddies. When they join the waitlist, you get <span className="text-meathead-red font-bold">25% OFF</span> your first order!
+          </p>
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-meathead-charcoal/80 border-2 border-meathead-red/30 rounded-lg p-6 max-w-md mx-auto cursor-pointer hover:border-meathead-red transition-all"
+            onClick={() => {
+              const refUrl = `https://meatheadpakistan.vercel.app?ref=${referralCode}`;
+              navigator.clipboard.writeText(refUrl);
+              alert("Link copied! Share with 3 gym buddies to unlock 25% OFF");
+            }}
+          >
+            <p className="text-gray-400 text-sm mb-3 uppercase tracking-wider font-data text-center">
+              Your Referral Link
+            </p>
+            <div className="bg-meathead-black border-2 border-meathead-red/50 rounded-lg p-4 mb-3">
+              <p className="text-meathead-red font-mono text-xs md:text-sm break-all text-center">
+                https://meatheadpakistan.vercel.app?ref={referralCode}
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-white">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span className="font-bold">Click to Copy Link</span>
+            </div>
+          </motion.div>
+          <p className="text-gray-500 text-sm mt-6 italic">
+            Track your referrals - when 3 friends join with your link, we'll WhatsApp you the discount!
+          </p>
+        </motion.div>
 
         {/* What's Next Section */}
         <motion.div
@@ -334,54 +439,6 @@ export default function ThankYouPage() {
           </div>
         </motion.div>
 
-        {/* Referral Bonus */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-          className="bg-gradient-to-br from-meathead-red/20 to-meathead-red/5 border-2 border-meathead-red/50 rounded-2xl p-8 mb-8 text-center"
-        >
-          <div className="text-5xl mb-3">💪</div>
-          <h2 className="font-heading text-3xl md:text-4xl mb-4 uppercase tracking-heading">
-            REFER & <span className="text-meathead-red">EARN</span>
-          </h2>
-          <div className="bg-meathead-red/20 border-2 border-meathead-red rounded-lg p-6 mb-6 inline-block">
-            <p className="text-5xl md:text-6xl font-heading text-meathead-red mb-2">25% OFF</p>
-            <p className="text-gray-300 text-lg">YOUR FIRST ORDER</p>
-          </div>
-          <p className="text-gray-300 text-lg mb-6">
-            Share your referral link with 3 gym buddies. When they join the waitlist, you get <span className="text-meathead-red font-bold">25% OFF</span> your first order!
-          </p>
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="bg-meathead-charcoal/80 border-2 border-meathead-red/30 rounded-lg p-6 max-w-md mx-auto cursor-pointer hover:border-meathead-red transition-all"
-            onClick={() => {
-              const refUrl = `https://meatheadpakistan.vercel.app?ref=${referralCode}`;
-              navigator.clipboard.writeText(refUrl);
-              alert("Link copied! Share with 3 gym buddies to unlock 25% OFF");
-            }}
-          >
-            <p className="text-gray-400 text-sm mb-3 uppercase tracking-wider font-data text-center">
-              Your Referral Link
-            </p>
-            <div className="bg-meathead-black border-2 border-meathead-red/50 rounded-lg p-4 mb-3">
-              <p className="text-meathead-red font-mono text-xs md:text-sm break-all text-center">
-                https://meatheadpakistan.vercel.app?ref={referralCode}
-              </p>
-            </div>
-            <div className="flex items-center justify-center gap-2 text-white">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              <span className="font-bold">Click to Copy Link</span>
-            </div>
-          </motion.div>
-          <p className="text-gray-500 text-sm mt-6 italic">
-            Track your referrals - when 3 friends join with your code, we'll WhatsApp you the discount!
-          </p>
-        </motion.div>
-
         {/* Back to Home Button */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -419,6 +476,26 @@ export default function ThankYouPage() {
         }}
       />
     </main>
+  );
+}
+
+export default function ThankYouPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-meathead-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-meathead-red rounded-full mb-4">
+            <svg className="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <p className="text-white font-heading text-xl">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ThankYouContent />
+    </Suspense>
   );
 }
 

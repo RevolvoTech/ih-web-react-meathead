@@ -20,20 +20,48 @@ export async function POST(request: Request) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // First, get current count to determine next batch number
+    // First, get current data to check for duplicates and determine next batch number
     const existingResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:F',
+      range: 'Orders!A:M', // Extended to include referral_code column
     });
 
     const existingRows = existingResponse.data.values || [];
 
-    // Filter for Twin City launch waitlist entries (numeric batch_number)
+    // Filter for Twin City launch waitlist entries
     const existingWaitlistEntries = existingRows.slice(1).filter((row) => {
       const orderType = row[2]; // Column C (order_type)
       const status = row[5]; // Column F (status)
       return orderType === 'WAITLIST' && status === 'launch_waitlist';
     });
+
+    // Check if phone number already exists in waitlist
+    const normalizePhone = (phone: string) => {
+      // Remove all non-digits and standardize format
+      return phone.replace(/\D/g, '');
+    };
+
+    const incomingPhone = normalizePhone(data.whatsapp_number);
+
+    const duplicateEntry = existingWaitlistEntries.find((row) => {
+      const existingPhone = normalizePhone(row[1] || ''); // Column B (whatsapp_number)
+      return existingPhone === incomingPhone;
+    });
+
+    // If duplicate found, return existing position without creating new entry
+    if (duplicateEntry) {
+      const existingPosition = duplicateEntry[4]; // Column E (batch_number)
+      return NextResponse.json({
+        success: true,
+        message: 'You are already on the waitlist!',
+        waitlistCount: existingPosition,
+        isDuplicate: true,
+      }, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        }
+      });
+    }
 
     const nextBatchNumber = existingWaitlistEntries.length + 1;
 

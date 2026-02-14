@@ -114,6 +114,7 @@ export default function LaunchWaitlistForm() {
           name: formData.name || "there",
           phone: formData.phone,
           position: data.waitlistCount?.toString() || "0",
+          duplicate: data.isDuplicate ? "true" : "false",
         });
         router.push(`/thank-you?${queryParams.toString()}`);
       } else {

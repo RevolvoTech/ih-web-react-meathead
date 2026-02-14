@@ -8,6 +8,7 @@ interface OrderData {
   pattiesRemaining: number;
   isSoldOut: boolean;
   totalPatties: number;
+  waitlistCount?: number;
 }
 
 interface OrderContextType {
@@ -27,6 +28,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     pattiesRemaining: 100,
     isSoldOut: false,
     totalPatties: 100,
+    waitlistCount: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,16 +42,26 @@ export function OrderProvider({ children }: { children: ReactNode }) {
 
   const fetchOrderCount = async () => {
     try {
-      const response = await fetch("/api/get-order-count");
-      if (!response.ok) {
+      const [orderResponse, waitlistResponse] = await Promise.all([
+        fetch("/api/get-order-count"),
+        fetch("/api/get-launch-waitlist-count")
+      ]);
+
+      if (!orderResponse.ok) {
         if (process.env.NODE_ENV === 'development') {
           console.warn("API returned error. This is normal in dev if GOOGLE_SHEET environment variables are missing.");
           return;
         }
         throw new Error("Failed to fetch");
       }
-      const data = await response.json();
-      setOrderData(data);
+
+      const orderData = await orderResponse.json();
+      const waitlistData = waitlistResponse.ok ? await waitlistResponse.json() : { waitlistCount: 0 };
+
+      setOrderData({
+        ...orderData,
+        waitlistCount: waitlistData.waitlistCount || 0
+      });
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.warn("Could not fetch order count. Using default values for development.");

@@ -9,9 +9,10 @@ import CookingGuide from "@/components/CookingGuide";
 import FoundersNote from "@/components/FoundersNote";
 import Reviews from "@/components/Reviews";
 import BulkPricing from "@/components/BulkPricing";
-import OrderCTA from "@/components/OrderCTA";
+// import OrderCTA from "@/components/OrderCTA"; // Hidden - will use for actual launch
+import LaunchWaitlistForm from "@/components/LaunchWaitlistForm";
 import Footer from "@/components/Footer";
-import WhatsAppButton from "@/components/WhatsAppButton";
+// import WhatsAppButton from "@/components/WhatsAppButton"; // Hidden for launch waitlist phase
 import MobileNav from "@/components/MobileNav";
 
 export default function Home() {
@@ -49,10 +50,15 @@ export default function Home() {
         <BulkPricing />
       </div>
       <div id="order">
-        <OrderCTA />
+        <section className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-meathead-red/10 via-transparent to-meathead-red/10" />
+          <div className="relative z-10">
+            <LaunchWaitlistForm />
+          </div>
+        </section>
       </div>
       <Footer />
-      <WhatsAppButton />
+      {/* <WhatsAppButton /> */}
       <MobileNav />
     </main>
   );

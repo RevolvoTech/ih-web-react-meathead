@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
-  return "Yo Meathead! I want to pre-order beef patties for the Saturday afternoon launch. Let's go!";
+  return "Yo Meathead! I want to join the waitlist for beef patties. Let's go!";
 };
 
 export default function WhatsAppButton() {

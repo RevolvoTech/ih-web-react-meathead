@@ -5,7 +5,7 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 
 const comparisons = [
-  { category: "Protein Source", them: "Mystery cuts, grain-fed", us: "Grass-fed Beef" },
+  { category: "Protein Source", them: "Mystery cuts, grain-fed", us: "100% Beef Patty" },
   { category: "Fillers", them: "Soy, breadcrumbs, grains", us: "ZERO. Just beef." },
   { category: "Cooking Fat", them: "Vegetable oils, seed oils", us: "Pure Beef Tallow" },
   { category: "Processing", them: "Factory ground, weeks old", us: "FRESH, COOKED, DELIVERED" },

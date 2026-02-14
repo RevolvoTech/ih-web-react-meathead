@@ -8,7 +8,7 @@ const protocols = [
   {
     number: "01",
     title: "ELITE SOURCES",
-    description: "Grass-fed beef from elite local suppliers. Same-day sourcing for maximum freshness.",
+    description: "100% Beef Patty from elite local suppliers. Same-day sourcing for maximum freshness.",
   },
   {
     number: "02",
@@ -22,8 +22,8 @@ const protocols = [
   },
   {
     number: "04",
-    title: "SATURDAY LAUNCH",
-    description: "Delivered fresh in insulated bags. Launching Saturday afternoon. Bahria 7, 8 | DHA 1, 2 only.",
+    title: "FRESH DELIVERY",
+    description: "Delivered fresh in insulated bags. Join the waitlist for updates. Bahria 7, 8 | DHA 1, 2 only.",
   },
 ];
 

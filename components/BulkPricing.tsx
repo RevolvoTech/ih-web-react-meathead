@@ -49,10 +49,10 @@ export default function BulkPricing() {
           className="text-center mb-16"
         >
           <h2 className="font-heading text-5xl md:text-7xl mb-4 uppercase tracking-heading">
-            CHOOSE YOUR <span className="text-meathead-red">PACK</span>
+            OUR <span className="text-meathead-red">PRICING</span>
           </h2>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
-            More patties = better pricing. Stock up and save.
+            Lock in these prices by joining the waitlist today.
           </p>
         </motion.div>
 
@@ -98,18 +98,81 @@ export default function BulkPricing() {
                 </p>
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={scrollToOrderForm}
-                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
-                  tier.popular
-                    ? "bg-meathead-red hover:bg-red-700 text-white"
-                    : "bg-meathead-charcoal hover:bg-meathead-black text-white border border-meathead-red/30"
-                }`}
+              <motion.div
+                animate={tier.popular ? {
+                  y: [0, -5, 0],
+                } : {
+                  y: [0, -3, 0],
+                }}
+                transition={tier.popular ? {
+                  y: {
+                    duration: 1.8,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  },
+                } : {
+                  y: {
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  },
+                }}
               >
-                ORDER NOW
-              </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={scrollToOrderForm}
+                  animate={tier.popular ? {
+                    scale: [1, 1.04, 1],
+                    boxShadow: [
+                      "0 6px 25px rgba(239, 68, 68, 0.5)",
+                      "0 10px 40px rgba(239, 68, 68, 0.8)",
+                      "0 6px 25px rgba(239, 68, 68, 0.5)",
+                    ],
+                  } : {
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={tier.popular ? {
+                    scale: {
+                      duration: 1.8,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    },
+                    boxShadow: {
+                      duration: 1.8,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    },
+                  } : {
+                    scale: {
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    },
+                  }}
+                  className={`w-full py-3 rounded-lg font-bold transition-all duration-300 uppercase tracking-heading relative overflow-hidden ${
+                    tier.popular
+                      ? "bg-meathead-red hover:bg-red-700 text-white"
+                      : "bg-meathead-charcoal hover:bg-meathead-black text-white border border-meathead-red/30"
+                  }`}
+                >
+                  <span className="relative z-10">JOIN WAITLIST</span>
+                  {tier.popular && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                      animate={{
+                        x: ["-200%", "200%"],
+                      }}
+                      transition={{
+                        duration: 2.5,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatDelay: 0.8,
+                      }}
+                    />
+                  )}
+                </motion.button>
+              </motion.div>
             </motion.div>
           ))}
         </div>
@@ -126,14 +189,14 @@ export default function BulkPricing() {
             </h3>
             <div className="grid md:grid-cols-3 gap-6 text-sm">
               <div>
-                <p className="text-gray-400 mb-1">AREAS</p>
-                <p className="text-white font-bold">Bahria 7, 8 | DHA 1, 2</p>
-                <p className="text-gray-500 text-xs mt-1">Freshness requires tight radius</p>
+                <p className="text-gray-400 mb-1">LAUNCHING IN</p>
+                <p className="text-white font-bold">Twin City</p>
+                <p className="text-gray-500 text-xs mt-1">Islamabad/Rawalpindi</p>
               </div>
               <div>
-                <p className="text-gray-400 mb-1">LAUNCH</p>
-                <p className="text-white font-bold">Saturday afternoon</p>
-                <p className="text-gray-500 text-xs mt-1">Pre-orders open now</p>
+                <p className="text-gray-400 mb-1">WAITLIST</p>
+                <p className="text-white font-bold">Join now</p>
+                <p className="text-gray-500 text-xs mt-1">Get instant updates</p>
               </div>
               <div>
                 <p className="text-gray-400 mb-1">PAYMENT</p>

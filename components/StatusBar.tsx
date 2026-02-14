@@ -13,18 +13,12 @@ export default function StatusBar() {
             <span className="absolute inline-flex h-3 w-3 animate-ping bg-meathead-red rounded-full opacity-75"></span>
             <span className="relative inline-flex h-2 w-2 bg-meathead-red rounded-full"></span>
           </div>
-          <span className="text-gray-400 font-data">LAUNCHING SATURDAY AFTERNOON:</span>
+          <span className="text-gray-400 font-data">LAUNCHING SOON IN TWIN CITY:</span>
         </div>
-        {orderData.isSoldOut ? (
-          <span className="font-data font-bold text-meathead-red text-lg uppercase animate-pulse">
-            SOLD OUT
-          </span>
-        ) : (
-          <span className="font-data font-bold text-white">
-            <span className="text-meathead-red text-lg">{orderData.pattiesRemaining}</span>
-            /100 PATTIES REMAINING
-          </span>
-        )}
+        <span className="font-data font-bold text-white">
+          <span className="text-meathead-red text-lg">{orderData.waitlistCount || 0}</span>
+          {" "}PEOPLE WAITING
+        </span>
       </div>
     </div>
   );

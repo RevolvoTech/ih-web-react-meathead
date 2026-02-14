@@ -28,8 +28,8 @@ const reviews = [
     name: "StackOverflow_Warrior",
     role: "Software Dev",
     rating: 5,
-    review: "Finally, a burger with zero bugs. The 80/20 fat ratio is a perfectly optimized algorithm. No bloat, no lag, just high-performance fuel. It's like a Clean Code version of a meal. 10/10 Documentation on the protein sourcing.",
-    response: "Merge request accepted. Deployment to your stomach is scheduled for Saturday afternoon.",
+    review: "Finally, a burger with zero bugs. The 85/15 fat ratio is a perfectly optimized algorithm. No bloat, no lag, just high-performance fuel. It's like a Clean Code version of a meal. 10/10 Documentation on the protein sourcing.",
+    response: "Merge request accepted. Join the waitlist for deployment notifications.",
     rotation: "rotate-1",
     borderColor: "border-blue-500/50",
   },
@@ -110,7 +110,8 @@ export default function Reviews() {
           ))}
         </div>
 
-        <motion.div
+        {/* Hidden during launch waitlist phase */}
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.8 }}
@@ -119,7 +120,7 @@ export default function Reviews() {
           <p className="text-gray-500 text-sm italic">
             Got beef with us? DM us on WhatsApp. We'll either fix it or roast you back. 🔥
           </p>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );

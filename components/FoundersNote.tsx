@@ -101,77 +101,47 @@ export default function FoundersNote() {
           </motion.div>
         </div>
 
-        {orderData.isSoldOut ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-center mb-12"
-          >
-            <div className="inline-block bg-meathead-red text-white font-heading text-sm md:text-base px-6 py-2 rounded-full mb-6 tracking-heading">
-              YOU MISSED IT
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="bg-meathead-black/50 backdrop-blur-sm border-2 border-meathead-red/30 rounded-xl p-8"
+        >
+          <div className="flex flex-col items-center justify-center gap-6 text-center">
+            <div className="inline-block bg-meathead-red text-white font-heading text-sm md:text-base px-6 py-2 rounded-full tracking-heading animate-pulse">
+              LAUNCHING SOON
             </div>
-            <h2 className="font-heading text-4xl md:text-6xl mb-4 uppercase tracking-heading text-white">
-              BATCH 01 <span className="text-meathead-red">PRE-ORDERS FULL</span>
-            </h2>
-            <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-              All 100 patties pre-ordered for Saturday's launch.
-              <br />
-              Don't miss the next drop. Join the priority list for instant restock alerts.
-            </p>
-            <PriorityListForm />
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="bg-meathead-black/50 backdrop-blur-sm border-2 border-meathead-red/30 rounded-xl p-8"
-          >
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 flex-1">
-                <div className="text-center">
-                  <p className="text-gray-400 text-sm mb-1 font-data">PRE-ORDERS</p>
-                  <p className="font-heading text-xl text-meathead-red uppercase tracking-heading">
-                    OPEN NOW
-                  </p>
-                </div>
-                <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>
-                <div className="text-center">
-                  <p className="text-gray-400 text-sm mb-1 font-data">LAUNCH DAY</p>
-                  <p className="font-heading text-xl text-white uppercase tracking-heading">
-                    Saturday afternoon
-                  </p>
-                </div>
-                <div className="hidden md:block w-px h-12 bg-meathead-red/30"></div>
-                <div className="text-center">
-                  <p className="text-gray-400 text-sm mb-1 font-data">PRE-ORDERS CLOSE AT</p>
-                  <p className="font-heading text-xl text-meathead-red uppercase tracking-heading">
-                    100 PATTIES
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-4 bg-meathead-gray/50 px-6 py-4 rounded-lg border border-meathead-red/20">
-                <div className="relative flex items-center justify-center">
-                  <span className="absolute inline-flex h-3 w-3 animate-ping bg-meathead-red rounded-full opacity-75"></span>
-                  <span className="relative inline-flex h-3 w-3 bg-meathead-red rounded-full"></span>
-                </div>
-                <div className="text-left">
-                  <p className="text-gray-400 text-xs uppercase tracking-wider font-data">BATCH 01</p>
-                  <p className="font-data font-bold text-2xl text-white">
-                    <span className="text-meathead-red">{orderData.pattiesRemaining}</span>
-                    /100
-                  </p>
-                  <p className="text-gray-400 text-xs font-data">Patties Remaining</p>
-                </div>
+            <h2 className="font-heading text-4xl md:text-5xl uppercase tracking-heading text-white">
+              COMING TO <span className="text-meathead-red">TWIN CITY</span>
+            </h2>
+
+            <p className="text-gray-300 text-lg md:text-xl max-w-2xl leading-relaxed">
+              We're bringing premium beef patties to Islamabad & Rawalpindi.
+              <br />
+              <span className="text-meathead-red font-bold">Join the waitlist for instant launch notifications.</span>
+            </p>
+
+            <div className="flex items-center gap-4 bg-meathead-gray/50 px-6 py-4 rounded-lg border border-meathead-red/20">
+              <div className="relative flex items-center justify-center">
+                <span className="absolute inline-flex h-3 w-3 animate-ping bg-meathead-red rounded-full opacity-75"></span>
+                <span className="relative inline-flex h-3 w-3 bg-meathead-red rounded-full"></span>
+              </div>
+              <div className="text-left">
+                <p className="text-gray-400 text-xs uppercase tracking-wider font-data">TWIN CITY WAITLIST</p>
+                <p className="font-data font-bold text-2xl text-white">
+                  <span className="text-meathead-red">{orderData.waitlistCount || 0}</span>
+                  {" "}REGISTERED
+                </p>
+                <p className="text-gray-400 text-xs font-data">People waiting for launch</p>
               </div>
             </div>
-            <p className="text-gray-500 text-xs mt-6 text-center italic">
-              Pre-order now. Launch Saturday afternoon. First come, first served.
+
+            <p className="text-gray-500 text-sm italic">
+              Get notified when we launch in your area. First come, first served.
             </p>
-          </motion.div>
-        )}
+          </div>
+        </motion.div>
       </div>
     </section>
   );

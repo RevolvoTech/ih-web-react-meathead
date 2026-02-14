@@ -6,7 +6,7 @@ import { useOrder } from "@/context/OrderContext";
 
 const WHATSAPP_NUMBER = "923354818171";
 const getWhatsAppMessage = () => {
-  return "Yo Meathead! I want to pre-order beef patties for the Saturday afternoon launch. Let's go!";
+  return "Yo Meathead! I want to join the waitlist for beef patties. Let's go!";
 };
 
 export default function Hero() {
@@ -62,7 +62,7 @@ export default function Hero() {
             transition={{ delay: 0.3, duration: 0.3, ease: "easeOut" }}
             className="text-gray-300 text-lg md:text-xl lg:text-2xl mb-4 max-w-2xl"
           >
-            Grass-fed beef. Cooked & smashed. Seared in tallow. FRESH, never frozen.
+            100% Beef Patty. Cooked & smashed. Seared in tallow. FRESH, never frozen.
           </motion.p>
 
           <motion.div
@@ -76,7 +76,7 @@ export default function Hero() {
               <div className="text-gray-400 font-data text-xs lg:text-sm">PROTEIN</div>
             </div>
             <div className="bg-meathead-gray px-4 py-4 rounded-lg border-2 border-meathead-red/30 hover:border-meathead-red/60 transition-all">
-              <div className="text-meathead-red font-data font-bold text-2xl lg:text-3xl mb-1">80/20</div>
+              <div className="text-meathead-red font-data font-bold text-2xl lg:text-3xl mb-1">85/15</div>
               <div className="text-gray-400 font-data text-xs lg:text-sm">PRECISION</div>
             </div>
             <div className="bg-meathead-gray px-4 py-4 rounded-lg border-2 border-meathead-red/30 hover:border-meathead-red/60 transition-all">
@@ -91,7 +91,7 @@ export default function Hero() {
             transition={{ delay: 0.5, duration: 0.3, ease: "easeOut" }}
             className="mb-3"
           >
-            <p className="text-gray-400 text-sm mb-2 font-data">DOUBLE PACK</p>
+            <p className="text-gray-400 text-sm mb-2 font-data">STARTING AT (DOUBLE PACK)</p>
             <p className="font-data font-bold text-5xl md:text-6xl text-white mb-1">
               ₨650
             </p>
@@ -100,17 +100,64 @@ export default function Hero() {
             </p>
           </motion.div>
 
-          <motion.button
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={scrollToOrderForm}
-            className="bg-meathead-red hover:bg-red-700 text-white font-heading text-xl md:text-2xl lg:text-3xl py-5 px-16 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-meathead-red/50 uppercase tracking-heading"
+            animate={{
+              opacity: 1,
+              y: [0, -6, 0],
+            }}
+            transition={{
+              opacity: { delay: 0.6, duration: 0.4 },
+              y: {
+                delay: 0.6,
+                duration: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+            }}
+            className="inline-block"
           >
-            {orderData.isSoldOut ? "JOIN PRIORITY LIST" : "PRE-ORDER NOW"}
-          </motion.button>
+            <motion.button
+              animate={{
+                scale: [1, 1.05, 1],
+                boxShadow: [
+                  "0 10px 40px rgba(239, 68, 68, 0.5)",
+                  "0 15px 50px rgba(239, 68, 68, 0.9)",
+                  "0 10px 40px rgba(239, 68, 68, 0.5)",
+                ],
+              }}
+              transition={{
+                scale: {
+                  duration: 1.6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+                boxShadow: {
+                  duration: 1.6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+              }}
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={scrollToOrderForm}
+              className="bg-meathead-red hover:bg-red-700 text-white font-heading text-xl md:text-2xl lg:text-3xl py-5 px-16 rounded-lg transition-all duration-300 transform shadow-2xl hover:shadow-meathead-red/50 uppercase tracking-heading relative overflow-hidden"
+            >
+              <span className="relative z-10">JOIN WAITLIST - TWIN CITY</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                animate={{
+                  x: ["-200%", "200%"],
+                }}
+                transition={{
+                  duration: 2.2,
+                  repeat: Infinity,
+                  ease: "linear",
+                  repeatDelay: 0.6,
+                }}
+              />
+            </motion.button>
+          </motion.div>
         </motion.div>
 
         <motion.div

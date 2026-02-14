@@ -7,7 +7,7 @@ import { useRef } from "react";
 const reasons = [
   {
     title: "ZERO SOY",
-    description: "No soy fillers, no fake meat, no plant protein. Just grass-fed beef, cooked and smashed. FRESH, never frozen.",
+    description: "No soy fillers, no fake meat, no plant protein. Just 100% Beef Patty, cooked and smashed. FRESH, never frozen.",
   },
   {
     title: "ZERO SEED OILS",

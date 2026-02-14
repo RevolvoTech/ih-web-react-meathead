@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import {
   formatPakistaniPhoneForStorage,
+  getDeterministicReferralCode,
   normalizePakistaniPhone,
 } from '@/lib/referral';
 
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     // First, get current data to check for duplicates and determine next batch number
     const existingResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:M', // Extended to include referral_code column
+      range: 'Orders!A:N', // Includes referral_code and referred_count columns
     });
 
     const existingRows = existingResponse.data.values || [];
@@ -69,12 +70,44 @@ export async function POST(request: Request) {
     }
 
     const nextBatchNumber = existingWaitlistEntries.length + 1;
+    const submittedReferralCode = (data.referral_code || '').trim().toUpperCase();
+
+    // If a valid referral code was used, increment referred_count for that referrer's row.
+    if (submittedReferralCode) {
+      const referrerIndex = existingRows.slice(1).findIndex((row) => {
+        const orderType = row[2]; // Column C
+        const status = row[5]; // Column F
+        if (orderType !== 'WAITLIST' || status !== 'launch_waitlist') return false;
+
+        const referrerPhone = normalizePakistaniPhone(row[1] || '');
+        if (!referrerPhone || referrerPhone === incomingPhone) return false;
+
+        const referrerCode = getDeterministicReferralCode(referrerPhone);
+        return referrerCode === submittedReferralCode;
+      });
+
+      if (referrerIndex >= 0) {
+        const sheetRowNumber = referrerIndex + 2; // +1 header row +1 index base
+        const existingRefCountRaw = existingRows[sheetRowNumber - 1]?.[13] || '0'; // Column N
+        const existingRefCount = Number.parseInt(existingRefCountRaw, 10) || 0;
+        const nextRefCount = existingRefCount + 1;
+
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: SHEET_ID,
+          range: `Orders!N${sheetRowNumber}`,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values: [[nextRefCount]],
+          },
+        });
+      }
+    }
 
     // Append row to "Orders" sheet using existing columns
     // Using: whatsapp_number, customer_name, delivery_address (for area)
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:M',
+      range: 'Orders!A:N',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
@@ -90,7 +123,8 @@ export async function POST(request: Request) {
           '',                       // Column J: longitude (empty for waitlist)
           0,                        // Column K: total_amount (0 for waitlist)
           'N/A',                    // Column L: addon (N/A for waitlist)
-          data.referral_code || '', // Column M: referral_code (NEW)
+          submittedReferralCode,    // Column M: referral_code used (if any)
+          0,                        // Column N: referred_count for this row starts at 0
         ]],
       },
     });

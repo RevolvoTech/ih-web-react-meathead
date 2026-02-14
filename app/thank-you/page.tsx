@@ -8,6 +8,11 @@ import {
   getDeterministicReferralCode,
   getReferralLink,
 } from "@/lib/referral";
+import {
+  LAUNCH_GOAL,
+  getLaunchMilestone,
+  getLaunchProgress,
+} from "@/lib/launchProgress";
 
 function ThankYouContent() {
   const searchParams = useSearchParams();
@@ -33,14 +38,14 @@ function ThankYouContent() {
       try {
         const response = await fetch("/api/get-launch-waitlist-count");
         const data = await response.json();
-        if (data.count) {
-          setTotalWaitlist(data.count);
+        if (typeof data.waitlistCount === "number") {
+          setTotalWaitlist(data.waitlistCount);
           // If position was passed via URL
           const position = searchParams.get("position");
           if (position) {
             setWaitlistPosition(parseInt(position));
           } else {
-            setWaitlistPosition(data.count);
+            setWaitlistPosition(data.waitlistCount);
           }
         }
       } catch (error) {
@@ -73,6 +78,33 @@ function ThankYouContent() {
   const referralLink = getReferralLink(
     referralCode || getDeterministicReferralCode(phone)
   );
+  const currentWaitlistCount = totalWaitlist ?? 0;
+  const launchProgress = getLaunchProgress(currentWaitlistCount, LAUNCH_GOAL);
+  const remainingToLaunch = Math.max(LAUNCH_GOAL - currentWaitlistCount, 0);
+  const launchMilestone = getLaunchMilestone(currentWaitlistCount, LAUNCH_GOAL);
+  const visualProgress = launchProgress;
+
+  let launchStatusTitle = "BUILDING MOMENTUM";
+  let launchStatusCopy = "Founding waitlist is live. Share your referral link to accelerate launch.";
+  let timelineCopy = "Founding phase is live. Share with your gym buddies to accelerate launch!";
+  let progressFooter = `${currentWaitlistCount} people joined so far.`;
+
+  if (launchMilestone === "momentum") {
+    launchStatusTitle = "MOMENTUM BUILDING";
+    launchStatusCopy = "Momentum is building. Keep sharing to push us closer to launch.";
+    timelineCopy = `${remainingToLaunch} to go. Share with your gym buddies to speed up launch!`;
+    progressFooter = `${remainingToLaunch} more signups until launch! 🚀`;
+  } else if (launchMilestone === "almost") {
+    launchStatusTitle = "ALMOST THERE";
+    launchStatusCopy = `Almost there — only ${remainingToLaunch} signups left to launch.`;
+    timelineCopy = `Almost there. Just ${remainingToLaunch} more signups to launch!`;
+    progressFooter = `${remainingToLaunch} more signups until launch! 🚀`;
+  } else if (launchMilestone === "done") {
+    launchStatusTitle = "WE DID IT!";
+    launchStatusCopy = "Launch threshold reached. Watch WhatsApp for opening details.";
+    timelineCopy = "Launch unlocked. You're on the list for updates and early access.";
+    progressFooter = "Threshold reached. Launch updates coming on WhatsApp. 🎉";
+  }
 
   const shareMessage = `Just joined the MEATHEAD waitlist!\n\nPremium beef patties with 24g+ protein - better than protein powder!\n\nDitch the supplements, get real food protein.\n\nJoin using my referral link: ${referralLink}`;
 
@@ -148,7 +180,7 @@ function ThankYouContent() {
         </motion.div>
 
         {/* Progress to 1K Goal - Prominent Display */}
-        {totalWaitlist && (
+        {totalWaitlist !== null && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -159,24 +191,23 @@ function ThankYouContent() {
               <h2 className="font-heading text-3xl md:text-5xl mb-2 uppercase tracking-heading">
                 PROGRESS TO <span className="text-meathead-red">LAUNCH</span>
               </h2>
-              <p className="text-gray-400">
-                We launch when we hit 1,000 signups. Help us get there faster!
-              </p>
+              <p className="text-meathead-red font-data text-sm mb-2 uppercase tracking-wider">{launchStatusTitle}</p>
+              <p className="text-gray-400">{launchStatusCopy}</p>
             </div>
 
             <div className="max-w-2xl mx-auto">
-              <div className="flex items-center justify-between mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
                 <div className="text-center">
                   <div className="text-gray-400 text-xs uppercase tracking-wider mb-1 font-data">Your Position</div>
                   <div className="font-heading text-4xl text-meathead-red">#{waitlistPosition}</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-gray-400 text-xs uppercase tracking-wider mb-1 font-data">Total Signups</div>
-                  <div className="font-heading text-4xl text-white">{totalWaitlist}</div>
+                  <div className="text-gray-400 text-xs uppercase tracking-wider mb-1 font-data">Joined</div>
+                  <div className="font-heading text-4xl text-white">{currentWaitlistCount}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-gray-400 text-xs uppercase tracking-wider mb-1 font-data">Goal</div>
-                  <div className="font-heading text-4xl text-white">1,000</div>
+                  <div className="font-heading text-4xl text-white">{LAUNCH_GOAL}</div>
                 </div>
               </div>
 
@@ -185,7 +216,7 @@ function ThankYouContent() {
                 <div className="w-full bg-meathead-black rounded-full h-6 overflow-hidden border-2 border-meathead-red/30">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((totalWaitlist / 1000) * 100, 100)}%` }}
+                    animate={{ width: `${visualProgress}%` }}
                     transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
                     className="bg-gradient-to-r from-meathead-red to-red-600 h-full rounded-full relative overflow-hidden"
                   >
@@ -202,15 +233,13 @@ function ThankYouContent() {
                     />
                   </motion.div>
                 </div>
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-white font-bold text-lg font-data">
-                  {Math.round((totalWaitlist / 1000) * 100)}%
+                <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-white font-bold text-base sm:text-lg font-data whitespace-nowrap">
+                  {Math.round(launchProgress)}%
                 </div>
               </div>
 
               <div className="mt-4 text-center">
-                <p className="text-gray-400 text-lg">
-                  <span className="text-meathead-red font-bold">{1000 - totalWaitlist}</span> more signups until launch!
-                </p>
+                <p className="text-gray-400 text-lg">{progressFooter}</p>
                 <p className="text-gray-500 text-sm mt-2">
                   Share your referral link below to help us launch faster! 🚀
                 </p>
@@ -306,26 +335,25 @@ function ThankYouContent() {
               </div>
               <div>
                 <h3 className="text-white font-bold text-lg mb-1">Launch Timeline</h3>
-                <p className="text-gray-400 mb-3">
-                  We launch when we hit <span className="text-meathead-red font-bold">1,000+ waitlist signups</span>!
-                  Want us to launch faster? Share with your gym buddies!
-                </p>
-                {totalWaitlist && (
+                <p className="text-gray-400 mb-3">{timelineCopy}</p>
+                {totalWaitlist !== null && (
                   <div className="bg-meathead-charcoal/50 rounded-lg p-3 border border-meathead-red/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-gray-400 text-sm font-data">CURRENT PROGRESS</span>
-                      <span className="text-meathead-red font-bold font-data">{totalWaitlist}/1000</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
+                      <span className="text-gray-400 text-sm font-data">STATUS</span>
+                      <span className="text-meathead-red font-bold font-data">
+                        {launchStatusTitle}
+                      </span>
                     </div>
                     <div className="w-full bg-meathead-black rounded-full h-3 overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${(totalWaitlist / 1000) * 100}%` }}
+                        animate={{ width: `${visualProgress}%` }}
                         transition={{ duration: 1, delay: 1.2 }}
                         className="bg-gradient-to-r from-meathead-red to-red-600 h-full rounded-full"
                       />
                     </div>
                     <p className="text-gray-500 text-xs mt-2 text-center">
-                      {1000 - totalWaitlist} more signups until launch! 🚀
+                      {progressFooter}
                     </p>
                   </div>
                 )}

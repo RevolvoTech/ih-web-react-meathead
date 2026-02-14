@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useOrder } from "@/context/OrderContext";
 
 const AREAS = [
   // Islamabad
@@ -52,6 +53,7 @@ interface RecentEntry {
 
 export default function LaunchWaitlistForm() {
   const router = useRouter();
+  const { refreshOrderCount } = useOrder();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -64,9 +66,6 @@ export default function LaunchWaitlistForm() {
   // Fetch recent entries on component mount
   useEffect(() => {
     fetchRecentEntries();
-    // Poll every 30 seconds to show new registrations
-    const interval = setInterval(fetchRecentEntries, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   const fetchRecentEntries = async () => {
@@ -108,6 +107,9 @@ export default function LaunchWaitlistForm() {
       const data = await response.json();
 
       if (response.ok) {
+        // Refresh status counts once after submit (no polling).
+        await refreshOrderCount();
+
         // Redirect to thank you page with user info
         const queryParams = new URLSearchParams({
           area: formData.area,

@@ -1,10 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import {
+  getDeterministicReferralCode,
+  getReferralLink,
+} from "@/lib/referral";
 
 function ThankYouContent() {
   const searchParams = useSearchParams();
@@ -17,23 +20,9 @@ function ThankYouContent() {
   const phone = searchParams.get("phone") || "";
   const duplicate = searchParams.get("duplicate") === "true";
 
-  // Generate deterministic referral code from phone number
-  const generateReferralCode = (phoneNumber: string): string => {
-    if (!phoneNumber) return "MEATHEAD001";
-
-    // Remove all non-digits
-    const digits = phoneNumber.replace(/\D/g, "");
-
-    // Take last 4 digits of phone number
-    const last4 = digits.slice(-4);
-
-    // Create code: MEAT + last 4 digits
-    return `MEAT${last4}`;
-  };
-
   useEffect(() => {
     // Generate referral code
-    const code = generateReferralCode(phone);
+    const code = getDeterministicReferralCode(phone);
     setReferralCode(code);
 
     // Set duplicate flag from URL
@@ -81,10 +70,11 @@ function ThankYouContent() {
       }
     }
   }, [searchParams]);
+  const referralLink = getReferralLink(
+    referralCode || getDeterministicReferralCode(phone)
+  );
 
-  const shareUrl = typeof window !== "undefined" ? window.location.origin : "https://meathead.pk";
-
-  const shareMessage = `Just joined the MEATHEAD waitlist!\n\nPremium beef patties with 24g+ protein - better than protein powder!\n\nDitch the supplements, get real food protein.\n\nJoin the waitlist: ${shareUrl}`;
+  const shareMessage = `Just joined the MEATHEAD waitlist!\n\nPremium beef patties with 24g+ protein - better than protein powder!\n\nDitch the supplements, get real food protein.\n\nJoin using my referral link: ${referralLink}`;
 
   const handleWhatsAppShare = () => {
     const encodedMessage = encodeURIComponent(shareMessage);
@@ -150,9 +140,9 @@ function ThankYouContent() {
             className="text-gray-300 text-xl md:text-2xl mb-2"
           >
             {isDuplicate ? (
-              <>You're already on the MEATHEAD waitlist{name ? `, ${name}` : ''}! 💪</>
+              <>You're already registered{name ? `, ${name}` : ""}. Here's your referral link. 💪</>
             ) : (
-              <>Welcome to MEATHEAD{name ? `, ${name}` : ''}! 💪</>
+              <>Welcome to MEATHEAD{name ? `, ${name}` : ""}! 💪</>
             )}
           </motion.p>
         </motion.div>
@@ -252,8 +242,7 @@ function ThankYouContent() {
             whileTap={{ scale: 0.98 }}
             className="bg-meathead-charcoal/80 border-2 border-meathead-red/30 rounded-lg p-6 max-w-md mx-auto cursor-pointer hover:border-meathead-red transition-all"
             onClick={() => {
-              const refUrl = `https://meatheadpakistan.vercel.app?ref=${referralCode}`;
-              navigator.clipboard.writeText(refUrl);
+              navigator.clipboard.writeText(referralLink);
               alert("Link copied! Share with 3 gym buddies to unlock 25% OFF");
             }}
           >
@@ -262,7 +251,7 @@ function ThankYouContent() {
             </p>
             <div className="bg-meathead-black border-2 border-meathead-red/50 rounded-lg p-4 mb-3">
               <p className="text-meathead-red font-mono text-xs md:text-sm break-all text-center">
-                https://meatheadpakistan.vercel.app?ref={referralCode}
+                {referralLink}
               </p>
             </div>
             <div className="flex items-center justify-center gap-2 text-white">
@@ -420,7 +409,7 @@ function ThankYouContent() {
           <motion.a
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            href="https://instagram.com/meathead.pk"
+            href="https://instagram.com/meatheadpakistan"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-5 px-12 rounded-lg transition-all shadow-lg hover:shadow-purple-500/50 text-lg"
@@ -428,7 +417,7 @@ function ThankYouContent() {
             <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
             </svg>
-            Follow @meathead.pk
+            Follow @meatheadpakistan
           </motion.a>
 
           <div className="mt-6 flex items-center justify-center gap-2 text-gray-400 text-sm">
@@ -461,7 +450,7 @@ function ThankYouContent() {
           transition={{ delay: 1.2 }}
           className="text-gray-500 text-sm text-center mt-12 italic"
         >
-          Questions? We're here to help! DM us on Instagram @meathead.pk
+          Questions? We're here to help! DM us on Instagram @meatheadpakistan
         </motion.p>
       </div>
 

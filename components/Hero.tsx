@@ -38,7 +38,7 @@ export default function Hero() {
           >
             <Image
               src="/images/logo.webp"
-              alt="MEATHEAD Premium Beef Patties Islamabad - High Protein Gym Food Logo Pakistan"
+              alt="MEATHEAD logo"
               width={300}
               height={300}
               className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 mx-auto lg:mx-0"
@@ -166,7 +166,7 @@ export default function Hero() {
           <div className="relative rounded-2xl overflow-hidden shadow-2xl">
             <Image
               src="/images/patty.webp"
-              alt="Premium 125g beef patty 24g protein MEATHEAD smash burger halal beef Islamabad Rawalpindi Pakistan"
+              alt="MEATHEAD beef patty"
               width={800}
               height={800}
               className="w-full h-auto"

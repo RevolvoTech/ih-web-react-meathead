@@ -1,10 +1,14 @@
+"use client";
+
 export default function StructuredData() {
+  const siteUrl = "https://meatheadpakistan.vercel.app";
+
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "MEATHEAD Pakistan",
-    "url": "https://meathead.pk",
-    "logo": "https://meathead.pk/images/logo.webp",
+    "url": siteUrl,
+    "logo": `${siteUrl}/images/logo.webp`,
     "description": "Premium high-protein beef patties for gym enthusiasts in Islamabad and Rawalpindi",
     "address": {
       "@type": "PostalAddress",
@@ -26,15 +30,14 @@ export default function StructuredData() {
         "@type": "City",
         "name": "Rawalpindi"
       }
-    ],
-    "sameAs": []
+    ]
   };
 
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": "MEATHEAD Premium Beef Patty",
-    "image": "https://meathead.pk/images/patty.webp",
+    "image": `${siteUrl}/images/patty.webp`,
     "description": "High-protein pre-cooked beef patty with 24g+ protein per 125g serving. 85/15 lean-to-fat ratio. Zero fillers. Perfect for post-workout nutrition and muscle building.",
     "brand": {
       "@type": "Brand",
@@ -50,26 +53,12 @@ export default function StructuredData() {
     },
     "offers": {
       "@type": "Offer",
-      "url": "https://meathead.pk",
+      "url": `${siteUrl}/`,
       "priceCurrency": "PKR",
       "price": "325",
       "priceValidUntil": "2026-12-31",
       "availability": "https://schema.org/PreOrder",
-      "itemCondition": "https://schema.org/NewCondition",
-      "areaServed": {
-        "@type": "GeoCircle",
-        "geoMidpoint": {
-          "@type": "GeoCoordinates",
-          "latitude": "33.6844",
-          "longitude": "73.0479"
-        },
-        "geoRadius": "50000"
-      }
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "127"
+      "itemCondition": "https://schema.org/NewCondition"
     },
     "category": "Food & Nutrition",
     "additionalProperty": [
@@ -93,11 +82,10 @@ export default function StructuredData() {
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
-    "@type": "FoodEstablishment",
+    "@type": "LocalBusiness",
     "name": "MEATHEAD Pakistan",
     "description": "Premium high-protein beef patties for fitness enthusiasts in Twin Cities",
-    "image": "https://meathead.pk/images/logo.webp",
-    "servesCuisine": "Pakistani, Protein-Rich Food",
+    "image": `${siteUrl}/images/logo.webp`,
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Islamabad",
@@ -109,53 +97,10 @@ export default function StructuredData() {
       "latitude": "33.6844",
       "longitude": "73.0479"
     },
-    "url": "https://meathead.pk",
+    "url": siteUrl,
+    "areaServed": ["Islamabad", "Rawalpindi"],
     "priceRange": "PKR 325-650",
-    "paymentAccepted": "Cash, Bank Transfer",
-    "hasMenu": {
-      "@type": "Menu",
-      "hasMenuSection": {
-        "@type": "MenuSection",
-        "name": "Beef Patties",
-        "hasMenuItem": [
-          {
-            "@type": "MenuItem",
-            "name": "MEATHEAD Double Pack",
-            "description": "2 x 125g premium beef patties with 24g+ protein each",
-            "nutrition": {
-              "@type": "NutritionInformation",
-              "proteinContent": "48g+",
-              "servingSize": "250g (2 patties)"
-            },
-            "offers": {
-              "@type": "Offer",
-              "price": "650",
-              "priceCurrency": "PKR"
-            }
-          }
-        ]
-      }
-    }
-  };
-
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "MEATHEAD Pakistan",
-    "url": "https://meathead.pk",
-    "description": "High-protein beef patties for gym enthusiasts in Islamabad and Rawalpindi",
-    "publisher": {
-      "@type": "Organization",
-      "name": "MEATHEAD Pakistan"
-    },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://meathead.pk?search={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "paymentAccepted": "Cash, Bank Transfer"
   };
 
   return (
@@ -176,12 +121,6 @@ export default function StructuredData() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(localBusinessSchema)
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(websiteSchema)
         }}
       />
     </>

@@ -1,28 +1,5 @@
-# MEATHEAD Pakistan - SEO Optimized Robots.txt
 User-agent: *
 Allow: /
-Allow: /images/
-Allow: /api/get-waitlist-count
-Allow: /api/get-launch-waitlist-count
+Disallow: /api/
 
-# Disallow admin/api routes
-Disallow: /api/submit-*
-Disallow: /api/get-order-count
-
-# Sitemap
-Sitemap: https://meathead.pk/sitemap.xml
-
-# Crawl-delay for better performance
-Crawl-delay: 1
-
-# Specific bot rules
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 0
-
-User-agent: Googlebot-Image
-Allow: /images/
-
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
+Sitemap: https://meatheadpakistan.vercel.app/sitemap.xml

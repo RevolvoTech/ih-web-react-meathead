@@ -17,8 +17,8 @@ import LaunchWaitlistForm from "@/components/LaunchWaitlistForm";
 import Footer from "@/components/Footer";
 // import WhatsAppButton from "@/components/WhatsAppButton"; // Hidden for launch waitlist phase
 import MobileNav from "@/components/MobileNav";
-import SEOContent from "@/components/SEOContent";
 import FAQ from "@/components/FAQ";
+import StructuredData from "@/components/StructuredData";
 
 export default function Home() {
   // Capture referral code from URL
@@ -37,7 +37,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
-      <SEOContent />
+      <StructuredData />
       <StatusBar />
       <div id="hero">
         <Hero />

@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
+import {
+  formatPakistaniPhoneForStorage,
+  normalizePakistaniPhone,
+} from '@/lib/referral';
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const CLIENT_EMAIL = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
@@ -8,6 +12,14 @@ const PRIVATE_KEY = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n')
 export async function POST(request: Request) {
   try {
     const data = await request.json();
+    const incomingPhone = normalizePakistaniPhone(data.whatsapp_number || '');
+
+    if (!incomingPhone) {
+      return NextResponse.json(
+        { error: 'Invalid WhatsApp number format' },
+        { status: 400 }
+      );
+    }
 
     // Authenticate with Google Sheets API
     const auth = new google.auth.GoogleAuth({
@@ -36,15 +48,8 @@ export async function POST(request: Request) {
     });
 
     // Check if phone number already exists in waitlist
-    const normalizePhone = (phone: string) => {
-      // Remove all non-digits and standardize format
-      return phone.replace(/\D/g, '');
-    };
-
-    const incomingPhone = normalizePhone(data.whatsapp_number);
-
     const duplicateEntry = existingWaitlistEntries.find((row) => {
-      const existingPhone = normalizePhone(row[1] || ''); // Column B (whatsapp_number)
+      const existingPhone = normalizePakistaniPhone(row[1] || ''); // Column B (whatsapp_number)
       return existingPhone === incomingPhone;
     });
 
@@ -53,7 +58,7 @@ export async function POST(request: Request) {
       const existingPosition = duplicateEntry[4]; // Column E (batch_number)
       return NextResponse.json({
         success: true,
-        message: 'You are already on the waitlist!',
+        message: "You're already registered. Here's your referral link.",
         waitlistCount: existingPosition,
         isDuplicate: true,
       }, {
@@ -74,7 +79,7 @@ export async function POST(request: Request) {
       requestBody: {
         values: [[
           data.timestamp,           // Column A: timestamp
-          data.whatsapp_number,     // Column B: whatsapp_number
+          formatPakistaniPhoneForStorage(data.whatsapp_number) || data.whatsapp_number, // Column B: whatsapp_number
           'WAITLIST',               // Column C: order_type (using as marker)
           1,                        // Column D: quantity
           nextBatchNumber,          // Column E: batch_number (auto-incrementing number)

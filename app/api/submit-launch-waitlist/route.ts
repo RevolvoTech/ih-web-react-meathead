@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     // Using: whatsapp_number, customer_name, delivery_address (for area)
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:L',
+      range: 'Orders!A:M',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
@@ -57,6 +57,7 @@ export async function POST(request: Request) {
           '',                       // Column J: longitude (empty for waitlist)
           0,                        // Column K: total_amount (0 for waitlist)
           'N/A',                    // Column L: addon (N/A for waitlist)
+          data.referral_code || '', // Column M: referral_code (NEW)
         ]],
       },
     });

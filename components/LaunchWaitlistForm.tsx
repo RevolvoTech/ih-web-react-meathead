@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const AREAS = [
   // Islamabad
@@ -50,6 +51,7 @@ interface RecentEntry {
 }
 
 export default function LaunchWaitlistForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -84,6 +86,11 @@ export default function LaunchWaitlistForm() {
     setIsSubmitting(true);
     setMessage(null);
 
+    // Get referral code from localStorage
+    const referralCode = typeof window !== "undefined"
+      ? localStorage.getItem("meathead_referral") || ""
+      : "";
+
     try {
       const response = await fetch("/api/submit-launch-waitlist", {
         method: "POST",
@@ -94,23 +101,21 @@ export default function LaunchWaitlistForm() {
           customer_name: formData.name || "Not provided",
           area: formData.area,
           status: "launch_waitlist",
+          referral_code: referralCode,
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({
-          type: "success",
-          text: `You're on the list! We'll notify you on WhatsApp when we launch in ${formData.area}. ${data.waitlistCount ? `You're #${data.waitlistCount} on the waitlist!` : ''}`
+        // Redirect to thank you page with user info
+        const queryParams = new URLSearchParams({
+          area: formData.area,
+          name: formData.name || "there",
+          phone: formData.phone,
+          position: data.waitlistCount?.toString() || "0",
         });
-        setFormData({
-          name: "",
-          phone: "",
-          area: "F-7",
-        });
-        // Refresh recent entries after successful submission
-        setTimeout(fetchRecentEntries, 1000);
+        router.push(`/thank-you?${queryParams.toString()}`);
       } else {
         setMessage({ type: "error", text: data.error || "Failed to submit" });
       }

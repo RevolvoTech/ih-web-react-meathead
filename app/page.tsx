@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import StatusBar from "@/components/StatusBar";
 import Hero from "@/components/Hero";
 import ProductShowcase from "@/components/ProductShowcase";
@@ -18,6 +21,20 @@ import SEOContent from "@/components/SEOContent";
 import FAQ from "@/components/FAQ";
 
 export default function Home() {
+  // Capture referral code from URL
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const refCode = params.get("ref");
+
+      if (refCode) {
+        // Store referral code in localStorage
+        localStorage.setItem("meathead_referral", refCode);
+        console.log("Referral code captured:", refCode);
+      }
+    }
+  }, []);
+
   return (
     <main className="min-h-screen">
       <SEOContent />

@@ -8,6 +8,16 @@
   body {
     @apply bg-meathead-black text-white;
   }
+
+  /*
+   * Framer Motion renders many blocks with opacity:0 on initial HTML.
+   * This no-JS fallback keeps content visible for crawlers/browsers without JS.
+   */
+  html.no-js [style*="opacity:0"],
+  html.no-js [style*="opacity: 0"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 @layer utilities {

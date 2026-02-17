@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Space_Grotesk, Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { OrderProvider } from "@/context/OrderContext";
 
@@ -102,8 +103,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="no-js">
       <body className={`${anton.variable} ${spaceGrotesk.variable} ${inter.variable} font-inter antialiased`}>
+        <Script id="set-js-class" strategy="beforeInteractive">
+          {`document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');`}
+        </Script>
         <OrderProvider>
           {children}
         </OrderProvider>

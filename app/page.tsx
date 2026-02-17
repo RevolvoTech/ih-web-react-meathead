@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import StatusBar from "@/components/StatusBar";
 import Hero from "@/components/Hero";
 import ProductShowcase from "@/components/ProductShowcase";
@@ -38,6 +39,31 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <StructuredData />
+      <section className="bg-meathead-black border-b border-meathead-red/20 px-4 py-5">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="font-heading text-2xl md:text-3xl uppercase tracking-heading mb-2">
+            Halal High-Protein Beef Patties in Twin Cities
+          </h2>
+          <p className="text-gray-300 text-sm md:text-base">
+            MEATHEAD delivers premium halal beef patties in Islamabad and
+            Rawalpindi for meal prep, smash burgers, and protein-focused diets.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-4 text-sm">
+            <Link
+              href="/beef-patties-islamabad/"
+              className="text-meathead-red hover:text-red-300"
+            >
+              Beef Patties Islamabad
+            </Link>
+            <Link
+              href="/beef-patties-rawalpindi/"
+              className="text-meathead-red hover:text-red-300"
+            >
+              Beef Patties Rawalpindi
+            </Link>
+          </div>
+        </div>
+      </section>
       <StatusBar />
       <div id="hero">
         <Hero />

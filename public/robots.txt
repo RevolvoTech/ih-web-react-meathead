@@ -3,3 +3,4 @@ Allow: /
 Disallow: /api/
 
 Sitemap: https://meatheadpakistan.vercel.app/sitemap.xml
+Host: meatheadpakistan.vercel.app

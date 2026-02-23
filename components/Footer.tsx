@@ -87,11 +87,17 @@ export default function Footer() {
             </p>
             <div className="mt-5 pt-4 border-t border-meathead-gray/30">
               <p className="text-gray-500 text-xs mb-3 font-data uppercase tracking-wider">LOCAL GUIDES</p>
-              <div className="flex flex-col gap-2 text-sm">
-                <Link href="/beef-patties-islamabad" className="text-gray-300 hover:text-white transition-colors">
+              <div className="flex flex-wrap justify-center md:justify-end gap-2">
+                <Link
+                  href="/beef-patties-islamabad"
+                  className="inline-flex items-center rounded-full border border-meathead-red/50 px-3 py-1.5 text-[11px] uppercase tracking-wider text-meathead-red hover:bg-meathead-red hover:text-white transition-colors duration-300"
+                >
                   Beef Patties Islamabad
                 </Link>
-                <Link href="/beef-patties-rawalpindi" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/beef-patties-rawalpindi"
+                  className="inline-flex items-center rounded-full border border-meathead-red/50 px-3 py-1.5 text-[11px] uppercase tracking-wider text-meathead-red hover:bg-meathead-red hover:text-white transition-colors duration-300"
+                >
                   Beef Patties Rawalpindi
                 </Link>
               </div>

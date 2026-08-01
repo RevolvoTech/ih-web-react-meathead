@@ -3,25 +3,14 @@
 import { useOrder } from "@/context/OrderContext";
 import {
   LAUNCH_GOAL,
-  getLaunchMilestone,
   getLaunchProgress,
 } from "@/lib/launchProgress";
 
 export default function StatusBar() {
-  const { orderData } = useOrder();
-  const waitlistCount = orderData.waitlistCount || 0;
+  const { orderData, isLoading } = useOrder();
+  const waitlistCount = orderData.waitlistCount ?? 0;
   const launchProgress = getLaunchProgress(waitlistCount, LAUNCH_GOAL);
-  const remainingToLaunch = Math.max(LAUNCH_GOAL - waitlistCount, 0);
-  const launchMilestone = getLaunchMilestone(waitlistCount, LAUNCH_GOAL);
-
-  let statusText = `${waitlistCount} PEOPLE JOINED`;
-  if (launchMilestone === "momentum") {
-    statusText = `${waitlistCount} JOINED • MOMENTUM`;
-  } else if (launchMilestone === "almost") {
-    statusText = `${remainingToLaunch} TO GO • ALMOST THERE`;
-  } else if (launchMilestone === "done") {
-    statusText = "WE DID IT! LAUNCH UNLOCKED";
-  }
+  const statusText = `${waitlistCount} PEOPLE JOINED`;
 
   return (
     <div className="bg-meathead-charcoal border-b border-meathead-red/30 py-2 px-4 sticky top-0 z-50">
@@ -33,8 +22,18 @@ export default function StatusBar() {
           </div>
           <span className="text-gray-400 font-data">LAUNCHING SOON IN TWIN CITY:</span>
         </div>
-        <span className="font-data font-bold text-white">
-          <span className="text-meathead-red">{statusText}</span>
+        <span className="font-data font-bold text-white min-w-[10rem] sm:min-w-[12rem]" aria-live="polite">
+          {isLoading ? (
+            <span className="text-meathead-red inline-flex items-center gap-2">
+              <span
+                className="h-3.5 w-3.5 rounded-full border-2 border-meathead-red/30 border-t-meathead-red animate-spin"
+                aria-hidden="true"
+              />
+              GETTING WAITLIST...
+            </span>
+          ) : (
+            <span className="text-meathead-red">{statusText}</span>
+          )}
         </span>
       </div>
       <div className="max-w-4xl mx-auto mt-1">

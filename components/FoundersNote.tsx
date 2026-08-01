@@ -11,7 +11,7 @@ export default function FoundersNote() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
-  const { orderData } = useOrder();
+  const { orderData, isLoading } = useOrder();
 
   return (
     <section id="founders" ref={ref} className="py-20 px-4 bg-meathead-charcoal relative overflow-hidden">
@@ -129,9 +129,21 @@ export default function FoundersNote() {
               </div>
               <div className="text-left">
                 <p className="text-gray-400 text-xs uppercase tracking-wider font-data">TWIN CITY WAITLIST</p>
-                <p className="font-data font-bold text-2xl text-white">
-                  <span className="text-meathead-red">{orderData.waitlistCount || 0}</span>
-                  {" "}REGISTERED
+                <p className="font-data font-bold text-2xl text-white min-h-8" aria-live="polite">
+                  {isLoading ? (
+                    <span className="text-meathead-red inline-flex items-center gap-2">
+                      <span
+                        className="h-4 w-4 rounded-full border-2 border-meathead-red/30 border-t-meathead-red animate-spin"
+                        aria-hidden="true"
+                      />
+                      GETTING WAITLIST...
+                    </span>
+                  ) : (
+                    <>
+                      <span className="text-meathead-red">{orderData.waitlistCount ?? 0}</span>
+                      {" "}REGISTERED
+                    </>
+                  )}
                 </p>
                 <p className="text-gray-400 text-xs font-data">People waiting for launch</p>
               </div>

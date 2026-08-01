@@ -28,7 +28,6 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     pattiesRemaining: 100,
     isSoldOut: false,
     totalPatties: 100,
-    waitlistCount: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 

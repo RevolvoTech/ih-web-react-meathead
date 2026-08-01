@@ -181,7 +181,7 @@ function ThankYouContent() {
           </motion.p>
         </motion.div>
 
-        {/* Progress to 1K Goal - Prominent Display */}
+        {/* Progress to launch goal - prominent display */}
         {totalWaitlist !== null && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

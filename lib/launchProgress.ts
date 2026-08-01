@@ -1,6 +1,6 @@
-export const LAUNCH_GOAL = 1000;
-export const MOMENTUM_THRESHOLD = 150;
-export const ALMOST_THERE_THRESHOLD = 700;
+export const LAUNCH_GOAL = 100;
+export const MOMENTUM_THRESHOLD = 15;
+export const ALMOST_THERE_THRESHOLD = 70;
 
 export type LaunchMilestone = "early" | "momentum" | "almost" | "done";
 

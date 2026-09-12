@@ -3,6 +3,7 @@
 import { CircleDollarSign, Fuel, PackageOpen, Plus, RefreshCw, ShoppingBag, WalletCards } from "lucide-react";
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import AuthGate from "@/components/operations/AuthGate";
+import InventoryPanel from "@/components/operations/InventoryPanel";
 import OperationsShell from "@/components/operations/OperationsShell";
 import StatusBadge, { humanizeStatus } from "@/components/operations/StatusBadge";
 import {
@@ -11,6 +12,8 @@ import {
   type AnalyticsSummary,
   type Expense,
   type ExpenseCategory,
+  type InventoryItem,
+  type OperationsProfile,
   type OrderSummary,
 } from "@/lib/meathead-api";
 
@@ -27,14 +30,15 @@ const formatMoney = (paisa = 0) => new Intl.NumberFormat("en-PK", {
 }).format(paisa / 100);
 
 export default function OperationsPage() {
-  return <AuthGate>{({ session, signOut }) => <OperationsDashboard token={session.access_token} signOut={signOut} />}</AuthGate>;
+  return <AuthGate allowedRoles={["ADMIN"]} workspace="Admin">{({ session, profile, signOut }) => <OperationsDashboard token={session.access_token} profile={profile} signOut={signOut} />}</AuthGate>;
 }
 
-function OperationsDashboard({ token, signOut }: { token: string; signOut: () => Promise<void> }) {
+function OperationsDashboard({ token, profile, signOut }: { token: string; profile: OperationsProfile; signOut: () => Promise<void> }) {
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -45,16 +49,18 @@ function OperationsDashboard({ token, signOut }: { token: string; signOut: () =>
     const now = new Date();
     const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
     try {
-      const [nextDashboard, nextOrders, nextAnalytics, nextExpenses] = await Promise.all([
+      const [nextDashboard, nextOrders, nextAnalytics, nextExpenses, nextInventory] = await Promise.all([
         meatheadApi.adminDashboard(token),
         meatheadApi.adminOrders(token),
         meatheadApi.adminAnalytics(token, from, now.toISOString()),
         meatheadApi.adminExpenses(token),
+        meatheadApi.adminInventory(token),
       ]);
       setDashboard(nextDashboard);
       setOrders(nextOrders);
       setAnalytics(nextAnalytics);
       setExpenses(nextExpenses);
+      setInventory(nextInventory);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Operations data could not be loaded.");
     } finally {
@@ -72,7 +78,7 @@ function OperationsDashboard({ token, signOut }: { token: string; signOut: () =>
     (dashboard?.inventory.soldQuantity ?? 0),
   );
 
-  return <OperationsShell active="ops" title="Today at a glance" subtitle="Orders, delivery workload, and the expenses that matter for a single-product operation." onSignOut={signOut}>
+  return <OperationsShell active="admin" profile={profile} title="Today at a glance" subtitle="Orders, delivery workload, inventory, and the expenses that matter for this operation." onSignOut={signOut}>
     <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-white/55">Current month · values update when you refresh</p>
       <div className="flex gap-2">
@@ -91,6 +97,10 @@ function OperationsDashboard({ token, signOut }: { token: string; signOut: () =>
         <Metric icon={<Fuel aria-hidden="true" />} label="Active runs" value={String(dashboard?.activeRuns ?? 0)} detail="Assigned or on road" />
         <Metric icon={<CircleDollarSign aria-hidden="true" />} label="Month expenses" value={formatMoney(analytics?.expenseTotalPaisa)} detail={`${analytics?.deliveredOrders ?? 0} orders delivered`} />
       </section>
+
+      <div className="mt-6">
+        <InventoryPanel items={inventory} token={token} canManage onChanged={load} />
+      </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">
         <section className="border border-white/10 bg-meathead-charcoal" aria-labelledby="latest-orders-heading">

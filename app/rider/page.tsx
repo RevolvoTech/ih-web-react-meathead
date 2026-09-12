@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import AuthGate from "@/components/operations/AuthGate";
 import OperationsShell from "@/components/operations/OperationsShell";
 import StatusBadge from "@/components/operations/StatusBadge";
-import { meatheadApi, type DeliveryRun, type DeliveryStop } from "@/lib/meathead-api";
+import { meatheadApi, type DeliveryRun, type DeliveryStop, type OperationsProfile } from "@/lib/meathead-api";
 
 const formatMoney = (paisa: number) => new Intl.NumberFormat("en-PK", {
   style: "currency",
@@ -14,10 +14,10 @@ const formatMoney = (paisa: number) => new Intl.NumberFormat("en-PK", {
 }).format(paisa / 100);
 
 export default function RiderPage() {
-  return <AuthGate>{({ session, signOut }) => <RiderWorkspace token={session.access_token} signOut={signOut} />}</AuthGate>;
+  return <AuthGate allowedRoles={["ADMIN", "RIDER"]} workspace="Rider">{({ session, profile, signOut }) => <RiderWorkspace token={session.access_token} profile={profile} signOut={signOut} />}</AuthGate>;
 }
 
-function RiderWorkspace({ token, signOut }: { token: string; signOut: () => Promise<void> }) {
+function RiderWorkspace({ token, profile, signOut }: { token: string; profile: OperationsProfile; signOut: () => Promise<void> }) {
   const [runs, setRuns] = useState<DeliveryRun[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState("");
@@ -97,7 +97,7 @@ function RiderWorkspace({ token, signOut }: { token: string; signOut: () => Prom
     );
   }
 
-  return <OperationsShell active="rider" title="Delivery runs" subtitle="Start your assigned run, share location, and complete stops in sequence." onSignOut={signOut}>
+  return <OperationsShell active="rider" profile={profile} title="Delivery runs" subtitle="Start your assigned run, share location, and complete stops in sequence." onSignOut={signOut}>
     <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
       <div aria-live="polite" className="flex min-h-6 items-center gap-2 text-sm text-white/55">{locationRunId && <span className="h-2 w-2 rounded-full bg-emerald-400 motion-safe:animate-pulse" aria-hidden="true" />}{locationMessage || "Location is shared only while you choose to share it."}</div>
       <button type="button" onClick={() => void load()} disabled={loading} className="inline-flex min-h-11 items-center gap-2 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/75 hover:border-white/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red disabled:opacity-50"><RefreshCw size={16} aria-hidden="true" className={loading ? "motion-safe:animate-spin" : ""} /> Refresh</button>

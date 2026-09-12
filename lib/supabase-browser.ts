@@ -7,6 +7,12 @@ export function getSupabaseBrowserClient(): SupabaseClient | null {
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!url || !publishableKey) return null;
-  browserClient ??= createClient(url, publishableKey);
+  browserClient ??= createClient(url, publishableKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  });
   return browserClient;
 }

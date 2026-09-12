@@ -20,6 +20,22 @@
   }
 }
 
+.operations-safe-header {
+  padding-top: env(safe-area-inset-top);
+}
+
+.operations-safe-main {
+  padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+}
+
+.operations-app :where(a, button, input, select) {
+  touch-action: manipulation;
+}
+
+.operations-app :where(a, button:not(:disabled), label[for], select) {
+  cursor: pointer;
+}
+
 @layer utilities {
   .text-gradient {
     @apply bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent;

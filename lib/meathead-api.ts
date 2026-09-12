@@ -46,6 +46,13 @@ export type OrderStatus =
   | "CANCELLED";
 
 export type DeliveryStopStatus = "PENDING" | "ARRIVED" | "DELIVERED" | "FAILED" | "SKIPPED";
+export type UserRole = "ADMIN" | "CHEF" | "DISPATCHER" | "RIDER";
+
+export interface OperationsProfile {
+  id: string;
+  role: UserRole;
+  displayName: string;
+}
 
 export interface AdminDashboard {
   statusCounts: Array<{ status: OrderStatus; _count: { _all: number } }>;
@@ -65,6 +72,32 @@ export interface OrderSummary {
   totalAmountPaisa: number;
   placedAt: string;
   items: Array<{ id: string; productName: string; quantity: number }>;
+}
+
+export interface InventoryBatch {
+  id: string;
+  code: string;
+  totalQuantity: number;
+  reservedQuantity: number;
+  soldQuantity: number;
+  status: "DRAFT" | "ACTIVE" | "CLOSED";
+  createdAt: string;
+}
+
+export interface InventoryItem {
+  id: string;
+  sku: string;
+  name: string;
+  unitWeightGrams: number;
+  lowStockThreshold: number | null;
+  products: Array<{
+    id: string;
+    sku: string;
+    name: string;
+    inventoryUnitsPerItem: number;
+    active: boolean;
+  }>;
+  batches: InventoryBatch[];
 }
 
 export interface AnalyticsSummary {
@@ -141,8 +174,29 @@ export interface TrackingOrder {
 }
 
 export const meatheadApi = {
+  me: (token: string) => request<OperationsProfile>("/v1/me", {}, token),
   adminDashboard: (token: string) => request<AdminDashboard>("/v1/admin/dashboard", {}, token),
   adminOrders: (token: string) => request<OrderSummary[]>("/v1/admin/orders?limit=20", {}, token),
+  adminInventory: (token: string) => request<InventoryItem[]>("/v1/admin/inventory", {}, token),
+  createInventoryBatch: (token: string, input: {
+    code: string;
+    inventoryItemId: string;
+    totalQuantity: number;
+    status: "ACTIVE" | "DRAFT";
+  }) => request<InventoryBatch>("/v1/admin/inventory/batches", {
+    method: "POST",
+    body: JSON.stringify(input),
+  }, token),
+  updateInventoryItem: (token: string, inventoryItemId: string, input: { lowStockThreshold: number | null }) =>
+    request<InventoryItem>(`/v1/admin/inventory/${inventoryItemId}`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    }, token),
+  updateOrderStatus: (token: string, orderId: string, status: OrderStatus) =>
+    request<OrderSummary>(`/v1/admin/orders/${orderId}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }, token),
   adminAnalytics: (token: string, from: string, to: string) =>
     request<AnalyticsSummary>(`/v1/admin/analytics?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, {}, token),
   adminExpenses: (token: string) => request<Expense[]>("/v1/admin/expenses?limit=20", {}, token),

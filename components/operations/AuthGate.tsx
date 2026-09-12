@@ -4,16 +4,22 @@ import type { Session } from "@supabase/supabase-js";
 import { Eye, EyeOff, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 import { type FormEvent, type ReactNode, useEffect, useState } from "react";
+import { meatheadApi, type OperationsProfile, type UserRole } from "@/lib/meathead-api";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 interface AuthGateProps {
-  children: (auth: { session: Session; signOut: () => Promise<void> }) => ReactNode;
+  allowedRoles: UserRole[];
+  workspace: "Admin" | "Chef" | "Rider";
+  children: (auth: { session: Session; profile: OperationsProfile; signOut: () => Promise<void> }) => ReactNode;
 }
 
-export default function AuthGate({ children }: AuthGateProps) {
+export default function AuthGate({ allowedRoles, workspace, children }: AuthGateProps) {
   const supabase = getSupabaseBrowserClient();
   const [session, setSession] = useState<Session | null>(null);
   const [checking, setChecking] = useState(true);
+  const [profile, setProfile] = useState<OperationsProfile | null>(null);
+  const [profileChecking, setProfileChecking] = useState(false);
+  const [profileError, setProfileError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -34,6 +40,33 @@ export default function AuthGate({ children }: AuthGateProps) {
     return () => data.subscription.unsubscribe();
   }, [supabase]);
 
+  useEffect(() => {
+    let cancelled = false;
+    if (!session) {
+      setProfile(null);
+      setProfileError("");
+      setProfileChecking(false);
+      return;
+    }
+
+    setProfileChecking(true);
+    setProfileError("");
+    void meatheadApi.me(session.access_token)
+      .then((nextProfile) => {
+        if (!cancelled) setProfile(nextProfile);
+      })
+      .catch((requestError) => {
+        if (!cancelled) {
+          setProfile(null);
+          setProfileError(requestError instanceof Error ? requestError.message : "Your staff profile could not be loaded.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setProfileChecking(false);
+      });
+    return () => { cancelled = true; };
+  }, [session]);
+
   async function logIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase) return;
@@ -44,7 +77,11 @@ export default function AuthGate({ children }: AuthGateProps) {
     setSubmitting(false);
   }
 
-  if (checking) {
+  async function signOut() {
+    if (supabase) await supabase.auth.signOut();
+  }
+
+  if (checking || (session && profileChecking)) {
     return <div className="min-h-dvh bg-meathead-black px-4 py-24" aria-busy="true">
       <div className="mx-auto max-w-md space-y-4 motion-safe:animate-pulse"><div className="h-10 w-52 bg-meathead-gray" /><div className="h-64 border border-white/10 bg-meathead-charcoal" /></div>
     </div>;
@@ -63,8 +100,8 @@ export default function AuthGate({ children }: AuthGateProps) {
         <div className="mt-8 border border-white/10 bg-meathead-charcoal p-6 sm:p-8">
           <div className="mb-7 flex h-11 w-11 items-center justify-center border border-meathead-red/50 bg-meathead-red/10 text-meathead-red"><LockKeyhole aria-hidden="true" size={21} /></div>
           <p className="font-data text-xs font-bold uppercase tracking-[0.22em] text-meathead-red">Private workspace</p>
-          <h1 className="mt-2 font-heading text-4xl uppercase leading-none">Log in to MEATHEAD Ops</h1>
-          <p className="mt-3 text-sm leading-6 text-white/60">Use the Supabase account assigned to your admin, dispatcher, or rider profile.</p>
+          <h1 className="mt-2 font-heading text-4xl uppercase leading-none">Log in to MEATHEAD {workspace}</h1>
+          <p className="mt-3 text-sm leading-6 text-white/60">Use the private account assigned to this workspace.</p>
 
           <form className="mt-8 space-y-5" onSubmit={logIn}>
             <div>
@@ -85,9 +122,36 @@ export default function AuthGate({ children }: AuthGateProps) {
     </main>;
   }
 
+  if (profileError || !profile) {
+    return <main className="min-h-dvh bg-meathead-black px-4 py-24 text-white">
+      <div className="mx-auto max-w-lg border border-meathead-red/40 bg-meathead-charcoal p-7">
+        <LockKeyhole className="text-meathead-red" aria-hidden="true" />
+        <h1 className="mt-5 font-heading text-3xl uppercase">Staff access is not ready</h1>
+        <p role="alert" className="mt-3 text-sm leading-6 text-white/65">{profileError || "No active staff profile was found for this account."}</p>
+        <button type="button" onClick={() => void signOut()} className="mt-6 min-h-11 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/75 hover:border-white/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red">Log out</button>
+      </div>
+    </main>;
+  }
+
+  if (!allowedRoles.includes(profile.role)) {
+    const home = profile.role === "RIDER" ? "/rider" : profile.role === "CHEF" ? "/chef" : "/admin";
+    return <main className="min-h-dvh bg-meathead-black px-4 py-24 text-white">
+      <div className="mx-auto max-w-lg border border-white/10 bg-meathead-charcoal p-7">
+        <LockKeyhole className="text-meathead-red" aria-hidden="true" />
+        <h1 className="mt-5 font-heading text-3xl uppercase">Different workspace</h1>
+        <p className="mt-3 text-sm leading-6 text-white/65">{profile.displayName} is signed in as {profile.role.toLowerCase()}. This account cannot open the {workspace.toLowerCase()} workspace.</p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link href={home} className="inline-flex min-h-11 items-center bg-meathead-red px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Open my workspace</Link>
+          <button type="button" onClick={() => void signOut()} className="min-h-11 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/75 hover:border-white/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red">Log out</button>
+        </div>
+      </div>
+    </main>;
+  }
+
   return children({
     session,
-    signOut: async () => { await supabase.auth.signOut(); },
+    profile,
+    signOut,
   });
 }
 

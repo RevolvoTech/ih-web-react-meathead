@@ -102,15 +102,15 @@ function RiderWorkspace({ token, profile, signOut }: { token: string; profile: O
     );
   }
 
-  return <OperationsShell active="rider" profile={profile} title="Delivery runs" subtitle="Navigate one stop at a time. Returning from Maps checks your arrival and prepares the next destination." onSignOut={signOut}>
+  return <OperationsShell active="rider" profile={profile} title="Delivery runs" onSignOut={signOut}>
     <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-      <div aria-live="polite" className="flex min-h-6 items-center gap-2 text-sm text-white/55">{(locationRunId || checkingStopId) && <span className="h-2 w-2 rounded-full bg-emerald-400 motion-safe:animate-pulse" aria-hidden="true" />}{locationMessage || `Arrival advances automatically within ${ARRIVAL_RADIUS_METERS}m.`}</div>
+      <div aria-live="polite" className="flex min-h-6 items-center gap-2 font-data text-xs font-bold uppercase text-white/55">{(locationRunId || checkingStopId) && <span className="h-2 w-2 rounded-full bg-emerald-400 motion-safe:animate-pulse" aria-hidden="true" />}{locationMessage || `${ARRIVAL_RADIUS_METERS} m auto-arrival`}</div>
       <button type="button" onClick={() => void load()} disabled={loading} className="inline-flex min-h-11 items-center gap-2 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/75 hover:border-white/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red disabled:opacity-50"><RefreshCw size={16} aria-hidden="true" className={loading ? "motion-safe:animate-spin" : ""} /> Refresh</button>
     </div>
 
-    {error && <div role="alert" className="mb-5 border-l-2 border-meathead-red bg-meathead-red/10 px-4 py-3 text-sm text-red-100">{error}</div>}
-    {loading && !runs.length ? <div className="space-y-4" aria-busy="true" aria-label="Loading delivery runs">{[0, 1].map((item) => <div key={item} className="h-64 border border-white/10 bg-meathead-charcoal motion-safe:animate-pulse" />)}</div> : null}
-    {!loading && !runs.length ? <div className="border border-white/10 bg-meathead-charcoal px-5 py-16 text-center"><Route className="mx-auto text-white/25" size={34} aria-hidden="true" /><h2 className="mt-4 text-lg font-bold">No active delivery run</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-white/50">Assigned runs will appear here after dispatch creates them.</p></div> : null}
+    {error && <div role="alert" className="mb-5 rounded-lg border-l-2 border-meathead-red bg-meathead-red/10 px-4 py-3 text-sm text-red-100">{error}</div>}
+    {loading && !runs.length ? <div className="space-y-4" aria-busy="true" aria-label="Loading delivery runs">{[0, 1].map((item) => <div key={item} className="h-64 rounded-xl border border-white/10 bg-meathead-charcoal motion-safe:animate-pulse" />)}</div> : null}
+    {!loading && !runs.length ? <div className="rounded-xl border border-white/10 bg-meathead-charcoal px-5 py-16 text-center shadow-lg shadow-black/20"><Route className="mx-auto text-white/25" size={34} aria-hidden="true" /><h2 className="mt-4 font-heading text-2xl uppercase">No active run</h2></div> : null}
 
     <div className="space-y-6">
       {runs.map((run) => <RunCard

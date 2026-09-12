@@ -99,7 +99,7 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
   }
 
   return <div>
-    <div ref={elementRef} className="h-72 w-full bg-meathead-gray sm:h-80" aria-label="Choose delivery location on map" />
+    <div ref={elementRef} className="h-72 w-full overflow-hidden rounded-xl bg-meathead-gray shadow-lg shadow-black/20 sm:h-80" aria-label="Choose delivery location on map" />
     <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <button type="button" onClick={useCurrentLocation} disabled={locating} className="inline-flex min-h-11 items-center justify-center gap-2 border border-white/25 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] hover:border-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red disabled:opacity-50">
         <Crosshair size={16} aria-hidden="true" /> {locating ? "Finding you…" : "Use my location"}

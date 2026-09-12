@@ -27,7 +27,7 @@ export default function InventoryPanel({ items, token, onChanged, canManage = fa
     <header className="flex flex-col gap-4 border-b border-white/10 p-4 sm:flex-row sm:items-end sm:justify-between sm:p-5">
       <div>
         <p className="font-data text-xs font-bold uppercase tracking-[0.16em] text-meathead-red">125 g per patty</p>
-        <h2 id="inventory-heading" className="mt-1 text-lg font-bold">Meat inventory</h2>
+        <h2 id="inventory-heading" className="mt-1 font-heading text-2xl uppercase">Meat inventory</h2>
       </div>
       {canManage && <button type="button" onClick={() => setStockOpen((open) => !open)} className="inline-flex min-h-11 items-center justify-center gap-2 bg-meathead-red px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><Plus size={16} aria-hidden="true" /> Add stock</button>}
     </header>
@@ -37,21 +37,21 @@ export default function InventoryPanel({ items, token, onChanged, canManage = fa
       {stockOpen && token && onChanged && <StockForm item={item} token={token} onSaved={async () => { setStockOpen(false); await onChanged(); }} />}
 
       <div className="grid grid-cols-2 gap-px bg-white/10 lg:grid-cols-4">
-        <InventoryMetric label="Available" value={`${available} patties`} detail={`${formatKg(available, item.unitWeightGrams)} kg usable`} />
-        <InventoryMetric label="Reserved" value={`${totals.reserved} patties`} detail="Held by open orders" />
-        <InventoryMetric label="Consumed" value={`${totals.used} patties`} detail="Completed deliveries" />
-        <InventoryMetric label="Low-stock warning" value={item.lowStockThreshold === null ? "Not set" : `${item.lowStockThreshold} patties`} detail={item.lowStockThreshold === null ? "Admin can configure it" : `${formatKg(item.lowStockThreshold, item.unitWeightGrams)} kg`} />
+        <InventoryMetric label="Available" value={`${available} patties`} detail={`${formatKg(available, item.unitWeightGrams)} kg`} />
+        <InventoryMetric label="Reserved" value={`${totals.reserved} patties`} />
+        <InventoryMetric label="Consumed" value={`${totals.used} patties`} />
+        <InventoryMetric label="Low-stock warning" value={item.lowStockThreshold === null ? "Not set" : `${item.lowStockThreshold} patties`} />
       </div>
 
       <div className="grid gap-px border-t border-white/10 bg-white/10 lg:grid-cols-2">
         <div className="bg-meathead-charcoal p-4 sm:p-5">
-          <div className="flex items-center gap-2"><Scale size={17} className="text-meathead-red" aria-hidden="true" /><h3 className="font-semibold">Product recipes</h3></div>
+          <div className="flex items-center gap-2"><Scale size={17} className="text-meathead-red" aria-hidden="true" /><h3 className="font-heading text-xl uppercase">Product recipes</h3></div>
           <ul className="mt-3 divide-y divide-white/10">
             {item.products.filter((product) => product.active).map((product) => <li key={product.id} className="flex items-center justify-between gap-4 py-3 text-sm"><span>{product.name}</span><strong className="font-data">{product.inventoryUnitsPerItem} {product.inventoryUnitsPerItem === 1 ? "patty" : "patties"}</strong></li>)}
           </ul>
         </div>
         <div className="bg-meathead-charcoal p-4 sm:p-5">
-          <h3 className="font-semibold">Stock batches</h3>
+          <h3 className="font-heading text-xl uppercase">Stock batches</h3>
           {item.batches.length ? <ul className="mt-3 divide-y divide-white/10">{item.batches.slice(0, 6).map((batch) => {
             const remaining = Math.max(0, batch.totalQuantity - batch.reservedQuantity - batch.soldQuantity);
             return <li key={batch.id} className="flex items-center justify-between gap-4 py-3"><div><p className="font-data text-xs font-bold">{batch.code}</p><p className="mt-1 text-xs text-white/45">{batch.status.toLowerCase()}</p></div><div className="text-right"><strong className="font-data text-sm">{remaining} {batch.status === "ACTIVE" ? "available" : "patties"}</strong><p className="mt-1 text-xs text-white/45">of {batch.totalQuantity}</p></div></li>;
@@ -66,8 +66,8 @@ function formatKg(patties: number, grams: number) {
   return ((patties * grams) / 1000).toLocaleString("en-PK", { maximumFractionDigits: 3 });
 }
 
-function InventoryMetric({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return <div className="bg-meathead-charcoal p-4"><span className="font-data text-[11px] font-bold uppercase tracking-[0.12em] text-white/45">{label}</span><strong className="mt-3 block font-data text-lg">{value}</strong><span className="mt-1 block text-xs text-white/40">{detail}</span></div>;
+function InventoryMetric({ label, value, detail }: { label: string; value: string; detail?: string }) {
+  return <div className="bg-meathead-charcoal p-4"><span className="font-data text-[11px] font-bold uppercase tracking-[0.12em] text-white/45">{label}</span><strong className="mt-3 block font-data text-lg tabular-nums">{value}</strong>{detail && <span className="mt-1 block text-xs text-white/40">{detail}</span>}</div>;
 }
 
 function StockForm({ item, token, onSaved }: { item: InventoryItem; token: string; onSaved: () => Promise<void> }) {

@@ -91,7 +91,7 @@ export default function OrderCheckout() {
 
   if (created) return <Success order={created} onReset={startAnother} />;
 
-  return <main className="min-h-screen bg-meathead-black text-white">
+  return <main className="order-flow min-h-dvh bg-meathead-black text-white">
     <header className="border-b border-white/10 px-4 py-5 sm:px-6">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
         <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm text-white/60 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red"><ArrowLeft size={17} aria-hidden="true" /> Waitlist home</Link>
@@ -100,11 +100,7 @@ export default function OrderCheckout() {
     </header>
 
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
-      <div className="max-w-2xl">
-        <p className="font-data text-xs font-bold uppercase tracking-[0.18em] text-meathead-red">Test checkout</p>
-        <h1 className="mt-2 font-heading text-5xl uppercase leading-none sm:text-7xl">Build the order.</h1>
-        <p className="mt-4 max-w-xl text-sm leading-6 text-white/60">This page is temporary and unlinked. It creates a real operations order, reserves active inventory, and generates the customer tracking link.</p>
-      </div>
+      <h1 className="max-w-2xl text-balance font-heading text-5xl uppercase leading-none sm:text-7xl">Build your order.</h1>
 
       {loading ? <LoadingState /> : error && !products.length ? <LoadError message={error} onRetry={loadCatalog} /> :
         <form onSubmit={submit} className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
@@ -112,16 +108,15 @@ export default function OrderCheckout() {
             <section aria-labelledby="product-heading">
               <SectionHeading number="01" id="product-heading">Choose the pack</SectionHeading>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                {products.map((product) => <label key={product.id} className={`relative cursor-pointer border p-4 transition-colors ${productId === product.id ? "border-meathead-red bg-meathead-red/10" : "border-white/15 bg-meathead-charcoal hover:border-white/35"}`}>
+                {products.map((product) => <label key={product.id} className={`relative cursor-pointer rounded-xl border p-4 shadow-lg shadow-black/20 transition-colors ${productId === product.id ? "border-meathead-red bg-meathead-red/10" : "border-white/15 bg-meathead-charcoal hover:border-white/35"}`}>
                   <input type="radio" name="product" value={product.id} checked={productId === product.id} onChange={() => setProductId(product.id)} className="sr-only" />
                   <span className="block font-heading text-2xl uppercase">{product.name}</span>
                   <span className="mt-2 block font-data text-sm font-bold text-meathead-red">{money(product.unitPricePaisa)}</span>
-                  <span className="mt-3 block text-xs leading-5 text-white/50">{product.description}</span>
                   <span className="mt-2 block text-xs text-white/40">{product.inventoryUnitsPerItem} × 125 g patties</span>
                 </label>)}
               </div>
-              <div className="mt-4 flex items-center justify-between border border-white/15 bg-meathead-charcoal p-3">
-                <div><p className="text-sm font-semibold">Pack quantity</p><p className="mt-1 text-xs text-white/45">Maximum 20 per order</p></div>
+              <div className="mt-4 flex items-center justify-between rounded-xl border border-white/15 bg-meathead-charcoal p-3 shadow-lg shadow-black/20">
+                <p className="text-sm font-semibold">Pack quantity</p>
                 <div className="flex items-center">
                   <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid h-11 w-11 place-items-center border border-white/20 hover:border-white/50"><Minus size={16} /></button>
                   <output className="grid h-11 min-w-12 place-items-center border-y border-white/20 font-data font-bold">{quantity}</output>
@@ -150,7 +145,7 @@ export default function OrderCheckout() {
             </section>
           </div>
 
-          <aside className="border border-white/15 bg-meathead-charcoal p-5 lg:sticky lg:top-6">
+          <aside className="rounded-xl border border-white/15 bg-meathead-charcoal p-5 shadow-xl shadow-black/25 lg:sticky lg:top-6">
             <p className="font-data text-xs font-bold uppercase tracking-[0.16em] text-meathead-red">Order total</p>
             <div className="mt-5 space-y-3 text-sm">
               <div className="flex justify-between gap-4 text-white/60"><span>{quantity} × {selected?.name ?? "Pack"}</span><span>{money(subtotal)}</span></div>
@@ -159,9 +154,9 @@ export default function OrderCheckout() {
             </div>
             {error && <p role="alert" className="mt-5 border-l-2 border-meathead-red bg-meathead-red/10 px-3 py-2 text-sm leading-5 text-red-100">{error}</p>}
             <button type="submit" disabled={submitting || !selected} className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-meathead-red px-5 font-data text-xs font-bold uppercase tracking-[0.12em] hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-50">
-              {submitting && <LoaderCircle className="motion-safe:animate-spin" size={17} aria-hidden="true" />}{submitting ? "Placing order…" : "Place real test order"}
+              {submitting && <LoaderCircle className="motion-safe:animate-spin" size={17} aria-hidden="true" />}{submitting ? "Placing order…" : "Place test order"}
             </button>
-            <p className="mt-3 text-xs leading-5 text-white/40">Submitting reserves stock immediately. Use a small pack for the first test.</p>
+            <p className="mt-3 text-xs text-white/40">Reserves live stock.</p>
           </aside>
         </form>}
     </div>
@@ -181,7 +176,7 @@ function LoadingState() {
 }
 
 function LoadError({ message, onRetry }: { message: string; onRetry: () => Promise<void> }) {
-  return <div className="mt-10 border border-meathead-red/40 bg-meathead-red/10 p-5" role="alert"><p>{message}</p><button type="button" onClick={() => void onRetry()} className="mt-4 min-h-11 bg-meathead-red px-5 font-data text-xs font-bold uppercase tracking-[0.1em]">Retry</button></div>;
+  return <div className="mt-10 rounded-xl border border-meathead-red/40 bg-meathead-red/10 p-5" role="alert"><p>{message}</p><button type="button" onClick={() => void onRetry()} className="mt-4 min-h-11 bg-meathead-red px-5 font-data text-xs font-bold uppercase tracking-[0.1em]">Retry</button></div>;
 }
 
 function Success({ order, onReset }: { order: CreatedOrder; onReset: () => void }) {
@@ -191,5 +186,5 @@ function Success({ order, onReset }: { order: CreatedOrder; onReset: () => void 
     trackingHref = `${trackingUrl.pathname}${trackingUrl.search}${trackingUrl.hash}`;
   } catch { /* Keep the API value if it is already relative. */ }
 
-  return <main className="grid min-h-screen place-items-center bg-meathead-black px-4 py-12 text-white"><div className="w-full max-w-xl border border-white/15 bg-meathead-charcoal p-6 sm:p-10"><div className="grid h-12 w-12 place-items-center bg-meathead-red"><Check aria-hidden="true" /></div><p className="mt-7 font-data text-xs font-bold uppercase tracking-[0.18em] text-meathead-red">Real order created</p><h1 className="mt-2 font-heading text-5xl uppercase">{order.orderNumber}</h1><p className="mt-4 text-white/60">The order is now visible to the operations team and {money(order.totalAmountPaisa)} is due on delivery.</p><a href={trackingHref} target="_blank" rel="noreferrer" className="mt-7 inline-flex min-h-12 w-full items-center justify-center bg-meathead-red px-5 text-center font-data text-xs font-bold uppercase tracking-[0.1em] hover:bg-red-700">Open customer tracking</a><button type="button" onClick={onReset} className="mt-3 min-h-11 w-full border border-white/20 px-5 font-data text-xs font-bold uppercase tracking-[0.1em] hover:border-white/50">Place another test order</button><Link href="/" className="mt-5 block text-center text-sm text-white/45 hover:text-white">Back to waitlist home</Link></div></main>;
+  return <main className="order-flow grid min-h-dvh place-items-center bg-meathead-black px-4 py-12 text-white"><div className="w-full max-w-xl rounded-xl border border-white/15 bg-meathead-charcoal p-6 shadow-xl shadow-black/25 sm:p-10"><div className="grid size-12 place-items-center rounded-lg bg-meathead-red"><Check aria-hidden="true" /></div><p className="mt-7 font-data text-xs font-bold uppercase tracking-[0.18em] text-meathead-red">Order created</p><h1 className="mt-2 font-heading text-5xl uppercase">{order.orderNumber}</h1><p className="mt-4 text-white/60">{money(order.totalAmountPaisa)} due on delivery.</p><a href={trackingHref} target="_blank" rel="noreferrer" className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-meathead-red px-5 text-center font-data text-xs font-bold uppercase tracking-[0.1em] hover:bg-red-700">Open customer tracking</a><button type="button" onClick={onReset} className="mt-3 min-h-11 w-full border border-white/20 px-5 font-data text-xs font-bold uppercase tracking-[0.1em] hover:border-white/50">Place another test order</button><Link href="/" className="mt-5 block text-center text-sm text-white/45 hover:text-white">Back to waitlist home</Link></div></main>;
 }

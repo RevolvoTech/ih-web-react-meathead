@@ -93,11 +93,10 @@ export default function DispatchPanel({ token, orders, onCreated }: DispatchPane
   return <section className="border border-white/10 bg-meathead-charcoal" aria-labelledby="dispatch-heading">
     <header className="border-b border-white/10 p-4 sm:p-5">
       <p className="font-data text-xs font-bold uppercase tracking-[0.16em] text-meathead-red">Delivery desk</p>
-      <h2 id="dispatch-heading" className="mt-1 text-lg font-bold">Build a rider run</h2>
-      <p className="mt-2 text-sm text-white/50">Select ready orders. The backend arranges the stop sequence from your dispatch origin.</p>
+      <h2 id="dispatch-heading" className="mt-1 font-heading text-2xl uppercase">Build a rider run</h2>
     </header>
 
-    {!readyOrders.length ? <div className="px-5 py-8"><p className="font-semibold">No orders ready for dispatch</p><p className="mt-1 text-sm text-white/45">They appear here after Chef marks them ready.</p></div> : <div className="grid gap-px bg-white/10 lg:grid-cols-[minmax(0,1fr)_360px]">
+    {!readyOrders.length ? <div className="px-5 py-8"><p className="font-semibold">No orders ready</p></div> : <div className="grid gap-px bg-white/10 lg:grid-cols-[minmax(0,1fr)_360px]">
       <fieldset className="bg-meathead-charcoal p-4 sm:p-5">
         <legend className="font-data text-xs font-bold uppercase tracking-[0.12em] text-white/50">Ready orders</legend>
         <div className="mt-3 divide-y divide-white/10">
@@ -114,10 +113,10 @@ export default function DispatchPanel({ token, orders, onCreated }: DispatchPane
           <label className="text-sm font-semibold">Origin latitude<input inputMode="decimal" value={latitude} onChange={(event) => setLatitude(event.target.value)} className={`${inputClass} mt-2`} placeholder="33.6844" /></label>
           <label className="text-sm font-semibold">Origin longitude<input inputMode="decimal" value={longitude} onChange={(event) => setLongitude(event.target.value)} className={`${inputClass} mt-2`} placeholder="73.0479" /></label>
         </div>
-        <button type="button" onClick={useCurrentLocation} disabled={locating} className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] hover:border-white/50 disabled:opacity-50"><Crosshair size={16} />{locating ? "Finding origin…" : "Use current location"}</button>
+        <button type="button" onClick={useCurrentLocation} disabled={locating} className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] hover:border-white/50 disabled:opacity-50"><Crosshair size={16} aria-hidden="true" />{locating ? "Finding origin…" : "Use current location"}</button>
         {error && <p role="alert" className="mt-4 text-sm text-red-200">{error}</p>}
         {success && <p role="status" className="mt-4 text-sm text-emerald-300">{success}</p>}
-        <button type="button" onClick={() => void createRun()} disabled={saving || loading} className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-meathead-red px-5 font-data text-xs font-bold uppercase tracking-[0.1em] hover:bg-red-700 disabled:opacity-50"><Route size={17} />{saving ? "Building run…" : `Assign ${selectedIds.length || ""} order${selectedIds.length === 1 ? "" : "s"}`}</button>
+        <button type="button" onClick={() => void createRun()} disabled={saving || loading} className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-meathead-red px-5 font-data text-xs font-bold uppercase tracking-[0.1em] hover:bg-red-700 disabled:opacity-50"><Route size={17} aria-hidden="true" />{saving ? "Building run…" : `Assign ${selectedIds.length || ""} order${selectedIds.length === 1 ? "" : "s"}`}</button>
       </div>
     </div>}
   </section>;

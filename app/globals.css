@@ -5,6 +5,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    color-scheme: dark;
+  }
+
   body {
     @apply bg-meathead-black text-white;
   }
@@ -30,6 +34,20 @@
 
 .operations-app :where(a, button, input, select) {
   touch-action: manipulation;
+}
+
+.operations-app :where(button, input:not([type="checkbox"]):not([type="radio"]), select, textarea),
+.tracking-app :where(button),
+.order-flow :where(button, input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border-radius: 0.5rem;
+}
+
+.operations-app section,
+.tracking-app section,
+.tracking-app aside {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  box-shadow: 0 18px 45px rgb(0 0 0 / 0.2);
 }
 
 .operations-app :where(a, button:not(:disabled), label[for], select) {

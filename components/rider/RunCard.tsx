@@ -125,7 +125,7 @@ function StopRow({ run, stop, active, busy, cashCollected, setCashCollected, onB
   const complete = ["DELIVERED", "FAILED", "SKIPPED"].includes(stop.status);
   const mapsUrl = googleMapsDirectionsUrl(Number(stop.order.latitude), Number(stop.order.longitude));
   return <li className={`grid gap-4 p-4 sm:p-5 lg:grid-cols-[48px_minmax(0,1fr)_auto] ${active ? "border-l-2 border-l-meathead-red bg-white/[0.025]" : "border-l-2 border-l-transparent"}`}>
-    <div className={`flex h-10 w-10 items-center justify-center border bg-black/25 font-data text-sm font-bold ${active ? "border-meathead-red text-meathead-red" : "border-white/15 text-white/55"}`} aria-label={`Stop ${stop.sequence}`}>{stop.sequence}</div>
+    <div className={`flex size-10 items-center justify-center rounded-lg border bg-black/25 font-data text-sm font-bold ${active ? "border-meathead-red text-meathead-red" : "border-white/15 text-white/55"}`} aria-label={`Stop ${stop.sequence}`}>{stop.sequence}</div>
     <div className="min-w-0">
       <div className="flex flex-wrap items-center gap-2"><strong>{stop.order.customerName}</strong><StatusBadge status={stop.status} />{active && <span className="font-data text-[10px] font-bold uppercase tracking-[0.12em] text-meathead-red">Active</span>}<span className="font-data text-xs text-white/40">{stop.order.orderNumber}</span></div>
       <p className="mt-2 flex items-start gap-2 text-sm leading-5 text-white/65"><MapPin className="mt-0.5 shrink-0 text-meathead-red" size={15} aria-hidden="true" />{stop.order.deliveryAddress}</p>

@@ -9,12 +9,11 @@ interface OperationsShellProps {
   active: "admin" | "chef" | "rider";
   profile: OperationsProfile;
   title: string;
-  subtitle: string;
   onSignOut: () => Promise<void>;
   children: ReactNode;
 }
 
-export default function OperationsShell({ active, profile, title, subtitle, onSignOut, children }: OperationsShellProps) {
+export default function OperationsShell({ active, profile, title, onSignOut, children }: OperationsShellProps) {
   const navClass = (item: "admin" | "chef" | "rider") => `flex min-h-11 items-center gap-2 border-b-2 px-3 font-data text-xs font-bold uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red ${active === item ? "border-meathead-red text-white" : "border-transparent text-white/55 hover:text-white"}`;
   const navItems = profile.role === "ADMIN"
     ? [
@@ -43,8 +42,7 @@ export default function OperationsShell({ active, profile, title, subtitle, onSi
     <main id="operations-main" className="operations-safe-main mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10">
       <div className="mb-8 border-l-2 border-meathead-red pl-4">
         <p className="font-data text-xs font-bold uppercase tracking-[0.2em] text-meathead-red">{profile.displayName} · {profile.role.toLowerCase()} workspace</p>
-        <h1 className="mt-2 font-heading text-4xl uppercase leading-none sm:text-5xl">{title}</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-white/60">{subtitle}</p>
+        <h1 className="mt-2 text-balance font-heading text-4xl uppercase leading-none sm:text-5xl">{title}</h1>
       </div>
       {children}
     </main>

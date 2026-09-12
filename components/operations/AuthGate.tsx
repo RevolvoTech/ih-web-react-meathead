@@ -94,14 +94,13 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
   }
 
   if (!session) {
-    return <main className="min-h-dvh bg-meathead-black px-4 py-16 text-white sm:py-24">
+    return <main className="operations-app min-h-dvh bg-meathead-black px-4 py-16 text-white sm:py-24">
       <div className="mx-auto max-w-md">
         <Link href="/" className="font-data text-xs font-bold uppercase tracking-[0.2em] text-white/60 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-meathead-red">← Public site</Link>
-        <div className="mt-8 border border-white/10 bg-meathead-charcoal p-6 sm:p-8">
-          <div className="mb-7 flex h-11 w-11 items-center justify-center border border-meathead-red/50 bg-meathead-red/10 text-meathead-red"><LockKeyhole aria-hidden="true" size={21} /></div>
+        <div className="mt-8 rounded-xl border border-white/10 bg-meathead-charcoal p-6 shadow-xl shadow-black/25 sm:p-8">
+          <div className="mb-7 flex size-11 items-center justify-center rounded-lg border border-meathead-red/50 bg-meathead-red/10 text-meathead-red"><LockKeyhole aria-hidden="true" size={21} /></div>
           <p className="font-data text-xs font-bold uppercase tracking-[0.22em] text-meathead-red">Private workspace</p>
-          <h1 className="mt-2 font-heading text-4xl uppercase leading-none">Log in to MEATHEAD {workspace}</h1>
-          <p className="mt-3 text-sm leading-6 text-white/60">Use the private account assigned to this workspace.</p>
+          <h1 className="mt-2 text-balance font-heading text-4xl uppercase leading-none">MEATHEAD {workspace}</h1>
 
           <form className="mt-8 space-y-5" onSubmit={logIn}>
             <div>
@@ -123,8 +122,8 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
   }
 
   if (profileError || !profile) {
-    return <main className="min-h-dvh bg-meathead-black px-4 py-24 text-white">
-      <div className="mx-auto max-w-lg border border-meathead-red/40 bg-meathead-charcoal p-7">
+    return <main className="operations-app min-h-dvh bg-meathead-black px-4 py-24 text-white">
+      <div className="mx-auto max-w-lg rounded-xl border border-meathead-red/40 bg-meathead-charcoal p-7 shadow-xl shadow-black/25">
         <LockKeyhole className="text-meathead-red" aria-hidden="true" />
         <h1 className="mt-5 font-heading text-3xl uppercase">Staff access is not ready</h1>
         <p role="alert" className="mt-3 text-sm leading-6 text-white/65">{profileError || "No active staff profile was found for this account."}</p>
@@ -135,8 +134,8 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
 
   if (!allowedRoles.includes(profile.role)) {
     const home = profile.role === "RIDER" ? "/rider" : profile.role === "CHEF" ? "/chef" : "/admin";
-    return <main className="min-h-dvh bg-meathead-black px-4 py-24 text-white">
-      <div className="mx-auto max-w-lg border border-white/10 bg-meathead-charcoal p-7">
+    return <main className="operations-app min-h-dvh bg-meathead-black px-4 py-24 text-white">
+      <div className="mx-auto max-w-lg rounded-xl border border-white/10 bg-meathead-charcoal p-7 shadow-xl shadow-black/25">
         <LockKeyhole className="text-meathead-red" aria-hidden="true" />
         <h1 className="mt-5 font-heading text-3xl uppercase">Different workspace</h1>
         <p className="mt-3 text-sm leading-6 text-white/65">{profile.displayName} is signed in as {profile.role.toLowerCase()}. This account cannot open the {workspace.toLowerCase()} workspace.</p>
@@ -156,5 +155,5 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
 }
 
 function AuthMessage({ title, children }: { title: string; children: ReactNode }) {
-  return <main className="min-h-dvh bg-meathead-black px-4 py-24 text-white"><div className="mx-auto max-w-lg border border-meathead-red/40 bg-meathead-charcoal p-7"><LockKeyhole className="text-meathead-red" aria-hidden="true" /><h1 className="mt-5 font-heading text-3xl uppercase">{title}</h1><p className="mt-3 text-sm leading-6 text-white/65">{children}</p></div></main>;
+  return <main className="operations-app min-h-dvh bg-meathead-black px-4 py-24 text-white"><div className="mx-auto max-w-lg rounded-xl border border-meathead-red/40 bg-meathead-charcoal p-7 shadow-xl shadow-black/25"><LockKeyhole className="text-meathead-red" aria-hidden="true" /><h1 className="mt-5 font-heading text-3xl uppercase">{title}</h1><p className="mt-3 text-sm leading-6 text-white/65">{children}</p></div></main>;
 }

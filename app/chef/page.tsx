@@ -68,13 +68,13 @@ function ChefWorkspace({ token, profile, signOut }: { token: string; profile: Op
   const item = inventory[0];
   const stock = item?.batches.filter((batch) => batch.status === "ACTIVE").reduce((sum, batch) => sum + batch.totalQuantity - batch.reservedQuantity - batch.soldQuantity, 0) ?? 0;
 
-  return <OperationsShell active="chef" profile={profile} title="Kitchen queue" subtitle="Accept orders, move them through preparation, and watch the 125 g patty stock in real time." onSignOut={signOut}>
+  return <OperationsShell active="chef" profile={profile} title="Kitchen queue" onSignOut={signOut}>
     <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
       <p aria-live="polite" className="text-sm text-white/55">Auto-refreshes every 15 seconds{lastUpdated ? ` · Updated ${lastUpdated.toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" })}` : ""}</p>
       <button type="button" onClick={() => void load()} disabled={loading} className="inline-flex min-h-11 items-center gap-2 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/75 hover:border-white/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red disabled:opacity-50"><RefreshCw size={16} aria-hidden="true" className={loading ? "motion-safe:animate-spin" : ""} /> Refresh</button>
     </div>
 
-    {error && <div role="alert" className="mb-5 border-l-2 border-meathead-red bg-meathead-red/10 px-4 py-3 text-sm text-red-100">{error}</div>}
+    {error && <div role="alert" className="mb-5 rounded-lg border-l-2 border-meathead-red bg-meathead-red/10 px-4 py-3 text-sm text-red-100">{error}</div>}
 
     <section aria-label="Kitchen summary" className="grid grid-cols-2 gap-px overflow-hidden border border-white/10 bg-white/10 lg:grid-cols-4">
       <KitchenMetric icon={<Clock3 aria-hidden="true" />} label="New" value={String(counts.PLACED ?? 0)} />
@@ -85,9 +85,9 @@ function ChefWorkspace({ token, profile, signOut }: { token: string; profile: Op
 
     <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.8fr)] xl:items-start">
       <section className="border border-white/10 bg-meathead-charcoal" aria-labelledby="queue-heading">
-        <header className="border-b border-white/10 p-4 sm:p-5"><p className="font-data text-xs font-bold uppercase tracking-[0.16em] text-meathead-red">Live production</p><h2 id="queue-heading" className="mt-1 text-lg font-bold">Orders to prepare</h2></header>
+        <header className="border-b border-white/10 p-4 sm:p-5"><h2 id="queue-heading" className="font-heading text-2xl uppercase">Orders to prepare</h2></header>
         {loading && !orders.length ? <div className="space-y-px bg-white/10" aria-busy="true" aria-label="Loading kitchen orders">{[0, 1, 2].map((row) => <div key={row} className="h-32 bg-meathead-charcoal motion-safe:animate-pulse" />)}</div> : null}
-        {!loading && !orders.length ? <div className="px-5 py-14 text-center"><Check className="mx-auto text-emerald-400" size={32} aria-hidden="true" /><h3 className="mt-4 font-semibold">Kitchen is clear</h3><p className="mt-2 text-sm text-white/45">New confirmed orders will appear automatically.</p></div> : null}
+        {!loading && !orders.length ? <div className="px-5 py-14 text-center"><Check className="mx-auto text-emerald-400" size={32} aria-hidden="true" /><h3 className="mt-4 font-heading text-2xl uppercase">Kitchen clear</h3></div> : null}
         {orders.length ? <ol className="divide-y divide-white/10">{orders.map((order) => {
           const action = nextStep[order.status];
           const patties = order.items.reduce((total, orderItem) => {

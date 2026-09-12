@@ -19,9 +19,10 @@ const ISLAMABAD: [number, number] = [33.6844, 73.0479];
 export default function LocationPicker({ value, onChange }: LocationPickerProps) {
   const elementRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
-  const markerRef = useRef<L.CircleMarker | null>(null);
+  const markerRef = useRef<L.Marker | null>(null);
   const leafletRef = useRef<typeof L | null>(null);
   const onChangeRef = useRef(onChange);
+  const [mapReady, setMapReady] = useState(false);
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState("");
 
@@ -41,6 +42,7 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
       }).addTo(map);
       map.on("click", ({ latlng }) => onChangeRef.current({ latitude: latlng.lat, longitude: latlng.lng }));
       mapRef.current = map;
+      setMapReady(true);
     });
 
     return () => {
@@ -56,16 +58,25 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
     const leaflet = leafletRef.current;
     if (!map || !leaflet || !value) return;
     const point: [number, number] = [value.latitude, value.longitude];
-    markerRef.current?.remove();
-    markerRef.current = leaflet.circleMarker(point, {
-      color: "#ffffff",
-      fillColor: "#D2001B",
-      fillOpacity: 1,
-      radius: 9,
-      weight: 3,
-    }).addTo(map);
+
+    if (!markerRef.current) {
+      const redPin = leaflet.divIcon({
+        className: "custom-marker",
+        html: '<div style="background:#D2001B;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.45)"></div>',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+      });
+      const marker = leaflet.marker(point, { draggable: true, icon: redPin }).addTo(map);
+      marker.on("dragend", () => {
+        const position = marker.getLatLng();
+        onChangeRef.current({ latitude: position.lat, longitude: position.lng });
+      });
+      markerRef.current = marker;
+    } else {
+      markerRef.current.setLatLng(point);
+    }
     map.setView(point, Math.max(map.getZoom(), 16));
-  }, [value]);
+  }, [mapReady, value]);
 
   function useCurrentLocation() {
     setError("");
@@ -94,7 +105,7 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
         <Crosshair size={16} aria-hidden="true" /> {locating ? "Finding you…" : "Use my location"}
       </button>
       <p className="font-data text-xs text-white/50">
-        {value ? `${value.latitude.toFixed(5)}, ${value.longitude.toFixed(5)}` : "Tap the map to place the pin"}
+        {value ? "Drag the red pin to the exact entrance" : "Tap the map to place the delivery pin"}
       </p>
     </div>
     {error && <p role="alert" className="mt-2 text-sm text-red-200">{error}</p>}

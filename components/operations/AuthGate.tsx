@@ -7,6 +7,40 @@ import { type FormEvent, type ReactNode, useEffect, useState } from "react";
 import { meatheadApi, type OperationsProfile, type UserRole } from "@/lib/meathead-api";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 
+const STAFF_ACTIVITY_KEY = "meathead.staff.last-active-at";
+const STAFF_INACTIVITY_MS = 7 * 24 * 60 * 60 * 1000;
+const ACTIVITY_WRITE_INTERVAL_MS = 60 * 1000;
+
+function readLastActivity(): number | null {
+  try {
+    const value = Number(window.localStorage.getItem(STAFF_ACTIVITY_KEY));
+    return Number.isFinite(value) && value > 0 ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function recordActivity(now = Date.now()): void {
+  try {
+    window.localStorage.setItem(STAFF_ACTIVITY_KEY, String(now));
+  } catch {
+    // Supabase still manages the session when storage is restricted.
+  }
+}
+
+function clearActivity(): void {
+  try {
+    window.localStorage.removeItem(STAFF_ACTIVITY_KEY);
+  } catch {
+    // Nothing else to clean up.
+  }
+}
+
+function isInactive(now = Date.now()): boolean {
+  const lastActivity = readLastActivity();
+  return lastActivity !== null && now - lastActivity >= STAFF_INACTIVITY_MS;
+}
+
 interface AuthGateProps {
   allowedRoles: UserRole[];
   workspace: "Admin" | "Chef" | "Rider";
@@ -32,13 +66,67 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
       return;
     }
 
-    void supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    void (async () => {
+      if (isInactive()) {
+        clearActivity();
+        await supabase.auth.signOut({ scope: "local" });
+        setSession(null);
+      } else {
+        const { data } = await supabase.auth.getSession();
+        setSession(data.session);
+        if (data.session) recordActivity();
+      }
       setChecking(false);
+    })();
+    const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (event === "SIGNED_OUT") clearActivity();
+      setSession(nextSession);
     });
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => setSession(nextSession));
     return () => data.subscription.unsubscribe();
   }, [supabase]);
+
+  useEffect(() => {
+    if (!supabase || !session) return;
+
+    let lastRecordedAt = 0;
+    const noteActivity = () => {
+      const now = Date.now();
+      if (now - lastRecordedAt < ACTIVITY_WRITE_INTERVAL_MS) return;
+      lastRecordedAt = now;
+      recordActivity(now);
+    };
+    const restoreAfterResume = () => {
+      if (document.visibilityState === "hidden") return;
+      if (isInactive()) {
+        clearActivity();
+        void supabase.auth.signOut({ scope: "local" });
+        return;
+      }
+      // getSession refreshes an expired access token using the persisted
+      // rotating refresh token before the resumed app makes API calls.
+      void supabase.auth.getSession().then(({ data }) => {
+        setSession(data.session);
+        if (data.session) noteActivity();
+      });
+    };
+
+    noteActivity();
+    window.addEventListener("focus", restoreAfterResume);
+    window.addEventListener("pageshow", restoreAfterResume);
+    document.addEventListener("visibilitychange", restoreAfterResume);
+    window.addEventListener("pointerdown", noteActivity, { passive: true });
+    window.addEventListener("keydown", noteActivity);
+    const sessionCheck = window.setInterval(restoreAfterResume, 15 * 60 * 1000);
+
+    return () => {
+      window.clearInterval(sessionCheck);
+      window.removeEventListener("focus", restoreAfterResume);
+      window.removeEventListener("pageshow", restoreAfterResume);
+      document.removeEventListener("visibilitychange", restoreAfterResume);
+      window.removeEventListener("pointerdown", noteActivity);
+      window.removeEventListener("keydown", noteActivity);
+    };
+  }, [session, supabase]);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,7 +166,8 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
   }
 
   async function signOut() {
-    if (supabase) await supabase.auth.signOut();
+    clearActivity();
+    if (supabase) await supabase.auth.signOut({ scope: "local" });
   }
 
   if (checking || (session && profileChecking)) {

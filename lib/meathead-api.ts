@@ -1,3 +1,5 @@
+import { getSupabaseAccessToken } from "@/lib/supabase-browser";
+
 const API_BASE = (process.env.NEXT_PUBLIC_MEATHEAD_API_URL ?? "https://api.revolvo.tech/meathead").replace(/\/$/, "");
 
 export class MeatheadApiError extends Error {
@@ -12,12 +14,22 @@ export class MeatheadApiError extends Error {
 }
 
 async function request<T>(path: string, init: RequestInit = {}, token?: string): Promise<T> {
-  const headers = new Headers(init.headers);
-  headers.set("Accept", "application/json");
-  if (init.body) headers.set("Content-Type", "application/json");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
+  async function send(forceRefresh = false): Promise<Response> {
+    const headers = new Headers(init.headers);
+    headers.set("Accept", "application/json");
+    if (init.body) headers.set("Content-Type", "application/json");
+    if (token) {
+      const currentToken = await getSupabaseAccessToken(token, forceRefresh);
+      if (currentToken) headers.set("Authorization", `Bearer ${currentToken}`);
+    }
+    return fetch(`${API_BASE}${path}`, { ...init, headers, cache: "no-store" });
+  }
 
-  const response = await fetch(`${API_BASE}${path}`, { ...init, headers, cache: "no-store" });
+  let response = await send();
+  // A foregrounded WebView can race its first request against Supabase's
+  // automatic refresh. Refresh once and replay that request transparently.
+  if (token && response.status === 401) response = await send(true);
+
   const payload = await response.json().catch(() => null) as {
     data?: T;
     error?: { code?: string; message?: string };

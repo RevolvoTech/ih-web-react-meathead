@@ -100,12 +100,6 @@ export interface CreatedOrder {
   trackingLink: string;
 }
 
-export interface AdminRider {
-  id: string;
-  displayName: string;
-  phone: string | null;
-}
-
 export interface AdminDashboard {
   statusCounts: Array<{ status: OrderStatus; _count: { _all: number } }>;
   activeRuns: number;
@@ -266,15 +260,8 @@ export const meatheadApi = {
     vendor?: string;
     note?: string;
   }) => request<Expense>("/v1/admin/expenses", { method: "POST", body: JSON.stringify(input) }, token),
-  adminRiders: (token: string) => request<AdminRider[]>("/v1/admin/riders", {}, token),
-  createDeliveryRun: (token: string, input: {
-    riderId: string;
-    orderIds: string[];
-    origin: { latitude: number; longitude: number };
-  }) => request<DeliveryRun>("/v1/admin/delivery-runs", {
-    method: "POST",
-    body: JSON.stringify(input),
-  }, token),
+  riderPickups: (token: string) => request<OrderSummary[]>("/v1/rider/pickups", {}, token),
+  pickupReadyOrders: (token: string) => request<DeliveryRun>("/v1/rider/pickups", { method: "POST" }, token),
   riderRuns: (token: string) => request<DeliveryRun[]>("/v1/rider/runs?active=true", {}, token),
   startRun: (token: string, runId: string) =>
     request<DeliveryRun>(`/v1/rider/runs/${runId}/start`, { method: "POST" }, token),

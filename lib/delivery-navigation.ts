@@ -45,6 +45,23 @@ export function googleMapsDirectionsUrl(latitude: number, longitude: number): st
   return `https://www.google.com/maps/dir/?${parameters.toString()}`;
 }
 
+export function whatsappArrivalUrl(order: {
+  customerName: string;
+  customerPhone: string;
+  orderNumber: string;
+}): string {
+  const digits = order.customerPhone.replace(/\D/g, "");
+  const internationalNumber = digits.startsWith("00")
+    ? digits.slice(2)
+    : digits.startsWith("0")
+      ? `92${digits.slice(1)}`
+      : /^3\d{9}$/.test(digits)
+        ? `92${digits}`
+        : digits;
+  const message = `Hi ${order.customerName}, your MEATHEAD rider is at your location. Please receive your order (${order.orderNumber}).`;
+  return `https://wa.me/${internationalNumber}?${new URLSearchParams({ text: message }).toString()}`;
+}
+
 export function nextPendingStop(
   run: DeliveryRun,
   afterSequence = 0,

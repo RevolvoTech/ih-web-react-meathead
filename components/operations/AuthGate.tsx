@@ -41,6 +41,13 @@ function isInactive(now = Date.now()): boolean {
   return lastActivity !== null && now - lastActivity >= STAFF_INACTIVITY_MS;
 }
 
+function preserveActiveSession(current: Session | null, next: Session | null): Session | null {
+  // Supabase rotates access tokens frequently. The API client reads the latest
+  // persisted token itself, so keeping the same React session object avoids
+  // remounting/refetching every dashboard during routine token refreshes.
+  return current?.user.id === next?.user.id ? current : next;
+}
+
 interface AuthGateProps {
   allowedRoles: UserRole[];
   workspace: "Admin" | "Chef" | "Rider";
@@ -80,7 +87,7 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
     })();
     const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (event === "SIGNED_OUT") clearActivity();
-      setSession(nextSession);
+      setSession((current) => preserveActiveSession(current, nextSession));
     });
     return () => data.subscription.unsubscribe();
   }, [supabase]);
@@ -105,7 +112,7 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
       // getSession refreshes an expired access token using the persisted
       // rotating refresh token before the resumed app makes API calls.
       void supabase.auth.getSession().then(({ data }) => {
-        setSession(data.session);
+        setSession((current) => preserveActiveSession(current, data.session));
         if (data.session) noteActivity();
       });
     };
@@ -170,7 +177,7 @@ export default function AuthGate({ allowedRoles, workspace, children }: AuthGate
     if (supabase) await supabase.auth.signOut({ scope: "local" });
   }
 
-  if (checking || (session && profileChecking)) {
+  if (checking || (session && profileChecking && !profile)) {
     return <div className="min-h-dvh bg-meathead-black px-4 py-24" aria-busy="true">
       <div className="mx-auto max-w-md space-y-4 motion-safe:animate-pulse"><div className="h-10 w-52 bg-meathead-gray" /><div className="h-64 border border-white/10 bg-meathead-charcoal" /></div>
     </div>;

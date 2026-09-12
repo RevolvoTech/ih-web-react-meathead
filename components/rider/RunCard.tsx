@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, LocateFixed, MapPin, Navigation, Play, Phone, RefreshCw } from "lucide-react";
+import { Check, LocateFixed, MapPin, MessageCircle, Navigation, Play, Phone, RefreshCw } from "lucide-react";
 import { useMemo } from "react";
 import StatusBadge from "@/components/operations/StatusBadge";
-import { googleMapsDirectionsUrl, nextPendingStop } from "@/lib/delivery-navigation";
+import { googleMapsDirectionsUrl, nextPendingStop, whatsappArrivalUrl } from "@/lib/delivery-navigation";
 import type { DeliveryRun, DeliveryStop } from "@/lib/meathead-api";
 
 interface RunCardProps {
@@ -53,7 +53,7 @@ export default function RunCard({
     <header className="flex flex-col gap-4 border-b border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
       <div><div className="flex flex-wrap items-center gap-2"><h2 id={`run-${run.id}`} className="font-data text-lg font-bold">{run.runNumber}</h2><StatusBadge status={run.status} /></div><p className="mt-2 text-sm text-white/50">{run.stops.length} stop{run.stops.length === 1 ? "" : "s"}{run.distanceMeters ? ` · ${(run.distanceMeters / 1000).toFixed(1)} km` : ""}</p></div>
       <div className="flex flex-wrap gap-2">
-        {run.status === "ASSIGNED" && <button type="button" disabled={busyId === run.id} onClick={() => void onStartRun()} className="inline-flex min-h-11 items-center gap-2 bg-meathead-red px-4 font-data text-xs font-bold uppercase tracking-[0.1em] hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-50"><Play size={16} aria-hidden="true" /> Start run</button>}
+        {run.status === "ASSIGNED" && <button type="button" disabled={busyId === run.id} onClick={() => void onStartRun()} className="inline-flex min-h-11 items-center gap-2 bg-meathead-red px-4 font-data text-xs font-bold uppercase tracking-[0.1em] hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-50"><Play size={16} aria-hidden="true" /> Pick up orders</button>}
         {run.status === "IN_PROGRESS" && locationRunId !== run.id && <button type="button" onClick={onStartLocation} className="inline-flex min-h-11 items-center gap-2 border border-emerald-500/50 bg-emerald-500/10 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-emerald-200 hover:bg-emerald-500/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"><LocateFixed size={16} aria-hidden="true" /> Share location</button>}
         {locationRunId === run.id && <button type="button" onClick={onStopLocation} className="min-h-11 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/70 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red">Stop sharing</button>}
       </div>
@@ -124,13 +124,14 @@ function StopRow({ run, stop, active, busy, cashCollected, setCashCollected, onB
 }) {
   const complete = ["DELIVERED", "FAILED", "SKIPPED"].includes(stop.status);
   const mapsUrl = googleMapsDirectionsUrl(Number(stop.order.latitude), Number(stop.order.longitude));
+  const whatsappUrl = whatsappArrivalUrl(stop.order);
   return <li className={`grid gap-4 p-4 sm:p-5 lg:grid-cols-[48px_minmax(0,1fr)_auto] ${active ? "border-l-2 border-l-meathead-red bg-white/[0.025]" : "border-l-2 border-l-transparent"}`}>
     <div className={`flex size-10 items-center justify-center rounded-lg border bg-black/25 font-data text-sm font-bold ${active ? "border-meathead-red text-meathead-red" : "border-white/15 text-white/55"}`} aria-label={`Stop ${stop.sequence}`}>{stop.sequence}</div>
     <div className="min-w-0">
       <div className="flex flex-wrap items-center gap-2"><strong>{stop.order.customerName}</strong><StatusBadge status={stop.status} />{active && <span className="font-data text-[10px] font-bold uppercase tracking-[0.12em] text-meathead-red">Active</span>}<span className="font-data text-xs text-white/40">{stop.order.orderNumber}</span></div>
       <p className="mt-2 flex items-start gap-2 text-sm leading-5 text-white/65"><MapPin className="mt-0.5 shrink-0 text-meathead-red" size={15} aria-hidden="true" />{stop.order.deliveryAddress}</p>
       {stop.order.deliveryNotes && <p className="mt-2 border-l border-white/15 pl-3 text-xs leading-5 text-white/45">{stop.order.deliveryNotes}</p>}
-      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm"><a href={`tel:${stop.order.customerPhone}`} className="inline-flex min-h-11 items-center gap-2 text-white/70 underline decoration-white/25 underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-meathead-red"><Phone size={15} aria-hidden="true" /> Call customer</a>{stop.status === "PENDING" && <a href={mapsUrl} onClick={() => onBeginNavigation(run, stop)} className="inline-flex min-h-11 items-center gap-2 text-white/70 underline decoration-white/25 underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-meathead-red"><Navigation size={15} aria-hidden="true" /> Open directions</a>}</div>
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm"><a href={`tel:${stop.order.customerPhone}`} className="inline-flex min-h-11 items-center gap-2 text-white/70 underline decoration-white/25 underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-meathead-red"><Phone size={15} aria-hidden="true" /> Call customer</a>{stop.status === "ARRIVED" && <a href={whatsappUrl} className="inline-flex min-h-11 items-center gap-2 text-emerald-300 underline decoration-emerald-300/30 underline-offset-4 hover:text-emerald-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400"><MessageCircle size={15} aria-hidden="true" /> Message WhatsApp</a>}{stop.status === "PENDING" && <a href={mapsUrl} onClick={() => onBeginNavigation(run, stop)} className="inline-flex min-h-11 items-center gap-2 text-white/70 underline decoration-white/25 underline-offset-4 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-meathead-red"><Navigation size={15} aria-hidden="true" /> Open directions</a>}</div>
     </div>
     <div className="min-w-52 lg:text-right">
       <p className="font-data text-sm font-bold">{formatMoney(stop.order.totalAmountPaisa)}</p>

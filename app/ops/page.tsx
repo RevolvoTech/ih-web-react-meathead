@@ -3,7 +3,6 @@
 import { CircleDollarSign, Fuel, PackageOpen, Plus, RefreshCw, ShoppingBag, WalletCards } from "lucide-react";
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import AuthGate from "@/components/operations/AuthGate";
-import DispatchPanel from "@/components/operations/DispatchPanel";
 import InventoryPanel from "@/components/operations/InventoryPanel";
 import OperationsShell from "@/components/operations/OperationsShell";
 import StatusBadge, { humanizeStatus } from "@/components/operations/StatusBadge";
@@ -100,10 +99,6 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
 
       <div className="mt-6">
         <InventoryPanel items={inventory} token={token} canManage onChanged={load} />
-      </div>
-
-      <div className="mt-6">
-        <DispatchPanel token={token} orders={orders} onCreated={load} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">

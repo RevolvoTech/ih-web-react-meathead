@@ -23,6 +23,7 @@ function ChefWorkspace({ token, profile, signOut }: { token: string; profile: Op
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [busyOrderId, setBusyOrderId] = useState("");
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -64,6 +65,12 @@ function ChefWorkspace({ token, profile, signOut }: { token: string; profile: Op
     }
   }
 
+  async function refresh() {
+    setRefreshing(true);
+    await load(true);
+    setRefreshing(false);
+  }
+
   const counts = useMemo(() => Object.fromEntries(kitchenStatuses.map((status) => [status, orders.filter((order) => order.status === status).length])) as Record<OrderStatus, number>, [orders]);
   const item = inventory[0];
   const stock = item?.batches.filter((batch) => batch.status === "ACTIVE").reduce((sum, batch) => sum + batch.totalQuantity - batch.reservedQuantity - batch.soldQuantity, 0) ?? 0;
@@ -71,7 +78,7 @@ function ChefWorkspace({ token, profile, signOut }: { token: string; profile: Op
   return <OperationsShell active="chef" profile={profile} title="Kitchen queue" onSignOut={signOut}>
     <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
       <p aria-live="polite" className="text-sm text-white/55">Auto-refreshes every 15 seconds{lastUpdated ? ` · Updated ${lastUpdated.toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" })}` : ""}</p>
-      <button type="button" onClick={() => void load()} disabled={loading} className="inline-flex min-h-11 items-center gap-2 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/75 hover:border-white/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red disabled:opacity-50"><RefreshCw size={16} aria-hidden="true" className={loading ? "motion-safe:animate-spin" : ""} /> Refresh</button>
+      <button type="button" onClick={() => void refresh()} disabled={loading || refreshing} className="inline-flex min-h-11 items-center gap-2 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/75 hover:border-white/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red disabled:opacity-50"><RefreshCw size={16} aria-hidden="true" className={loading || refreshing ? "motion-safe:animate-spin" : ""} /> Refresh</button>
     </div>
 
     {error && <div role="alert" className="mb-5 rounded-lg border-l-2 border-meathead-red bg-meathead-red/10 px-4 py-3 text-sm text-red-100">{error}</div>}
@@ -100,7 +107,7 @@ function ChefWorkspace({ token, profile, signOut }: { token: string; profile: Op
               <p className="mt-3 font-semibold">{order.items.map((orderItem) => `${orderItem.quantity}× ${orderItem.productName}`).join(" · ")}</p>
               <p className="mt-1 text-sm text-white/50">{patties || "—"} patties · {order.customerName}</p>
             </div>
-            {action ? <button type="button" disabled={busyOrderId === order.id} onClick={() => void moveOrder(order, action.status)} className="min-h-11 bg-meathead-red px-5 font-data text-xs font-bold uppercase tracking-[0.1em] text-white hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-wait disabled:opacity-50">{busyOrderId === order.id ? "Updating…" : action.label}</button> : <p className="border border-emerald-400/25 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-200">Ready for rider</p>}
+            {action ? <button type="button" disabled={busyOrderId === order.id} onClick={() => void moveOrder(order, action.status)} className="min-h-11 bg-meathead-red px-5 font-data text-xs font-bold uppercase tracking-[0.1em] text-white hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-wait disabled:opacity-50">{busyOrderId === order.id ? "Updating…" : action.label}</button> : <p className="border border-emerald-400/25 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-200">Waiting for rider pickup</p>}
           </li>;
         })}</ol> : null}
       </section>

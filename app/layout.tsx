@@ -103,7 +103,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="no-js">
+    <html lang="en" className="no-js" suppressHydrationWarning>
       <body className={`${anton.variable} ${spaceGrotesk.variable} ${inter.variable} font-inter antialiased`}>
         <Script id="set-js-class" strategy="beforeInteractive">
           {`document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');`}

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 interface OrderData {
   totalOrders: number;
@@ -22,6 +23,7 @@ interface OrderContextType {
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 export function OrderProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [orderData, setOrderData] = useState<OrderData>({
     totalOrders: 0,
     pattiesUsed: 0,
@@ -73,8 +75,12 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    if (pathname.startsWith("/ops") || pathname.startsWith("/rider") || pathname.startsWith("/track")) {
+      setIsLoading(false);
+      return;
+    }
     fetchOrderCount();
-  }, []);
+  }, [pathname]);
 
   return (
     <OrderContext.Provider value={{ orderData, isLoading, refreshOrderCount: fetchOrderCount, markAsSoldOut, setOrderData }}>

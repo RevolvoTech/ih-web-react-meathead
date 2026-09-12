@@ -1,0 +1,96 @@
+"use client";
+
+import type { Session } from "@supabase/supabase-js";
+import { Eye, EyeOff, LockKeyhole } from "lucide-react";
+import Link from "next/link";
+import { type FormEvent, type ReactNode, useEffect, useState } from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
+
+interface AuthGateProps {
+  children: (auth: { session: Session; signOut: () => Promise<void> }) => ReactNode;
+}
+
+export default function AuthGate({ children }: AuthGateProps) {
+  const supabase = getSupabaseBrowserClient();
+  const [session, setSession] = useState<Session | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!supabase) {
+      setChecking(false);
+      return;
+    }
+
+    void supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setChecking(false);
+    });
+    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => setSession(nextSession));
+    return () => data.subscription.unsubscribe();
+  }, [supabase]);
+
+  async function logIn(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!supabase) return;
+    setSubmitting(true);
+    setError("");
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    if (authError) setError(authError.message);
+    setSubmitting(false);
+  }
+
+  if (checking) {
+    return <div className="min-h-dvh bg-meathead-black px-4 py-24" aria-busy="true">
+      <div className="mx-auto max-w-md space-y-4 motion-safe:animate-pulse"><div className="h-10 w-52 bg-meathead-gray" /><div className="h-64 border border-white/10 bg-meathead-charcoal" /></div>
+    </div>;
+  }
+
+  if (!supabase) {
+    return <AuthMessage title="Operations access is not configured">
+      Add the public Supabase URL and publishable key to the frontend environment, then redeploy.
+    </AuthMessage>;
+  }
+
+  if (!session) {
+    return <main className="min-h-dvh bg-meathead-black px-4 py-16 text-white sm:py-24">
+      <div className="mx-auto max-w-md">
+        <Link href="/" className="font-data text-xs font-bold uppercase tracking-[0.2em] text-white/60 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-meathead-red">← Public site</Link>
+        <div className="mt-8 border border-white/10 bg-meathead-charcoal p-6 sm:p-8">
+          <div className="mb-7 flex h-11 w-11 items-center justify-center border border-meathead-red/50 bg-meathead-red/10 text-meathead-red"><LockKeyhole aria-hidden="true" size={21} /></div>
+          <p className="font-data text-xs font-bold uppercase tracking-[0.22em] text-meathead-red">Private workspace</p>
+          <h1 className="mt-2 font-heading text-4xl uppercase leading-none">Log in to MEATHEAD Ops</h1>
+          <p className="mt-3 text-sm leading-6 text-white/60">Use the Supabase account assigned to your admin, dispatcher, or rider profile.</p>
+
+          <form className="mt-8 space-y-5" onSubmit={logIn}>
+            <div>
+              <label className="mb-2 block text-sm font-semibold" htmlFor="ops-email">Email</label>
+              <input id="ops-email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} className="min-h-12 w-full border border-white/20 bg-meathead-black px-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-meathead-red focus:ring-2 focus:ring-meathead-red/30" placeholder="you@meathead.pk" />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-semibold" htmlFor="ops-password">Password</label>
+              <div className="relative"><input id="ops-password" type={showPassword ? "text" : "password"} autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} className="min-h-12 w-full border border-white/20 bg-meathead-black px-4 pr-12 text-base text-white outline-none transition-colors focus:border-meathead-red focus:ring-2 focus:ring-meathead-red/30" /><button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"} className="absolute inset-y-0 right-0 flex min-w-12 items-center justify-center text-white/50 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-meathead-red">{showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}</button></div>
+            </div>
+            {error && <p role="alert" className="border-l-2 border-meathead-red bg-meathead-red/10 px-4 py-3 text-sm text-red-100">{error}</p>}
+            <button type="submit" disabled={submitting} className="min-h-12 w-full bg-meathead-red px-5 font-data text-sm font-bold uppercase tracking-[0.12em] text-white transition-colors hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white disabled:cursor-wait disabled:opacity-60">
+              {submitting ? "Logging in…" : "Log in"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>;
+  }
+
+  return children({
+    session,
+    signOut: async () => { await supabase.auth.signOut(); },
+  });
+}
+
+function AuthMessage({ title, children }: { title: string; children: ReactNode }) {
+  return <main className="min-h-dvh bg-meathead-black px-4 py-24 text-white"><div className="mx-auto max-w-lg border border-meathead-red/40 bg-meathead-charcoal p-7"><LockKeyhole className="text-meathead-red" aria-hidden="true" /><h1 className="mt-5 font-heading text-3xl uppercase">{title}</h1><p className="mt-3 text-sm leading-6 text-white/65">{children}</p></div></main>;
+}

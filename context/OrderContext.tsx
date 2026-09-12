@@ -75,7 +75,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (pathname.startsWith("/ops") || pathname.startsWith("/admin") || pathname.startsWith("/chef") || pathname.startsWith("/rider") || pathname.startsWith("/track")) {
+    if (pathname.startsWith("/ops") || pathname.startsWith("/admin") || pathname.startsWith("/chef") || pathname.startsWith("/rider") || pathname.startsWith("/track") || pathname.startsWith("/order")) {
       setIsLoading(false);
       return;
     }

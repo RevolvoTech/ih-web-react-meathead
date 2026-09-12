@@ -54,6 +54,46 @@ export interface OperationsProfile {
   displayName: string;
 }
 
+export interface StoreConfig {
+  currency: "PKR";
+  deliveryFeePaisa: number;
+}
+
+export interface CatalogProduct {
+  id: string;
+  sku: string;
+  name: string;
+  description: string;
+  unit: "PACK";
+  unitPricePaisa: number;
+  inventoryUnitsPerItem: number;
+}
+
+export interface CreateOrderInput {
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  deliveryAddress: string;
+  latitude: number;
+  longitude: number;
+  deliveryNotes?: string;
+  paymentMethod: "COD";
+  items: Array<{ productId: string; quantity: number }>;
+}
+
+export interface CreatedOrder {
+  orderNumber: string;
+  status: OrderStatus;
+  totalAmountPaisa: number;
+  trackingLink: string;
+}
+
+export interface AdminRider {
+  id: string;
+  displayName: string;
+  phone: string | null;
+}
+
 export interface AdminDashboard {
   statusCounts: Array<{ status: OrderStatus; _count: { _all: number } }>;
   activeRuns: number;
@@ -174,6 +214,13 @@ export interface TrackingOrder {
 }
 
 export const meatheadApi = {
+  storeConfig: () => request<StoreConfig>("/v1/config"),
+  catalog: () => request<CatalogProduct[]>("/v1/catalog"),
+  createOrder: (input: CreateOrderInput, idempotencyKey: string) => request<CreatedOrder>("/v1/orders", {
+    method: "POST",
+    headers: { "Idempotency-Key": idempotencyKey },
+    body: JSON.stringify(input),
+  }),
   me: (token: string) => request<OperationsProfile>("/v1/me", {}, token),
   adminDashboard: (token: string) => request<AdminDashboard>("/v1/admin/dashboard", {}, token),
   adminOrders: (token: string) => request<OrderSummary[]>("/v1/admin/orders?limit=20", {}, token),
@@ -207,6 +254,15 @@ export const meatheadApi = {
     vendor?: string;
     note?: string;
   }) => request<Expense>("/v1/admin/expenses", { method: "POST", body: JSON.stringify(input) }, token),
+  adminRiders: (token: string) => request<AdminRider[]>("/v1/admin/riders", {}, token),
+  createDeliveryRun: (token: string, input: {
+    riderId: string;
+    orderIds: string[];
+    origin: { latitude: number; longitude: number };
+  }) => request<DeliveryRun>("/v1/admin/delivery-runs", {
+    method: "POST",
+    body: JSON.stringify(input),
+  }, token),
   riderRuns: (token: string) => request<DeliveryRun[]>("/v1/rider/runs?active=true", {}, token),
   startRun: (token: string, runId: string) =>
     request<DeliveryRun>(`/v1/rider/runs/${runId}/start`, { method: "POST" }, token),

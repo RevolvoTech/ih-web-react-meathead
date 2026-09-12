@@ -39,3 +39,10 @@ next-env.d.ts
 .netlify
 
 key.json
+
+# Android staff app build output
+/android-staff-apps/.gradle/
+/android-staff-apps/build/
+/android-staff-apps/local.properties
+/android-staff-apps/app/build/
+/release-apks/

@@ -2,8 +2,8 @@
 
 import { Crosshair } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type L from "leaflet";
-import { addEnglishBasemap } from "@/lib/english-map";
+import type { Map, Marker } from "maplibre-gl";
+import { createEnglishMap, createMapPin } from "@/lib/english-map";
 
 export interface DeliveryPoint {
   latitude: number;
@@ -19,9 +19,9 @@ const ISLAMABAD: [number, number] = [33.6844, 73.0479];
 
 export default function LocationPicker({ value, onChange }: LocationPickerProps) {
   const elementRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<L.Map | null>(null);
-  const markerRef = useRef<L.Marker | null>(null);
-  const leafletRef = useRef<typeof L | null>(null);
+  const mapRef = useRef<Map | null>(null);
+  const markerRef = useRef<Marker | null>(null);
+  const markerConstructorRef = useRef<typeof Marker | null>(null);
   const onChangeRef = useRef(onChange);
   const [mapReady, setMapReady] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -33,16 +33,15 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
     if (!elementRef.current || mapRef.current) return;
     let cancelled = false;
 
-    void import("leaflet").then(async ({ default: leaflet }) => {
-      if (cancelled || !elementRef.current) return;
-      leafletRef.current = leaflet;
-      const map = leaflet.map(elementRef.current, { zoomControl: true }).setView(ISLAMABAD, 12);
-      map.attributionControl.setPrefix(false);
+    void createEnglishMap(elementRef.current, [ISLAMABAD[1], ISLAMABAD[0]], 12).then(({ map, maplibre }) => {
+      if (cancelled) {
+        map.remove();
+        return;
+      }
+      markerConstructorRef.current = maplibre.Marker;
       mapRef.current = map;
-      await addEnglishBasemap(map);
-      if (cancelled) return;
-      map.on("click", ({ latlng }) => onChangeRef.current({ latitude: latlng.lat, longitude: latlng.lng }));
-      setMapReady(true);
+      map.on("click", ({ lngLat }) => onChangeRef.current({ latitude: lngLat.lat, longitude: lngLat.lng }));
+      map.once("load", () => setMapReady(true));
     }).catch((mapError) => {
       console.error("Map failed to load", mapError);
       if (!cancelled) setError("The map could not load. You can still use your current location.");
@@ -58,27 +57,25 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
 
   useEffect(() => {
     const map = mapRef.current;
-    const leaflet = leafletRef.current;
-    if (!map || !leaflet || !value) return;
-    const point: [number, number] = [value.latitude, value.longitude];
+    const MarkerConstructor = markerConstructorRef.current;
+    if (!map || !MarkerConstructor || !value) return;
+    const point: [number, number] = [value.longitude, value.latitude];
 
     if (!markerRef.current) {
-      const redPin = leaflet.divIcon({
-        className: "custom-marker",
-        html: '<div style="background:#D2001B;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.45)"></div>',
-        iconSize: [30, 30],
-        iconAnchor: [15, 30],
-      });
-      const marker = leaflet.marker(point, { draggable: true, icon: redPin }).addTo(map);
+      const marker = new MarkerConstructor({
+        draggable: true,
+        element: createMapPin(),
+        anchor: "bottom",
+      }).setLngLat(point).addTo(map);
       marker.on("dragend", () => {
-        const position = marker.getLatLng();
+        const position = marker.getLngLat();
         onChangeRef.current({ latitude: position.lat, longitude: position.lng });
       });
       markerRef.current = marker;
     } else {
-      markerRef.current.setLatLng(point);
+      markerRef.current.setLngLat(point);
     }
-    map.setView(point, Math.max(map.getZoom(), 16));
+    map.easeTo({ center: point, zoom: Math.max(map.getZoom(), 16), duration: 250 });
   }, [mapReady, value]);
 
   function useCurrentLocation() {

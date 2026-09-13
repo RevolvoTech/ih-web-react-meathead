@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import { addEnglishBasemap } from "@/lib/english-map";
+import type { Map, Marker } from "maplibre-gl";
+import { createEnglishMap, createMapPin } from "@/lib/english-map";
 
 const DELIVERY_CHARGE = 100;
 
@@ -27,8 +28,8 @@ export default function PriorityListForm() {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [mapCoords, setMapCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const mapRef = useRef<L.Map | null>(null);
-  const markerRef = useRef<L.Marker | null>(null);
+  const mapRef = useRef<Map | null>(null);
+  const markerRef = useRef<Marker | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -36,6 +37,7 @@ export default function PriorityListForm() {
   useEffect(() => {
     if (!showMap || !mapCoords || !mapContainerRef.current) return;
     if (typeof window === 'undefined') return;
+    let cancelled = false;
 
     if (mapRef.current) {
       mapRef.current.remove();
@@ -43,29 +45,27 @@ export default function PriorityListForm() {
     }
 
     const initMap = async () => {
-      const L = (await import('leaflet')).default;
       if (!mapContainerRef.current) return;
 
-      const map = L.map(mapContainerRef.current).setView([mapCoords.lat, mapCoords.lng], 17);
+      const { map, maplibre } = await createEnglishMap(
+        mapContainerRef.current,
+        [mapCoords.lng, mapCoords.lat],
+        17,
+      );
+      if (cancelled) {
+        map.remove();
+        return;
+      }
       mapRef.current = map;
-      map.attributionControl.setPrefix(false);
-      await addEnglishBasemap(map);
-
-      const redIcon = L.divIcon({
-        className: 'custom-marker',
-        html: `<div style="background-color: #ef4444; width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>`,
-        iconSize: [30, 30],
-        iconAnchor: [15, 30],
-      });
-
-      const marker = L.marker([mapCoords.lat, mapCoords.lng], {
+      const marker = new maplibre.Marker({
         draggable: true,
-        icon: redIcon,
-      }).addTo(map);
+        element: createMapPin(),
+        anchor: 'bottom',
+      }).setLngLat([mapCoords.lng, mapCoords.lat]).addTo(map);
       markerRef.current = marker;
 
       marker.on('dragend', () => {
-        const position = marker.getLatLng();
+        const position = marker.getLngLat();
         setMapCoords({ lat: position.lat, lng: position.lng });
         setFormData((prev) => ({
           ...prev,
@@ -77,6 +77,7 @@ export default function PriorityListForm() {
     initMap();
 
     return () => {
+      cancelled = true;
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;

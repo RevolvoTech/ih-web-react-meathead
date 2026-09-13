@@ -1,8 +1,8 @@
 "use client";
 
-import type L from "leaflet";
+import type { Map, Marker } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
-import { addEnglishBasemap } from "@/lib/english-map";
+import { createEnglishMap, createMapPin } from "@/lib/english-map";
 
 interface TrackingMapProps {
   destination: { latitude: number; longitude: number };
@@ -11,59 +11,78 @@ interface TrackingMapProps {
 
 export default function TrackingMap({ destination, rider }: TrackingMapProps) {
   const elementRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<L.Map | null>(null);
-  const layerRef = useRef<L.LayerGroup | null>(null);
-  const leafletRef = useRef<typeof L | null>(null);
+  const mapRef = useRef<Map | null>(null);
+  const markersRef = useRef<Marker[]>([]);
+  const markerConstructorRef = useRef<typeof Marker | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    void import("leaflet").then(async ({ default: leaflet }) => {
-      if (cancelled || !elementRef.current || mapRef.current) return;
-      leafletRef.current = leaflet;
-      const map = leaflet.map(elementRef.current, { zoomControl: true, attributionControl: true });
-      map.attributionControl.setPrefix(false);
+    if (!elementRef.current || mapRef.current) return;
+    void createEnglishMap(elementRef.current, [destination.longitude, destination.latitude], 14).then(({ map, maplibre }) => {
+      if (cancelled) {
+        map.remove();
+        return;
+      }
+      markerConstructorRef.current = maplibre.Marker;
       mapRef.current = map;
-      await addEnglishBasemap(map);
-      if (cancelled) return;
-      setReady(true);
+      map.once("load", () => setReady(true));
     }).catch((mapError) => console.error("Tracking map failed to load", mapError));
     return () => {
       cancelled = true;
       mapRef.current?.remove();
       mapRef.current = null;
+      markersRef.current = [];
+      markerConstructorRef.current = null;
     };
-  }, []);
+  }, [destination.latitude, destination.longitude]);
 
   useEffect(() => {
     const map = mapRef.current;
-    const leaflet = leafletRef.current;
-    if (!map || !leaflet || !ready) return;
-    layerRef.current?.remove();
-    const layer = leaflet.layerGroup().addTo(map);
-    layerRef.current = layer;
-    const destinationPoint: L.LatLngTuple = [destination.latitude, destination.longitude];
-    leaflet.circleMarker(destinationPoint, {
-      radius: 8,
-      color: "#ffffff",
-      weight: 2,
-      fillColor: "#D2001B",
-      fillOpacity: 1,
-    }).bindTooltip("Delivery address").addTo(layer);
+    const MarkerConstructor = markerConstructorRef.current;
+    if (!map || !MarkerConstructor || !ready) return;
+    markersRef.current.forEach((marker) => marker.remove());
+    markersRef.current = [];
+    if (map.getLayer("delivery-route")) map.removeLayer("delivery-route");
+    if (map.getSource("delivery-route")) map.removeSource("delivery-route");
+
+    const destinationPoint: [number, number] = [destination.longitude, destination.latitude];
+    const destinationMarker = new MarkerConstructor({
+      element: createMapPin("meathead-map-dot meathead-map-dot--destination"),
+    }).setLngLat(destinationPoint).addTo(map);
+    markersRef.current.push(destinationMarker);
 
     if (rider) {
-      const riderPoint: L.LatLngTuple = [rider.latitude, rider.longitude];
-      leaflet.circleMarker(riderPoint, {
-        radius: 9,
-        color: "#ffffff",
-        weight: 3,
-        fillColor: "#0ea5e9",
-        fillOpacity: 1,
-      }).bindTooltip("Rider location").addTo(layer);
-      leaflet.polyline([riderPoint, destinationPoint], { color: "#ffffff", opacity: 0.55, weight: 2, dashArray: "6 7" }).addTo(layer);
-      map.fitBounds(leaflet.latLngBounds([riderPoint, destinationPoint]), { padding: [36, 36], maxZoom: 16 });
+      const riderPoint: [number, number] = [rider.longitude, rider.latitude];
+      const riderMarker = new MarkerConstructor({
+        element: createMapPin("meathead-map-dot meathead-map-dot--rider"),
+      }).setLngLat(riderPoint).addTo(map);
+      markersRef.current.push(riderMarker);
+      map.addSource("delivery-route", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          properties: {},
+          geometry: { type: "LineString", coordinates: [riderPoint, destinationPoint] },
+        },
+      });
+      map.addLayer({
+        id: "delivery-route",
+        type: "line",
+        source: "delivery-route",
+        paint: {
+          "line-color": "#ffffff",
+          "line-opacity": 0.55,
+          "line-width": 2,
+          "line-dasharray": [3, 3.5],
+        },
+      });
+      map.fitBounds([
+        [Math.min(riderPoint[0], destinationPoint[0]), Math.min(riderPoint[1], destinationPoint[1])],
+        [Math.max(riderPoint[0], destinationPoint[0]), Math.max(riderPoint[1], destinationPoint[1])],
+      ], { padding: 36, maxZoom: 16, duration: 300 });
     } else {
-      map.setView(destinationPoint, 14);
+      map.easeTo({ center: destinationPoint, zoom: 14, duration: 300 });
     }
   }, [destination.latitude, destination.longitude, ready, rider]);
 

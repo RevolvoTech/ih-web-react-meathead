@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { useOrder } from "@/context/OrderContext";
+import { addEnglishBasemap } from "@/lib/english-map";
 
 const DELIVERY_CHARGE = 100;
 
@@ -153,16 +154,10 @@ export default function OrderCTA() {
 
       if (!mapContainerRef.current) return;
 
-      // Create map without attribution control
-      const map = L.map(mapContainerRef.current, {
-        attributionControl: false,
-      }).setView([mapCoords.lat, mapCoords.lng], 17);
+      const map = L.map(mapContainerRef.current).setView([mapCoords.lat, mapCoords.lng], 17);
       mapRef.current = map;
-
-      // Add OpenStreetMap tiles (colorful, detailed)
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-      }).addTo(map);
+      map.attributionControl.setPrefix(false);
+      await addEnglishBasemap(map);
 
       // Custom red marker icon
       const redIcon = L.divIcon({

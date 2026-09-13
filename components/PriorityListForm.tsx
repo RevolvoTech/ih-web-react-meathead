@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
+import { addEnglishBasemap } from "@/lib/english-map";
 
 const DELIVERY_CHARGE = 100;
 
@@ -45,14 +46,10 @@ export default function PriorityListForm() {
       const L = (await import('leaflet')).default;
       if (!mapContainerRef.current) return;
 
-      const map = L.map(mapContainerRef.current, {
-        attributionControl: false,
-      }).setView([mapCoords.lat, mapCoords.lng], 17);
+      const map = L.map(mapContainerRef.current).setView([mapCoords.lat, mapCoords.lng], 17);
       mapRef.current = map;
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-      }).addTo(map);
+      map.attributionControl.setPrefix(false);
+      await addEnglishBasemap(map);
 
       const redIcon = L.divIcon({
         className: 'custom-marker',

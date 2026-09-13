@@ -3,6 +3,7 @@
 import { Crosshair } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type L from "leaflet";
+import { addEnglishBasemap } from "@/lib/english-map";
 
 export interface DeliveryPoint {
   latitude: number;
@@ -32,17 +33,19 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
     if (!elementRef.current || mapRef.current) return;
     let cancelled = false;
 
-    void import("leaflet").then(({ default: leaflet }) => {
+    void import("leaflet").then(async ({ default: leaflet }) => {
       if (cancelled || !elementRef.current) return;
       leafletRef.current = leaflet;
       const map = leaflet.map(elementRef.current, { zoomControl: true }).setView(ISLAMABAD, 12);
-      leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-        maxZoom: 19,
-      }).addTo(map);
-      map.on("click", ({ latlng }) => onChangeRef.current({ latitude: latlng.lat, longitude: latlng.lng }));
+      map.attributionControl.setPrefix(false);
       mapRef.current = map;
+      await addEnglishBasemap(map);
+      if (cancelled) return;
+      map.on("click", ({ latlng }) => onChangeRef.current({ latitude: latlng.lat, longitude: latlng.lng }));
       setMapReady(true);
+    }).catch((mapError) => {
+      console.error("Map failed to load", mapError);
+      if (!cancelled) setError("The map could not load. You can still use your current location.");
     });
 
     return () => {

@@ -2,6 +2,7 @@
 
 import type L from "leaflet";
 import { useEffect, useRef, useState } from "react";
+import { addEnglishBasemap } from "@/lib/english-map";
 
 interface TrackingMapProps {
   destination: { latitude: number; longitude: number };
@@ -17,17 +18,16 @@ export default function TrackingMap({ destination, rider }: TrackingMapProps) {
 
   useEffect(() => {
     let cancelled = false;
-    void import("leaflet").then(({ default: leaflet }) => {
+    void import("leaflet").then(async ({ default: leaflet }) => {
       if (cancelled || !elementRef.current || mapRef.current) return;
       leafletRef.current = leaflet;
       const map = leaflet.map(elementRef.current, { zoomControl: true, attributionControl: true });
-      leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-        maxZoom: 19,
-      }).addTo(map);
+      map.attributionControl.setPrefix(false);
       mapRef.current = map;
+      await addEnglishBasemap(map);
+      if (cancelled) return;
       setReady(true);
-    });
+    }).catch((mapError) => console.error("Tracking map failed to load", mapError));
     return () => {
       cancelled = true;
       mapRef.current?.remove();

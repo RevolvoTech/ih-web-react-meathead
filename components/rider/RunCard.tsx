@@ -13,11 +13,11 @@ interface RunCardProps {
   checkingStopId: string;
   cashCollected: Record<string, boolean>;
   locationRunId: string;
+  locationIssueRunId: string;
   setCashCollected: (stopId: string, checked: boolean) => void;
   onBeginNavigation: (run: DeliveryRun, stop: DeliveryStop) => void;
   onStartRun: () => Promise<void>;
-  onStartLocation: () => void;
-  onStopLocation: () => void;
+  onRetryLocation: () => void;
   onArrived: (run: DeliveryRun, stop: DeliveryStop) => Promise<void>;
   onDelivered: (stop: DeliveryStop) => Promise<void>;
 }
@@ -35,11 +35,11 @@ export default function RunCard({
   checkingStopId,
   cashCollected,
   locationRunId,
+  locationIssueRunId,
   setCashCollected,
   onBeginNavigation,
   onStartRun,
-  onStartLocation,
-  onStopLocation,
+  onRetryLocation,
   onArrived,
   onDelivered,
 }: RunCardProps) {
@@ -54,8 +54,8 @@ export default function RunCard({
       <div><div className="flex flex-wrap items-center gap-2"><h2 id={`run-${run.id}`} className="font-data text-lg font-bold">{run.runNumber}</h2><StatusBadge status={run.status} /></div><p className="mt-2 text-sm text-white/50">{run.stops.length} stop{run.stops.length === 1 ? "" : "s"}{run.distanceMeters ? ` · ${(run.distanceMeters / 1000).toFixed(1)} km` : ""}</p></div>
       <div className="flex flex-wrap gap-2">
         {run.status === "ASSIGNED" && <button type="button" disabled={busyId === run.id} onClick={() => void onStartRun()} className="inline-flex min-h-11 items-center gap-2 bg-meathead-red px-4 font-data text-xs font-bold uppercase tracking-[0.1em] hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:opacity-50"><Play size={16} aria-hidden="true" /> Pick up orders</button>}
-        {run.status === "IN_PROGRESS" && locationRunId !== run.id && <button type="button" onClick={onStartLocation} className="inline-flex min-h-11 items-center gap-2 border border-emerald-500/50 bg-emerald-500/10 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-emerald-200 hover:bg-emerald-500/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"><LocateFixed size={16} aria-hidden="true" /> Share location</button>}
-        {locationRunId === run.id && <button type="button" onClick={onStopLocation} className="min-h-11 border border-white/20 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-white/70 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-meathead-red">Stop sharing</button>}
+        {run.status === "IN_PROGRESS" && locationIssueRunId === run.id && <button type="button" onClick={onRetryLocation} className="inline-flex min-h-11 items-center gap-2 border border-amber-400/50 bg-amber-400/10 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-amber-200 hover:bg-amber-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-300"><LocateFixed size={16} aria-hidden="true" /> Enable location</button>}
+        {run.status === "IN_PROGRESS" && locationIssueRunId !== run.id && <span className="inline-flex min-h-11 items-center gap-2 border border-emerald-500/35 bg-emerald-500/10 px-4 font-data text-xs font-bold uppercase tracking-[0.1em] text-emerald-200"><LocateFixed size={16} aria-hidden="true" />{locationRunId === run.id ? "Location on" : "Starting location…"}</span>}
       </div>
     </header>
 

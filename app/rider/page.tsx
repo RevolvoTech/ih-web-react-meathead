@@ -1,11 +1,12 @@
 "use client";
 
 import { PackageCheck, RefreshCw, Route } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AuthGate from "@/components/operations/AuthGate";
 import OperationsShell from "@/components/operations/OperationsShell";
 import RunCard from "@/components/rider/RunCard";
 import { useArrivalNavigation } from "@/components/rider/useArrivalNavigation";
+import { useRunLocationSharing } from "@/components/rider/useRunLocationSharing";
 import { ARRIVAL_RADIUS_METERS } from "@/lib/delivery-navigation";
 import { meatheadApi, type DeliveryRun, type OperationsProfile, type OrderSummary } from "@/lib/meathead-api";
 
@@ -20,11 +21,8 @@ function RiderWorkspace({ token, profile, signOut }: { token: string; profile: O
   const [refreshing, setRefreshing] = useState(false);
   const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
-  const [locationRunId, setLocationRunId] = useState("");
   const [locationMessage, setLocationMessage] = useState("");
   const [cashCollected, setCashCollected] = useState<Record<string, boolean>>({});
-  const watchId = useRef<number | null>(null);
-  const lastLocationSentAt = useRef(0);
 
   const load = useCallback(async (showLoading = true) => {
     if (showLoading) setLoading(true);
@@ -51,15 +49,18 @@ function RiderWorkspace({ token, profile, signOut }: { token: string; profile: O
     setError,
     setMessage: setLocationMessage,
   });
+  const { locationRunId, locationIssueRunId, retryLocation } = useRunLocationSharing({
+    token,
+    runs,
+    setError,
+    setMessage: setLocationMessage,
+  });
 
   useEffect(() => {
     void load();
     const interval = window.setInterval(() => void load(false), 15_000);
     return () => window.clearInterval(interval);
   }, [load]);
-  useEffect(() => () => {
-    if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
-  }, []);
 
   const runAction = useCallback(async (id: string, action: () => Promise<unknown>) => {
     setBusyId(id);
@@ -74,45 +75,6 @@ function RiderWorkspace({ token, profile, signOut }: { token: string; profile: O
     }
   }, [load]);
 
-  function stopLocationSharing() {
-    if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
-    watchId.current = null;
-    setLocationRunId("");
-    setLocationMessage("Location sharing stopped.");
-  }
-
-  function startLocationSharing(runId: string) {
-    if (!("geolocation" in navigator)) {
-      setError("Location services are not available on this device.");
-      return;
-    }
-    if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
-    setLocationRunId(runId);
-    setLocationMessage("Waiting for an accurate location…");
-    watchId.current = navigator.geolocation.watchPosition(
-      (position) => {
-        const now = Date.now();
-        if (now - lastLocationSentAt.current < 10_000) return;
-        lastLocationSentAt.current = now;
-        const { latitude, longitude, accuracy, heading, speed } = position.coords;
-        void meatheadApi.recordLocation(token, runId, {
-          latitude,
-          longitude,
-          accuracyMeters: accuracy,
-          ...(heading !== null ? { headingDegrees: heading } : {}),
-          ...(speed !== null ? { speedMetersPerSecond: speed } : {}),
-          recordedAt: new Date(position.timestamp).toISOString(),
-        }).then(() => setLocationMessage(`Live location shared · ${Math.round(accuracy)}m accuracy`))
-          .catch((requestError) => setError(requestError instanceof Error ? requestError.message : "Location could not be shared."));
-      },
-      (locationError) => {
-        setLocationRunId("");
-        setError(locationError.code === 1 ? "Location permission was denied. Enable it in browser settings to share tracking." : "Your current location could not be read.");
-      },
-      { enableHighAccuracy: true, maximumAge: 8_000, timeout: 15_000 },
-    );
-  }
-
   async function pickUpReadyOrders() {
     setBusyId("pickup");
     setError("");
@@ -120,7 +82,6 @@ function RiderWorkspace({ token, profile, signOut }: { token: string; profile: O
       const run = await meatheadApi.pickupReadyOrders(token);
       setLocationMessage(`${run.stops.length} order${run.stops.length === 1 ? "" : "s"} picked up.`);
       await load(false);
-      startLocationSharing(run.id);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "The ready orders could not be picked up.");
     } finally {
@@ -170,11 +131,11 @@ function RiderWorkspace({ token, profile, signOut }: { token: string; profile: O
         checkingStopId={checkingStopId}
         cashCollected={cashCollected}
         locationRunId={locationRunId}
+        locationIssueRunId={locationIssueRunId}
         setCashCollected={(stopId, checked) => setCashCollected((current) => ({ ...current, [stopId]: checked }))}
         onBeginNavigation={beginNavigation}
         onStartRun={() => runAction(run.id, () => meatheadApi.startRun(token, run.id))}
-        onStartLocation={() => startLocationSharing(run.id)}
-        onStopLocation={stopLocationSharing}
+        onRetryLocation={() => retryLocation(run.id)}
         onArrived={markArrived}
         onDelivered={(stop) => runAction(stop.id, () => meatheadApi.updateStop(token, run.id, stop.id, { status: "DELIVERED", cashCollected: cashCollected[stop.id] ?? false }))}
       />)}

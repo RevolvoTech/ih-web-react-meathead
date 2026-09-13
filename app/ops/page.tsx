@@ -3,6 +3,7 @@
 import { CircleDollarSign, Fuel, PackageOpen, Plus, RefreshCw, ShoppingBag, WalletCards } from "lucide-react";
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import AuthGate from "@/components/operations/AuthGate";
+import CostModelPanel from "@/components/operations/CostModelPanel";
 import InventoryPanel from "@/components/operations/InventoryPanel";
 import OperationsShell from "@/components/operations/OperationsShell";
 import StatusBadge, { humanizeStatus } from "@/components/operations/StatusBadge";
@@ -15,12 +16,25 @@ import {
   type InventoryItem,
   type OperationsProfile,
   type OrderSummary,
+  type StandardCostModel,
 } from "@/lib/meathead-api";
 
 const expenseLabels: Record<ExpenseCategory, string> = {
   MEAT: "Meat",
+  SEASONING: "Seasoning",
   PACKAGING: "Packaging",
   RIDER_FUEL: "Rider fuel",
+  RIDER_OPERATIONS: "Rider operations",
+  LABOR: "Staff and labour",
+  RENT: "Rent",
+  UTILITIES: "Utilities",
+  HYGIENE_CLEANING: "Hygiene and cleaning",
+  MAINTENANCE: "Maintenance",
+  MARKETING: "Marketing",
+  COMPLIANCE_ADMIN: "Compliance and admin",
+  EQUIPMENT_SETUP: "Equipment and setup",
+  WASTE_REFUNDS: "Waste and refunds",
+  OTHER: "Other",
 };
 
 const formatMoney = (paisa = 0) => new Intl.NumberFormat("en-PK", {
@@ -39,6 +53,7 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [costModel, setCostModel] = useState<StandardCostModel | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -49,18 +64,20 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
     const now = new Date();
     const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
     try {
-      const [nextDashboard, nextOrders, nextAnalytics, nextExpenses, nextInventory] = await Promise.all([
+      const [nextDashboard, nextOrders, nextAnalytics, nextExpenses, nextInventory, nextCostModel] = await Promise.all([
         meatheadApi.adminDashboard(token),
         meatheadApi.adminOrders(token),
         meatheadApi.adminAnalytics(token, from, now.toISOString()),
         meatheadApi.adminExpenses(token),
         meatheadApi.adminInventory(token),
+        meatheadApi.adminStandardCosts(token),
       ]);
       setDashboard(nextDashboard);
       setOrders(nextOrders);
       setAnalytics(nextAnalytics);
       setExpenses(nextExpenses);
       setInventory(nextInventory);
+      setCostModel(nextCostModel);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Operations data could not be loaded.");
     } finally {
@@ -101,6 +118,8 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
         <InventoryPanel items={inventory} token={token} canManage onChanged={load} />
       </div>
 
+      {costModel && <div className="mt-6"><CostModelPanel token={token} model={costModel} analytics={analytics} onUpdated={setCostModel} /></div>}
+
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">
         <section className="border border-white/10 bg-meathead-charcoal" aria-labelledby="latest-orders-heading">
           <div className="flex items-end justify-between border-b border-white/10 px-4 py-4 sm:px-5">
@@ -124,7 +143,7 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
           <section className="border border-white/10 bg-meathead-charcoal" aria-labelledby="expenses-heading">
             <div className="border-b border-white/10 px-4 py-4"><h2 id="expenses-heading" className="font-heading text-2xl uppercase">This month</h2></div>
             <div className="divide-y divide-white/10">
-              {(Object.keys(expenseLabels) as ExpenseCategory[]).map((category) => <div key={category} className="flex items-center justify-between gap-4 px-4 py-3"><span className="text-sm text-white/60">{expenseLabels[category]}</span><strong className="font-data text-sm">{formatMoney(analytics?.expensesByCategory[category] ?? 0)}</strong></div>)}
+              {(Object.keys(expenseLabels) as ExpenseCategory[]).filter((category) => (analytics?.expensesByCategory[category] ?? 0) > 0).map((category) => <div key={category} className="flex items-center justify-between gap-4 px-4 py-3"><span className="text-sm text-white/60">{expenseLabels[category]}</span><strong className="font-data text-sm">{formatMoney(analytics?.expensesByCategory[category] ?? 0)}</strong></div>)}
               <div className="flex items-center justify-between gap-4 bg-black/20 px-4 py-4"><span className="text-sm font-semibold">Operating contribution</span><strong className={`font-data text-sm ${(analytics?.operatingContributionPaisa ?? 0) < 0 ? "text-red-300" : "text-emerald-300"}`}>{formatMoney(analytics?.operatingContributionPaisa ?? 0)}</strong></div>
             </div>
           </section>
@@ -186,7 +205,13 @@ function ExpenseForm({ token, onSaved }: { token: string; onSaved: () => Promise
   return <section className="mb-6 border border-meathead-red/35 bg-meathead-charcoal p-4 sm:p-5" aria-labelledby="new-expense-heading">
     <h2 id="new-expense-heading" className="font-heading text-2xl uppercase">Log an expense</h2>
     <form onSubmit={submit} className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-      <label className="text-sm font-semibold">Category<select value={category} onChange={(event) => setCategory(event.target.value as ExpenseCategory)} className={`${inputClass} mt-2`}><option value="MEAT">Meat</option><option value="PACKAGING">Packaging</option><option value="RIDER_FUEL">Rider fuel</option></select></label>
+      <label className="text-sm font-semibold">Category<select value={category} onChange={(event) => setCategory(event.target.value as ExpenseCategory)} className={`${inputClass} mt-2`}>
+        <optgroup label="Direct costs"><option value="MEAT">Meat</option><option value="SEASONING">Seasoning</option><option value="PACKAGING">Packaging</option><option value="WASTE_REFUNDS">Waste and refunds</option></optgroup>
+        <optgroup label="Delivery"><option value="RIDER_FUEL">Rider fuel</option><option value="RIDER_OPERATIONS">Rider operations</option></optgroup>
+        <optgroup label="Running the business"><option value="LABOR">Staff and labour</option><option value="RENT">Rent</option><option value="UTILITIES">Utilities</option><option value="HYGIENE_CLEANING">Hygiene and cleaning</option><option value="MAINTENANCE">Maintenance</option><option value="MARKETING">Marketing</option><option value="COMPLIANCE_ADMIN">Compliance and admin</option></optgroup>
+        <optgroup label="Opening"><option value="EQUIPMENT_SETUP">Equipment and setup</option></optgroup>
+        <option value="OTHER">Other</option>
+      </select></label>
       <label className="text-sm font-semibold">Amount (PKR)<input required inputMode="decimal" value={amount} onChange={(event) => setAmount(event.target.value)} className={`${inputClass} mt-2`} placeholder="0" /></label>
       <label className="text-sm font-semibold">Date<input required type="date" value={incurredAt} onChange={(event) => setIncurredAt(event.target.value)} className={`${inputClass} mt-2 [color-scheme:dark]`} /></label>
       <label className="text-sm font-semibold">Vendor <span className="font-normal text-white/40">optional</span><input value={vendor} onChange={(event) => setVendor(event.target.value)} className={`${inputClass} mt-2`} /></label>

@@ -1,4 +1,7 @@
 import { getSupabaseAccessToken } from "@/lib/supabase-browser";
+import type { AnalyticsSummary, Expense, ExpenseCategory, StandardCostItem, StandardCostModel } from "@/lib/cost-model-types";
+
+export type { AnalyticsSummary, CostBasis, Expense, ExpenseCategory, StandardCostItem, StandardCostModel } from "@/lib/cost-model-types";
 
 const API_BASE = (process.env.NEXT_PUBLIC_MEATHEAD_API_URL ?? "https://api.revolvo.tech/meathead").replace(/\/$/, "");
 
@@ -146,28 +149,6 @@ export interface InventoryItem {
   batches: InventoryBatch[];
 }
 
-export interface AnalyticsSummary {
-  deliveredOrders: number;
-  deliveredSalesPaisa: number;
-  collectedRevenuePaisa: number;
-  outstandingRevenuePaisa: number;
-  expenseTotalPaisa: number;
-  expensesByCategory: Partial<Record<ExpenseCategory, number>>;
-  operatingContributionPaisa: number;
-}
-
-export type ExpenseCategory = "MEAT" | "PACKAGING" | "RIDER_FUEL";
-
-export interface Expense {
-  id: string;
-  category: ExpenseCategory | "OTHER";
-  amountPaisa: number;
-  incurredAt: string;
-  vendor: string | null;
-  note: string | null;
-  createdBy?: { displayName: string };
-}
-
 export interface DeliveryStop {
   id: string;
   sequence: number;
@@ -253,6 +234,12 @@ export const meatheadApi = {
   adminAnalytics: (token: string, from: string, to: string) =>
     request<AnalyticsSummary>(`/v1/admin/analytics?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, {}, token),
   adminExpenses: (token: string) => request<Expense[]>("/v1/admin/expenses?limit=20", {}, token),
+  adminStandardCosts: (token: string) => request<StandardCostModel>("/v1/admin/standard-costs", {}, token),
+  updateStandardCost: (token: string, key: string, input: { amountPaisa?: number; enabled?: boolean }) =>
+    request<StandardCostItem>(`/v1/admin/standard-costs/${encodeURIComponent(key)}`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    }, token),
   createExpense: (token: string, input: {
     category: ExpenseCategory;
     amountPaisa: number;

@@ -86,7 +86,7 @@ export async function POST(request: Request) {
     // First, get current data to check for duplicates and determine next batch number
     const existingResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:O', // Includes own_referral_code, referred_count, and referred_by_code
+      range: 'Orders!A:S', // Includes referral and subscription-intent fields
     });
 
     const existingRows = existingResponse.data.values || [];
@@ -159,7 +159,7 @@ export async function POST(request: Request) {
     // Using: whatsapp_number, customer_name, delivery_address (for area)
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Orders!A:O',
+      range: 'Orders!A:S',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
@@ -178,6 +178,10 @@ export async function POST(request: Request) {
           ownReferralCode,          // Column M: own_referral_code for this row
           0,                        // Column N: referred_count for this row starts at 0
           submittedReferralCode,    // Column O: referred_by_code used for this signup
+          'NEW',                    // Column P: lead stage
+          data.preferred_plan || '',// Column Q: preferred subscription plan
+          data.ready_to_start ? 'YES' : 'NO', // Column R: ready this month
+          '',                       // Column S: admin notes
         ]],
       },
     });

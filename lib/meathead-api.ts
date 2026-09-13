@@ -149,6 +149,77 @@ export interface InventoryItem {
   batches: InventoryBatch[];
 }
 
+export type SubscriptionPlan = "DAILY_2" | "DAILY_4";
+export type SubscriptionStatus = "ACTIVE" | "PAUSED" | "OVERDUE" | "CANCELLED";
+export type SubscriptionPaymentMethod = "CASH" | "BANK_TRANSFER" | "EASYPAISA" | "JAZZCASH" | "OTHER";
+
+export interface SubscriptionPayment {
+  id: string;
+  amountPaisa: number;
+  method: SubscriptionPaymentMethod;
+  status: "PAID" | "REFUNDED";
+  reference: string | null;
+  periodStart: string;
+  periodEnd: string;
+  receivedAt: string;
+}
+
+export interface SubscriptionSkip {
+  id: string;
+  serviceDate: string;
+  note: string | null;
+}
+
+export interface Subscription {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string | null;
+  plan: SubscriptionPlan;
+  status: SubscriptionStatus;
+  dailyPattyQuantity: 2 | 4;
+  monthlyPricePaisa: number;
+  startDate: string;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  deliveryAddress: string;
+  area: string | null;
+  latitude: string | number;
+  longitude: string | number;
+  deliveryWindow: string;
+  deliveryNotes: string | null;
+  payments: SubscriptionPayment[];
+  skips: SubscriptionSkip[];
+}
+
+export interface SubscriptionOverview {
+  date: string;
+  activeSubscribers: number;
+  pausedSubscribers: number;
+  overdueSubscribers: number;
+  monthlyRecurringRevenuePaisa: number;
+  collectedThisMonthPaisa: number;
+  projectedContributionPaisa: number;
+  fulfillmentLiabilityPaisa: number;
+  renewalsDueNextSevenDays: number;
+  today: {
+    patties: number;
+    kilograms: number;
+    deliveries: number;
+    skipped: number;
+    generatedOrders: number;
+    ungeneratedOrders: number;
+    byPlan: { DAILY_2: number; DAILY_4: number };
+    byWindow: Array<{ window: string; deliveries: number; patties: number }>;
+  };
+  inventory: {
+    availablePatties: number;
+    committedNextSevenDays: number;
+    requiredKilogramsNextSevenDays: number;
+    daysRemaining: number | null;
+  };
+}
+
 export interface DeliveryStop {
   id: string;
   sequence: number;
@@ -235,6 +306,47 @@ export const meatheadApi = {
     request<AnalyticsSummary>(`/v1/admin/analytics?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, {}, token),
   adminExpenses: (token: string) => request<Expense[]>("/v1/admin/expenses?limit=20", {}, token),
   adminStandardCosts: (token: string) => request<StandardCostModel>("/v1/admin/standard-costs", {}, token),
+  adminSubscriptions: (token: string) => request<Subscription[]>("/v1/admin/subscriptions", {}, token),
+  subscriptionOverview: (token: string, date: string) => request<SubscriptionOverview>(
+    `/v1/admin/subscriptions/overview?date=${encodeURIComponent(date)}`,
+    {},
+    token,
+  ),
+  createSubscription: (token: string, input: {
+    customerName: string;
+    customerPhone: string;
+    customerEmail?: string;
+    plan: SubscriptionPlan;
+    monthlyPricePaisa?: number;
+    startDate: string;
+    deliveryAddress: string;
+    area?: string;
+    latitude: number;
+    longitude: number;
+    deliveryWindow: string;
+    deliveryNotes?: string;
+    payment?: { method: SubscriptionPaymentMethod; reference?: string };
+  }) => request<Subscription>("/v1/admin/subscriptions", { method: "POST", body: JSON.stringify(input) }, token),
+  updateSubscription: (token: string, id: string, input: Partial<{
+    status: SubscriptionStatus;
+    monthlyPricePaisa: number;
+    deliveryWindow: string;
+    deliveryNotes: string | null;
+  }>) => request<Subscription>(`/v1/admin/subscriptions/${id}`, { method: "PATCH", body: JSON.stringify(input) }, token),
+  recordSubscriptionPayment: (token: string, id: string, input: {
+    amountPaisa?: number;
+    method: SubscriptionPaymentMethod;
+    reference?: string;
+  }) => request<SubscriptionPayment>(`/v1/admin/subscriptions/${id}/payments`, { method: "POST", body: JSON.stringify(input) }, token),
+  addSubscriptionSkip: (token: string, id: string, input: { serviceDate: string; note?: string }) =>
+    request<SubscriptionSkip>(`/v1/admin/subscriptions/${id}/skips`, { method: "POST", body: JSON.stringify(input) }, token),
+  removeSubscriptionSkip: (token: string, id: string, skipId: string) =>
+    request<void>(`/v1/admin/subscriptions/${id}/skips/${skipId}`, { method: "DELETE" }, token),
+  generateSubscriptionOrders: (token: string, serviceDate: string) => request<{
+    serviceDate: string;
+    generated: number;
+    failed: Array<{ subscriptionId: string; error: string }>;
+  }>("/v1/admin/subscriptions/generate-orders", { method: "POST", body: JSON.stringify({ serviceDate }) }, token),
   updateStandardCost: (token: string, key: string, input: { amountPaisa?: number; enabled?: boolean }) =>
     request<StandardCostItem>(`/v1/admin/standard-costs/${encodeURIComponent(key)}`, {
       method: "PATCH",

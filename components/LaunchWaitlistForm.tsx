@@ -58,6 +58,8 @@ export default function LaunchWaitlistForm() {
     name: "",
     phone: "",
     area: "F-7",
+    preferredPlan: "DAILY_2",
+    readyToStart: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -110,6 +112,8 @@ export default function LaunchWaitlistForm() {
           whatsapp_number: formData.phone,
           customer_name: formData.name || "Not provided",
           area: formData.area,
+          preferred_plan: formData.preferredPlan,
+          ready_to_start: formData.readyToStart,
           status: "launch_waitlist",
           referral_code: referralCode,
         }),
@@ -275,6 +279,32 @@ export default function LaunchWaitlistForm() {
             We'll notify you when we launch in your area
           </p>
         </div>
+
+        <div>
+          <label htmlFor="preferred-plan" className="block text-gray-400 text-sm font-data mb-2 uppercase tracking-wider">
+            Daily plan *
+          </label>
+          <select
+            id="preferred-plan"
+            required
+            value={formData.preferredPlan}
+            onChange={(e) => setFormData({ ...formData, preferredPlan: e.target.value })}
+            className="w-full bg-meathead-charcoal border-2 border-meathead-red/30 rounded-lg px-4 py-4 text-white text-lg focus:border-meathead-red outline-none transition-colors"
+          >
+            <option value="DAILY_2">2 patties daily · PKR 26,500/month</option>
+            <option value="DAILY_4">4 patties daily · PKR 49,000/month</option>
+          </select>
+        </div>
+
+        <label className="flex min-h-11 items-center gap-3 text-sm text-gray-300">
+          <input
+            type="checkbox"
+            checked={formData.readyToStart}
+            onChange={(e) => setFormData({ ...formData, readyToStart: e.target.checked })}
+            className="size-5 accent-meathead-red"
+          />
+          I would be ready to start this month
+        </label>
 
         <motion.div
           animate={{

@@ -7,6 +7,8 @@ import CostModelPanel from "@/components/operations/CostModelPanel";
 import InventoryPanel from "@/components/operations/InventoryPanel";
 import OperationsShell from "@/components/operations/OperationsShell";
 import StatusBadge, { humanizeStatus } from "@/components/operations/StatusBadge";
+import SubscriptionOperationsPanel from "@/components/operations/SubscriptionOperationsPanel";
+import WaitlistPipeline from "@/components/operations/WaitlistPipeline";
 import {
   meatheadApi,
   type AdminDashboard,
@@ -17,6 +19,8 @@ import {
   type OperationsProfile,
   type OrderSummary,
   type StandardCostModel,
+  type Subscription,
+  type SubscriptionOverview,
 } from "@/lib/meathead-api";
 
 const expenseLabels: Record<ExpenseCategory, string> = {
@@ -54,6 +58,9 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [costModel, setCostModel] = useState<StandardCostModel | null>(null);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [subscriptionOverview, setSubscriptionOverview] = useState<SubscriptionOverview | null>(null);
+  const [subscriptionsLoading, setSubscriptionsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -64,13 +71,15 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
     const now = new Date();
     const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
     try {
-      const [nextDashboard, nextOrders, nextAnalytics, nextExpenses, nextInventory, nextCostModel] = await Promise.all([
+      const [nextDashboard, nextOrders, nextAnalytics, nextExpenses, nextInventory, nextCostModel, nextSubscriptions, nextSubscriptionOverview] = await Promise.all([
         meatheadApi.adminDashboard(token),
         meatheadApi.adminOrders(token),
         meatheadApi.adminAnalytics(token, from, now.toISOString()),
         meatheadApi.adminExpenses(token),
         meatheadApi.adminInventory(token),
         meatheadApi.adminStandardCosts(token),
+        meatheadApi.adminSubscriptions(token),
+        meatheadApi.subscriptionOverview(token, todayInKarachi()),
       ]);
       setDashboard(nextDashboard);
       setOrders(nextOrders);
@@ -78,14 +87,57 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
       setExpenses(nextExpenses);
       setInventory(nextInventory);
       setCostModel(nextCostModel);
+      setSubscriptions(nextSubscriptions);
+      setSubscriptionOverview(nextSubscriptionOverview);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Operations data could not be loaded.");
     } finally {
       setLoading(false);
+      setSubscriptionsLoading(false);
     }
   }, [token]);
 
   useEffect(() => { void load(); }, [load]);
+
+  const refreshSubscriptions = useCallback(async () => {
+    setSubscriptionsLoading(true);
+    try {
+      const [nextSubscriptions, nextOverview] = await Promise.all([
+        meatheadApi.adminSubscriptions(token),
+        meatheadApi.subscriptionOverview(token, todayInKarachi()),
+      ]);
+      setSubscriptions(nextSubscriptions);
+      setSubscriptionOverview(nextOverview);
+    } finally { setSubscriptionsLoading(false); }
+  }, [token]);
+
+  const refreshOrders = useCallback(async () => {
+    const [nextDashboard, nextOrders] = await Promise.all([meatheadApi.adminDashboard(token), meatheadApi.adminOrders(token)]);
+    setDashboard(nextDashboard);
+    setOrders(nextOrders);
+  }, [token]);
+
+  const refreshInventory = useCallback(async () => {
+    const [nextInventory, nextDashboard, nextOverview] = await Promise.all([
+      meatheadApi.adminInventory(token),
+      meatheadApi.adminDashboard(token),
+      meatheadApi.subscriptionOverview(token, todayInKarachi()),
+    ]);
+    setInventory(nextInventory);
+    setDashboard(nextDashboard);
+    setSubscriptionOverview(nextOverview);
+  }, [token]);
+
+  const refreshFinance = useCallback(async () => {
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const [nextAnalytics, nextExpenses] = await Promise.all([
+      meatheadApi.adminAnalytics(token, from, now.toISOString()),
+      meatheadApi.adminExpenses(token),
+    ]);
+    setAnalytics(nextAnalytics);
+    setExpenses(nextExpenses);
+  }, [token]);
 
   const openOrders = useMemo(() => dashboard?.statusCounts.reduce((total, row) =>
     ["DELIVERED", "CANCELLED", "DELIVERY_FAILED"].includes(row.status) ? total : total + row._count._all, 0) ?? 0, [dashboard]);
@@ -104,10 +156,21 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
     </div>
 
     {error && <div role="alert" className="mb-5 rounded-lg border-l-2 border-meathead-red bg-meathead-red/10 px-4 py-3 text-sm text-red-100">{error}</div>}
-    {formOpen && <ExpenseForm token={token} onSaved={async () => { setFormOpen(false); await load(); }} />}
+    {formOpen && <ExpenseForm token={token} onSaved={async () => { setFormOpen(false); await refreshFinance(); }} />}
 
     {loading && !dashboard ? <DashboardSkeleton /> : <>
-      <section aria-label="Operations summary" className="grid grid-cols-2 gap-px overflow-hidden border border-white/10 bg-white/10 lg:grid-cols-4">
+      <SubscriptionOperationsPanel
+        token={token}
+        subscriptions={subscriptions}
+        overview={subscriptionOverview}
+        loading={subscriptionsLoading}
+        onChanged={refreshSubscriptions}
+        onOrdersGenerated={async () => { await Promise.all([refreshOrders(), refreshInventory()]); }}
+      />
+
+      <div className="mt-6"><WaitlistPipeline token={token} /></div>
+
+      <section aria-label="Operations summary" className="mt-6 grid grid-cols-2 gap-px overflow-hidden border border-white/10 bg-white/10 lg:grid-cols-4">
         <Metric icon={<ShoppingBag aria-hidden="true" />} label="Open orders" value={String(openOrders)} />
         <Metric icon={<PackageOpen aria-hidden="true" />} label="Patties available" value={String(inventoryAvailable)} />
         <Metric icon={<Fuel aria-hidden="true" />} label="Active runs" value={String(dashboard?.activeRuns ?? 0)} />
@@ -115,10 +178,10 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
       </section>
 
       <div className="mt-6">
-        <InventoryPanel items={inventory} token={token} canManage onChanged={load} />
+        <InventoryPanel items={inventory} token={token} canManage onChanged={refreshInventory} />
       </div>
 
-      {costModel && <div className="mt-6"><CostModelPanel token={token} model={costModel} analytics={analytics} onUpdated={setCostModel} /></div>}
+      {costModel && <div className="mt-6"><CostModelPanel token={token} model={costModel} analytics={analytics} onUpdated={(next) => { setCostModel(next); void meatheadApi.subscriptionOverview(token, todayInKarachi()).then(setSubscriptionOverview); }} /></div>}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">
         <section className="border border-white/10 bg-meathead-charcoal" aria-labelledby="latest-orders-heading">
@@ -156,6 +219,12 @@ function OperationsDashboard({ token, profile, signOut }: { token: string; profi
       </div>
     </>}
   </OperationsShell>;
+}
+
+function todayInKarachi() {
+  const parts = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Karachi", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
 }
 
 function Metric({ icon, label, value, detail }: { icon: React.ReactNode; label: string; value: string; detail?: string }) {

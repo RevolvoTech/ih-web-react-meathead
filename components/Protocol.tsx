@@ -17,8 +17,8 @@ const protocols = [
   },
   {
     number: "03",
-    title: "PURE BEEF TALLOW",
-    description: "Cooked in ancestral fats. Zero seed oils, zero vegetable oils.",
+    title: "SELF-BASTING BEEF",
+    description: "The 80/20 blend renders its own cooking fat. Zero added seed or vegetable oils.",
   },
   {
     number: "04",

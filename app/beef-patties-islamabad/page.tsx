@@ -6,7 +6,7 @@ const pageUrl = "https://meatheadpakistan.vercel.app/beef-patties-islamabad";
 export const metadata: Metadata = {
   title: "Beef Patties in Islamabad | Halal High-Protein Patties | MEATHEAD",
   description:
-    "Looking for beef patties in Islamabad? MEATHEAD offers halal high-protein beef patties (24g+ protein, 125g, 85/15). Join the waitlist for launch updates.",
+    "Looking for beef patties in Islamabad? MEATHEAD offers halal high-protein beef patties (24g+ protein, 125g, 80/20). Join the waitlist for launch updates.",
   alternates: {
     canonical: "/beef-patties-islamabad",
   },
@@ -41,7 +41,7 @@ const faqItems = [
   {
     question: "How much protein is in each patty?",
     answer:
-      "Each 125g patty is formulated for 24g+ protein with an 85/15 lean-to-fat ratio.",
+      "Each 125g patty is formulated for 24g+ protein with an 80/20 lean-to-fat ratio.",
   },
 ];
 
@@ -76,7 +76,7 @@ export default function BeefPattiesIslamabadPage() {
         </p>
         <p className="text-gray-300 text-lg leading-relaxed mb-6">
           Each patty is designed for performance nutrition with 24g+ protein in
-          a 125g serving and an 85/15 ratio. Whether you train regularly or just
+          a 125g serving and an 80/20 ratio. Whether you train regularly or just
           want better everyday meals, the goal is simple: real food protein you
           can trust in Islamabad.
         </p>

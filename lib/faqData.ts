@@ -13,7 +13,7 @@ export const faqData = [
   {
     question: "Can I use MEATHEAD beef patties for smash burgers?",
     answer:
-      "Yes! Our 125g beef patties are perfect for smash burgers. With an 85/15 lean-to-fat ratio, they create restaurant-quality smash burgers with amazing crust and juice. Pre-cooked for convenience, you can make gourmet smash burgers at home in minutes. The best burger patties in Islamabad for homemade burgers.",
+      "Yes! Our 125g beef patties are perfect for smash burgers. With an 80/20 lean-to-fat ratio, they create restaurant-quality smash burgers with amazing crust and juice. Pre-cooked for convenience, you can make gourmet smash burgers at home in minutes. The best burger patties in Islamabad for homemade burgers.",
   },
   {
     question: "Do you deliver beef patties in Islamabad and Rawalpindi?",
@@ -34,7 +34,7 @@ export const faqData = [
     question:
       "What makes MEATHEAD better than chicken breast for protein?",
     answer:
-      "While chicken breast is lean, MEATHEAD beef patties offer more flavor, better satiety, and essential fats your body needs. Our 85/15 ratio provides optimal nutrition for muscle building - not too lean, not too fatty. Plus, our patties are pre-cooked, saving you meal prep time compared to cooking chicken breast daily.",
+      "While chicken breast is lean, MEATHEAD beef patties offer more flavor, better satiety, and essential fats your body needs. Our 80/20 ratio balances flavor and protein. Plus, our patties are pre-cooked, saving you meal prep time compared to cooking chicken breast daily.",
   },
   {
     question: "Can I bulk order beef patties for meal prep?",
@@ -45,7 +45,7 @@ export const faqData = [
     question:
       "How are MEATHEAD patties better than regular frozen burger patties?",
     answer:
-      "Unlike frozen burger patties from supermarkets, MEATHEAD patties are pre-cooked, precision-ground to 85/15, and optimized for protein content (24g+). Regular frozen patties often have lower protein, more fat, and unknown quality. We're transparent about macros and use only premium beef.",
+      "Unlike frozen burger patties from supermarkets, MEATHEAD patties are pre-cooked, precision-ground to 80/20, and optimized for protein content (24g+). Regular frozen patties often have lower protein, more fat, and unknown quality. We're transparent about macros and use only premium beef.",
   },
   {
     question: "What's the cost per serving compared to protein powder?",

@@ -11,7 +11,7 @@ const reasons = [
   },
   {
     title: "ZERO SEED OILS",
-    description: "Cooked in pure beef tallow. No canola, no sunflower, no inflammatory garbage.",
+    description: "The 80/20 beef renders its own cooking fat. No added canola, sunflower, or vegetable oil.",
   },
   {
     title: "ZERO EXCUSES",

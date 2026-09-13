@@ -7,14 +7,14 @@ import { useRef } from "react";
 const nutritionFacts = [
   { label: "Protein", value: "24g+", description: "Premium muscle fuel" },
   { label: "Weight", value: "125g", description: "Perfect portion size" },
-  { label: "Fat", value: "20g", description: "85/15 lean-to-fat ratio" },
+  { label: "Fat", value: "20g", description: "80/20 lean-to-fat ratio" },
   { label: "Carbs", value: "0g", description: "Zero fillers" },
 ];
 
 const features = [
   {
     title: "PRECISION GROUND",
-    description: "85/15 lean-to-fat ratio for optimal taste and nutrition",
+    description: "80/20 lean-to-fat ratio for flavor, juiciness, and protein",
   },
   {
     title: "100% BEEF",

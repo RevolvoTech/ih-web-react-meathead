@@ -38,7 +38,7 @@ export default function StructuredData() {
     "@type": "Product",
     "name": "MEATHEAD Premium Beef Patty",
     "image": `${siteUrl}/images/patty.webp`,
-    "description": "High-protein pre-cooked beef patty with 24g+ protein per 125g serving. 85/15 lean-to-fat ratio. Zero fillers. Perfect for post-workout nutrition and muscle building.",
+    "description": "High-protein pre-cooked beef patty with 24g+ protein per 125g serving. 80/20 lean-to-fat ratio. Zero fillers. Perfect for post-workout nutrition and muscle building.",
     "brand": {
       "@type": "Brand",
       "name": "MEATHEAD"
@@ -70,7 +70,7 @@ export default function StructuredData() {
       {
         "@type": "PropertyValue",
         "name": "Lean-to-Fat Ratio",
-        "value": "85/15"
+        "value": "80/20"
       },
       {
         "@type": "PropertyValue",

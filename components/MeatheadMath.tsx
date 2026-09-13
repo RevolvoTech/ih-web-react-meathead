@@ -63,7 +63,7 @@ export default function MeatheadMath() {
               </div>
               <p className="text-white font-bold mb-2">Seed Oil Free</p>
               <p className="text-gray-400 text-sm">
-                No canola, soybean, or vegetable oils. Cooked in pure beef tallow.
+                No added canola, soybean, or vegetable oils. The 80/20 patty cooks in its own rendered beef fat.
               </p>
             </motion.div>
           </div>

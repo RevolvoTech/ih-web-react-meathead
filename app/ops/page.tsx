@@ -23,8 +23,8 @@ const expenseLabels: Record<ExpenseCategory, string> = {
   MEAT: "Meat",
   SEASONING: "Seasoning",
   PACKAGING: "Packaging",
-  RIDER_FUEL: "Rider fuel",
-  RIDER_OPERATIONS: "Rider operations",
+  RIDER_FUEL: "Fuel & transport",
+  RIDER_OPERATIONS: "Operations",
   LABOR: "Staff and labour",
   RENT: "Rent",
   UTILITIES: "Utilities",
@@ -207,7 +207,7 @@ function ExpenseForm({ token, onSaved }: { token: string; onSaved: () => Promise
     <form onSubmit={submit} className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
       <label className="text-sm font-semibold">Category<select value={category} onChange={(event) => setCategory(event.target.value as ExpenseCategory)} className={`${inputClass} mt-2`}>
         <optgroup label="Direct costs"><option value="MEAT">Meat</option><option value="SEASONING">Seasoning</option><option value="PACKAGING">Packaging</option><option value="WASTE_REFUNDS">Waste and refunds</option></optgroup>
-        <optgroup label="Delivery"><option value="RIDER_FUEL">Rider fuel</option><option value="RIDER_OPERATIONS">Rider operations</option></optgroup>
+        <optgroup label="Logistics"><option value="RIDER_FUEL">Fuel &amp; transport</option><option value="RIDER_OPERATIONS">Operations</option></optgroup>
         <optgroup label="Running the business"><option value="LABOR">Staff and labour</option><option value="RENT">Rent</option><option value="UTILITIES">Utilities</option><option value="HYGIENE_CLEANING">Hygiene and cleaning</option><option value="MAINTENANCE">Maintenance</option><option value="MARKETING">Marketing</option><option value="COMPLIANCE_ADMIN">Compliance and admin</option></optgroup>
         <optgroup label="Opening"><option value="EQUIPMENT_SETUP">Equipment and setup</option></optgroup>
         <option value="OTHER">Other</option>

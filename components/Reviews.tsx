@@ -28,7 +28,7 @@ const reviews = [
     name: "StackOverflow_Warrior",
     role: "Software Dev",
     rating: 5,
-    review: "Finally, a burger with zero bugs. The 85/15 fat ratio is a perfectly optimized algorithm. No bloat, no lag, just high-performance fuel. It's like a Clean Code version of a meal. 10/10 Documentation on the protein sourcing.",
+    review: "Finally, a burger with zero bugs. The 80/20 fat ratio is a perfectly optimized algorithm. No bloat, no lag, just high-performance fuel. It's like a Clean Code version of a meal. 10/10 Documentation on the protein sourcing.",
     response: "Merge request accepted. Join the waitlist for deployment notifications.",
     rotation: "rotate-1",
     borderColor: "border-blue-500/50",

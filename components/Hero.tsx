@@ -76,7 +76,7 @@ export default function Hero() {
               <div className="text-gray-400 font-data text-xs lg:text-sm">PROTEIN</div>
             </div>
             <div className="bg-meathead-gray px-4 py-4 rounded-lg border-2 border-meathead-red/30 hover:border-meathead-red/60 transition-all">
-              <div className="text-meathead-red font-data font-bold text-2xl lg:text-3xl mb-1">85/15</div>
+              <div className="text-meathead-red font-data font-bold text-2xl lg:text-3xl mb-1">80/20</div>
               <div className="text-gray-400 font-data text-xs lg:text-sm">PRECISION</div>
             </div>
             <div className="bg-meathead-gray px-4 py-4 rounded-lg border-2 border-meathead-red/30 hover:border-meathead-red/60 transition-all">

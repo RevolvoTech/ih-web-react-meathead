@@ -27,7 +27,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "MEATHEAD | Halal Beef Patties in Islamabad & Rawalpindi",
-  description: "Premium halal beef patties for smash burgers and high-protein meals in Islamabad and Rawalpindi (Twin Cities). 24g+ protein per patty, 85/15 ratio, zero fillers.",
+  description: "Premium halal beef patties for smash burgers and high-protein meals in Islamabad and Rawalpindi (Twin Cities). 24g+ protein per patty, 80/20 ratio, zero fillers.",
   authors: [{ name: "MEATHEAD Pakistan" }],
   creator: "MEATHEAD",
   publisher: "MEATHEAD",

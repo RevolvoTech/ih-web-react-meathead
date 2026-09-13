@@ -76,7 +76,7 @@ export default function BeefPattiesRawalpindiPage() {
         </p>
         <p className="text-gray-300 text-lg leading-relaxed mb-6">
           Our patties are engineered for real nutrition: 24g+ protein per 125g
-          patty, 85/15 ratio, and a clean ingredient profile. This is for people
+          patty, 80/20 ratio, and a clean ingredient profile. This is for people
           in Rawalpindi who want better meat options for home cooking, smash
           burgers, and weekly meal prep.
         </p>

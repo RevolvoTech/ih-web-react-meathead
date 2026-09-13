@@ -81,7 +81,7 @@ export default function Footer() {
               <br />
               125G Patty
               <br />
-              85/15 Precision
+              80/20 Precision
               <br />
               0% Fillers
             </p>
